@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: amusing-order-server
+          uri: lb://amusing-order-server
+          predicates:
+            - Path=/order/**
+        - id: amusing-settlement-server
+          uri: lb://amusing-settlement-server
+          predicates:
+            - Path=/settlement/**
