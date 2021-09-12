@@ -1,42 +1,40 @@
-package com.amusing.start.auth.controller;
+package com.amusing.start.auth.controller.outward;
 
 import com.amusing.start.auth.dto.LoginDTO;
 import com.amusing.start.auth.from.LoginFrom;
-import com.amusing.start.auth.service.UserBaseService;
+import com.amusing.start.auth.service.LoginService;
 import com.amusing.start.result.ApiResult;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
 /**
- * Create By 2021/8/28
+ * Create By 2021/8/29
  *
  * @author lvqingyu
  */
 @RestController
-public class UserBaseController {
+@RequestMapping("login")
+public class LoginOutwardController {
 
-    private final UserBaseService userBaseService;
+    private final LoginService loginService;
 
     @Autowired
-    public UserBaseController(UserBaseService userBaseService) {
-        this.userBaseService = userBaseService;
+    public LoginOutwardController(LoginService loginService) {
+        this.loginService = loginService;
     }
 
-    @PostMapping("login")
+    @PostMapping
     public ApiResult login(@Valid @RequestBody LoginFrom loginFrom) {
-        LoginDTO loginDTO = build(loginFrom);
-        ApiResult result = userBaseService.login(loginDTO);
-        return result;
-    }
-
-    private LoginDTO build(LoginFrom loginFrom) {
         LoginDTO loginDTO = new LoginDTO();
         BeanUtils.copyProperties(loginFrom, loginDTO);
-        return loginDTO;
+        ApiResult result = loginService.login(loginDTO);
+        return result;
     }
+    
 }

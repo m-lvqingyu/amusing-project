@@ -1,4 +1,4 @@
-package com.amusing.start.auth.utils;
+package com.amusing.start.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;

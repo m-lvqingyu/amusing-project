@@ -4,11 +4,11 @@ import com.amusing.start.auth.dto.LoginDTO;
 import com.amusing.start.result.ApiResult;
 
 /**
- * Create By 2021/8/28
+ * Create By 2021/8/29
  *
  * @author lvqingyu
  */
-public interface UserBaseService {
+public interface LoginService {
 
     /**
      * 用户登录
@@ -17,4 +17,5 @@ public interface UserBaseService {
      * @return
      */
     ApiResult login(LoginDTO loginDTO);
+
 }

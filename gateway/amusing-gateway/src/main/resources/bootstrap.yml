@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: amusing-gateway
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     nacos:
       discovery:
@@ -11,6 +13,17 @@ spring:
       config:
         # 配置中心地址
         server-addr: localhost:8848
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+      datasource:
+        ds1:
+          nacos:
+            server-addr: localhost:8848
+            data-id: gateway_flow_rule
+            group-id: DEFAULT_GROUP
+            data-type: json
+            rule-type: gw-flow
     gateway:
       discovery:
         locator:
@@ -18,3 +31,7 @@ spring:
           enabled: true
       # 是否开启网关。默认：true
       enabled: true
+
+ignore:
+  white:
+    list: /auth/login

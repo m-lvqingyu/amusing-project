@@ -1,5 +1,7 @@
 package com.amusing.start.auth.exception.handle;
 
+import com.amusing.start.auth.exception.AuthException;
+import com.amusing.start.result.ApiCode;
 import com.amusing.start.result.ApiResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,6 +25,13 @@ public class AuthExceptionHandle {
         List<ObjectError> errorList = exception.getBindingResult().getAllErrors();
         String message = errorList.get(0).getDefaultMessage();
         return ApiResult.fail(message);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = AuthException.class)
+    public ApiResult handler(AuthException exception) {
+        ApiCode apiCode = exception.getApiCode();
+        return ApiResult.fail(apiCode);
     }
 
 }

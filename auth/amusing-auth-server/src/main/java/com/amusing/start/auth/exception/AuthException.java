@@ -16,4 +16,7 @@ public class AuthException extends Exception {
         this.apiCode = apiCode;
     }
 
+    public ApiCode getApiCode() {
+        return apiCode;
+    }
 }

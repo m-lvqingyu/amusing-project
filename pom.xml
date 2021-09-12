@@ -36,7 +36,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
-        <spring-cloud-alibaba.version>2.2.1.RELEASE</spring-cloud-alibaba.version>
+        <spring-cloud-alibaba.version>2.2.6.RELEASE</spring-cloud-alibaba.version>
         <lombok.version>1.18.12</lombok.version>
         <commons.lang3.version>3.11</commons.lang3.version>
         <commons.collections.version>4.4</commons.collections.version>
@@ -48,6 +48,7 @@
         <spring.druid.version>1.2.6</spring.druid.version>
         <mysql.version>8.0.26</mysql.version>
         <mybatis.version>3.4.3.2</mybatis.version>
+        <sentinel.nacos.version>1.8.1</sentinel.nacos.version>
     </properties>
 
     <dependencyManagement>
@@ -60,6 +61,7 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- 版本说明 https://github.com/alibaba/spring-cloud-alibaba/wiki/%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E -->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
@@ -144,6 +146,12 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.csp</groupId>
+                <artifactId>sentinel-datasource-nacos</artifactId>
+                <version>${sentinel.nacos.version}</version>
             </dependency>
 
         </dependencies>

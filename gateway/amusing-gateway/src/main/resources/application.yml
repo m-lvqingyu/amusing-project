@@ -10,3 +10,7 @@ spring:
           uri: lb://amusing-settlement-server
           predicates:
             - Path=/settlement/**
+        - id: amusing-auth-server
+          uri: lb://amusing-auth-server
+          predicates:
+            - Path=/auth/**
