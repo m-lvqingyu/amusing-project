@@ -34,10 +34,15 @@ public class LocalCache<K, V> {
     public void init() {
         ExecutorService pool = initExecutorService();
         cache = CacheBuilder.newBuilder()
+                 // 缓存容器初始容量
                 .initialCapacity(LocalCacheConstant.INITIAL_CAPACITY)
+                // 并发访问数量
                 .concurrencyLevel(LocalCacheConstant.CONCURRENCY_LEVEL)
+                // 最大条数
                 .maximumSize(LocalCacheConstant.MAXIMUM_SIZE)
+                // 当缓存项在指定的时间段内没有被读或写就会被回收
                 .expireAfterAccess(LocalCacheConstant.EXPIRE_AFTER_ACCESS, LocalCacheConstant.TIME_UNIT)
+                // 当缓存项上一次更新操作之后的多久会被刷新
                 .refreshAfterWrite(LocalCacheConstant.REFRESH_AFTER_WRITE, LocalCacheConstant.TIME_UNIT)
                 .build(new CacheLoader<K, V>() {
                     @Override

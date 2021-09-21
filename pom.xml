@@ -27,6 +27,8 @@
         <module>business/settlement/amusing-settlement-server</module>
         <module>business/settlement/amusing-settlement-client</module>
         <module>auth/amusing-auth-server</module>
+        <module>business/user/amusing-user-server</module>
+        <module>business/user/amusing-user-client</module>
     </modules>
 
     <packaging>pom</packaging>

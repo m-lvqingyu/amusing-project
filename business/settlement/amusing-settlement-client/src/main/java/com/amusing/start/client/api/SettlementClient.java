@@ -4,7 +4,6 @@ import com.amusing.start.client.fallback.SettlementClientFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * Create By 2021/9/12

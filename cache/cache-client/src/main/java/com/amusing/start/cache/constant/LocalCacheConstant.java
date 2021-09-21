@@ -20,7 +20,7 @@ public class LocalCacheConstant {
     public static final int CONCURRENCY_LEVEL = Runtime.getRuntime().availableProcessors();
 
     /**
-     * 最大缓存条数。子类在构造方法中调用setMaximunSize(int size)来更改
+     * 最大缓存条数。子类在构造方法中调用setMaxiMunSize(int size)来更改
      */
     public static final int MAXIMUM_SIZE = 1000;
 

@@ -9,8 +9,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  *
  * @author lvqingyu
  */
-@SpringBootApplication
-@EnableFeignClients(basePackages = "com.amusing.start.client.api")
+@SpringBootApplication(scanBasePackages = {"com.amusing.start"})
+@EnableFeignClients(basePackages = "com.amusing.start.client")
 public class OrderApplication {
 
     public static void main(String[] args) {
