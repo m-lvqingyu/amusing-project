@@ -20,8 +20,20 @@ public interface OrderShopsInfoMapper {
      */
     List<OrderShopsInfo> selectOrderNo(@Param("orderNo") String orderNo);
 
+    /**
+     * 保存订单与商铺关联关系
+     *
+     * @param record
+     * @return
+     */
     int insertSelective(OrderShopsInfo record);
 
+    /**
+     * 更新订单与商铺关联关系
+     *
+     * @param record
+     * @return
+     */
     int updateByPrimaryKeySelective(OrderShopsInfo record);
 
 }

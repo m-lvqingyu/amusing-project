@@ -50,7 +50,7 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         OrderDetailVO orderDetail = new OrderDetailVO();
-        setOrderInfoProper(orderInfo, orderDetail);
+        BeanUtils.copyProperties(orderInfo, orderDetail);
 
         String orderNo = orderInfo.getOrderNo();
         List<OrderShopsInfo> shopsInfoList = orderShopsInfoMapper.selectOrderNo(orderNo);
@@ -80,10 +80,5 @@ public class OrderServiceImpl implements IOrderService {
         orderDetail.setOrderShopsVOList(orderShopsVOList);
         return orderDetail;
     }
-
-    private void setOrderInfoProper(OrderInfo orderInfo, OrderDetailVO orderDetail) {
-        BeanUtils.copyProperties(orderInfo, orderDetail);
-    }
-
 
 }

@@ -1,11 +1,9 @@
 package com.amusing.start.order.pojo;
 
-import java.io.Serializable;
 import lombok.Data;
 
 /**
- * @author 
- * 订单商铺信息
+ * @author 订单商铺信息
  */
 @Data
 public class OrderShopsInfo {

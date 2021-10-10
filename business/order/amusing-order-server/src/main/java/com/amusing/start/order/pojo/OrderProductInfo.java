@@ -1,12 +1,11 @@
 package com.amusing.start.order.pojo;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
- * @author 
- * 
+ * @author
  */
 @Data
 public class OrderProductInfo {
