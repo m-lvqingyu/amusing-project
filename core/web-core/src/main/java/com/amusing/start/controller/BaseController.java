@@ -1,8 +1,6 @@
-package com.amusing.start.order.controller;
+package com.amusing.start.controller;
 
 import com.amusing.start.constant.CommonConstant;
-import com.amusing.start.order.exception.OrderException;
-import com.amusing.start.result.ApiCode;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,15 +22,14 @@ public class BaseController {
      * 获取用户唯一Id
      *
      * @return
-     * @throws OrderException
      */
-    public String getUserId() throws OrderException {
+    public String getUserId() {
         if (request == null) {
-            throw new OrderException(ApiCode.UNAUTHORIZED);
+            return "";
         }
         String userUid = request.getHeader(CommonConstant.USER_UID_HEADER_KEY);
         if (StringUtils.isEmpty(userUid)) {
-            throw new OrderException(ApiCode.UNAUTHORIZED);
+            return "";
         }
         return userUid;
     }

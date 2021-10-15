@@ -1,6 +1,6 @@
 package com.amusing.start.order.exception;
 
-import com.amusing.start.result.ApiCode;
+import com.amusing.start.code.ResultCode;
 
 /**
  * Create By 2021/8/21
@@ -9,10 +9,14 @@ import com.amusing.start.result.ApiCode;
  */
 public class OrderException extends Exception {
 
-    private ApiCode apiCode;
+    private ResultCode resultCode;
 
-    public OrderException(ApiCode apiCode) {
-        super(apiCode.getMsg());
-        this.apiCode = apiCode;
+    public OrderException(ResultCode resultCode) {
+        super(resultCode.value());
+        this.resultCode = resultCode;
+    }
+
+    public ResultCode getResultCode() {
+        return resultCode;
     }
 }

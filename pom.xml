@@ -29,6 +29,7 @@
         <module>auth/amusing-auth-server</module>
         <module>business/user/amusing-user-server</module>
         <module>business/user/amusing-user-client</module>
+        <module>core/web-core</module>
     </modules>
 
     <packaging>pom</packaging>

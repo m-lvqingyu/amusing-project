@@ -1,5 +1,6 @@
 package com.amusing.start.order.service.impl;
 
+import com.amusing.start.order.enums.OrderCode;
 import com.amusing.start.order.exception.OrderException;
 import com.amusing.start.order.mapper.OrderInfoMapper;
 import com.amusing.start.order.mapper.OrderProductInfoMapper;
@@ -11,7 +12,6 @@ import com.amusing.start.order.service.IOrderService;
 import com.amusing.start.order.vo.OrderDetailVO;
 import com.amusing.start.order.vo.OrderProductVO;
 import com.amusing.start.order.vo.OrderShopsVO;
-import com.amusing.start.result.ApiCode;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,14 +44,16 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public OrderDetailVO get(String orderId, String userId) throws OrderException {
+        // 查询订单基础信息
         OrderInfo orderInfo = orderInfoMapper.selectOrderNoAndUserId(orderId, userId);
         if (orderInfo == null) {
-            throw new OrderException(ApiCode.ORDER_NOT_FOUND);
+            throw new OrderException(OrderCode.ORDER_NOT_FOUND);
         }
 
         OrderDetailVO orderDetail = new OrderDetailVO();
         BeanUtils.copyProperties(orderInfo, orderDetail);
 
+        // 查询订单-商铺关联关系信息
         String orderNo = orderInfo.getOrderNo();
         List<OrderShopsInfo> shopsInfoList = orderShopsInfoMapper.selectOrderNo(orderNo);
         List<OrderShopsVO> orderShopsVOList = new ArrayList<>();
@@ -60,6 +62,7 @@ public class OrderServiceImpl implements IOrderService {
             return orderDetail;
         }
 
+        // 查询订单-商铺-商铺关联关系信息
         for (OrderShopsInfo orderShopsInfo : shopsInfoList) {
             String shopsId = orderShopsInfo.getShopsId();
             List<OrderProductInfo> productInfoList = orderProductInfoMapper.selectOrderNoAndShopsId(orderNo, shopsId);

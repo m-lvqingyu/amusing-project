@@ -1,9 +1,8 @@
 package com.amusing.start.user.service.impl;
 
 import com.amusing.start.client.output.UserAccountOutput;
-import com.amusing.start.result.ApiCode;
+import com.amusing.start.code.CommCode;
 import com.amusing.start.result.ApiResult;
-import com.amusing.start.user.enums.AmountType;
 import com.amusing.start.user.mapper.UserAccountInfoMapper;
 import com.amusing.start.user.mapper.plus.UserAccountInfoMapperPlus;
 import com.amusing.start.user.pojo.UserAccountInfo;
@@ -49,22 +48,22 @@ public class UserAccountInfoServiceImpl implements UserAccountInfoService {
     public ApiResult userMainSettlement(String userId, String amount) {
         UserAccountInfo info = getInfo(userId);
         if (info == null) {
-            return ApiResult.fail(ApiCode.USER_INFORMATION_NOT_EXIST);
+            return ApiResult.fail(CommCode.USER_INFORMATION_NOT_EXIST);
         }
 
         BigDecimal mainAmount = info.getMainAmount();
         if(mainAmount == null){
-            return ApiResult.fail(ApiCode.USER_INFORMATION_NOT_EXIST);
+            return ApiResult.fail(CommCode.USER_INFORMATION_NOT_EXIST);
         }
 
         BigDecimal updateAmount = new BigDecimal(amount);
         if (mainAmount.compareTo(updateAmount) < 0) {
-            return ApiResult.fail(ApiCode.USER_AMOUNT_INSUFFICIENT_ERROR);
+            return ApiResult.fail(CommCode.USER_AMOUNT_INSUFFICIENT_ERROR);
         }
 
         int result = userAccountInfoMapperPlus.updateMainAccount(userId, mainAmount, updateAmount);
         if (result <= 0) {
-            return ApiResult.fail(ApiCode.FAIL);
+            return ApiResult.fail(CommCode.FAIL);
         }
         return ApiResult.ok();
     }
@@ -73,22 +72,22 @@ public class UserAccountInfoServiceImpl implements UserAccountInfoService {
     public ApiResult userGiveSettlement(String userId, String amount) {
         UserAccountInfo info = getInfo(userId);
         if (info == null) {
-            return ApiResult.fail(ApiCode.USER_INFORMATION_NOT_EXIST);
+            return ApiResult.fail(CommCode.USER_INFORMATION_NOT_EXIST);
         }
 
         BigDecimal giveAmount = info.getGiveAmount();
         if(giveAmount == null){
-            return ApiResult.fail(ApiCode.USER_INFORMATION_NOT_EXIST);
+            return ApiResult.fail(CommCode.USER_INFORMATION_NOT_EXIST);
         }
 
         BigDecimal updateAmount = new BigDecimal(amount);
         if (giveAmount.compareTo(updateAmount) < 0) {
-            return ApiResult.fail(ApiCode.USER_AMOUNT_INSUFFICIENT_ERROR);
+            return ApiResult.fail(CommCode.USER_AMOUNT_INSUFFICIENT_ERROR);
         }
 
         int result = userAccountInfoMapperPlus.updateGiveAccount(userId, giveAmount, updateAmount);
         if (result <= 0) {
-            return ApiResult.fail(ApiCode.FAIL);
+            return ApiResult.fail(CommCode.FAIL);
         }
         return ApiResult.ok();
     }

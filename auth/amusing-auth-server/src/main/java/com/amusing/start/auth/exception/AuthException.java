@@ -1,6 +1,6 @@
 package com.amusing.start.auth.exception;
 
-import com.amusing.start.result.ApiCode;
+import com.amusing.start.code.ResultCode;
 
 /**
  * Create By 2021/8/28
@@ -9,14 +9,14 @@ import com.amusing.start.result.ApiCode;
  */
 public class AuthException extends Exception {
 
-    private ApiCode apiCode;
+    private ResultCode resultCode;
 
-    public AuthException(ApiCode apiCode) {
-        super(apiCode.getMsg());
-        this.apiCode = apiCode;
+    public AuthException(ResultCode resultCode) {
+        super(resultCode.value());
+        this.resultCode = resultCode;
     }
 
-    public ApiCode getApiCode() {
-        return apiCode;
+    public ResultCode getAuthCode() {
+        return resultCode;
     }
 }

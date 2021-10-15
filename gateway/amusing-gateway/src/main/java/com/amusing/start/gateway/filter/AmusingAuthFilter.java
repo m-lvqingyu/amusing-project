@@ -3,7 +3,7 @@ package com.amusing.start.gateway.filter;
 import cn.hutool.json.JSONUtil;
 import com.amusing.start.constant.CommonConstant;
 import com.amusing.start.gateway.config.TokenWhiteListConfig;
-import com.amusing.start.result.ApiCode;
+import com.amusing.start.code.CommCode;
 import com.amusing.start.result.ApiResult;
 import com.amusing.start.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +90,7 @@ public class AmusingAuthFilter implements GlobalFilter {
         response.getHeaders().set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         response.getHeaders().set("Access-Control-Allow-Origin", "*");
         response.getHeaders().set("Cache-Control", "no-cache");
-        String body = JSONUtil.toJsonStr(ApiResult.fail(ApiCode.UNAUTHORIZED));
+        String body = JSONUtil.toJsonStr(ApiResult.fail(CommCode.UNAUTHORIZED));
         DataBuffer buffer = response.bufferFactory().wrap(body.getBytes(Charset.forName("UTF-8")));
         return response.writeWith(Mono.just(buffer));
     }

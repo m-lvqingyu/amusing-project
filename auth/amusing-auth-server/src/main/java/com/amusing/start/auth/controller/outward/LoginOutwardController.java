@@ -1,6 +1,6 @@
 package com.amusing.start.auth.controller.outward;
 
-import com.amusing.start.auth.dto.LoginDTO;
+import com.amusing.start.auth.dto.LoginDto;
 import com.amusing.start.auth.from.LoginFrom;
 import com.amusing.start.auth.service.LoginService;
 import com.amusing.start.result.ApiResult;
@@ -29,12 +29,18 @@ public class LoginOutwardController {
         this.loginService = loginService;
     }
 
+    /**
+     * 用户登陆
+     *
+     * @param loginFrom
+     * @return
+     */
     @PostMapping
     public ApiResult login(@Valid @RequestBody LoginFrom loginFrom) {
-        LoginDTO loginDTO = new LoginDTO();
+        LoginDto loginDTO = new LoginDto();
         BeanUtils.copyProperties(loginFrom, loginDTO);
         ApiResult result = loginService.login(loginDTO);
         return result;
     }
-    
+
 }

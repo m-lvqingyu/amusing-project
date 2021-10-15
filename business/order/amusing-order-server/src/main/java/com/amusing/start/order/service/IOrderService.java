@@ -16,6 +16,8 @@ public interface IOrderService {
      * @param orderId 订单ID
      * @param userId  用户ID
      * @return
+     * @throws OrderException
      */
     OrderDetailVO get(String orderId, String userId) throws OrderException;
+
 }

@@ -1,14 +1,12 @@
 package com.amusing.start.auth.service.impl;
 
-import com.amusing.start.auth.dto.LoginDTO;
+import com.amusing.start.auth.dto.LoginDto;
 import com.amusing.start.auth.enums.LoginType;
-import com.amusing.start.auth.enums.UserDel;
-import com.amusing.start.auth.enums.UserStatus;
+import com.amusing.start.auth.exception.code.AuthCode;
 import com.amusing.start.auth.mapper.SysUserBaseMapper;
 import com.amusing.start.auth.pojo.SysUserBase;
-import com.amusing.start.auth.pojo.SysUserBaseExample;
 import com.amusing.start.auth.service.LoginService;
-import com.amusing.start.result.ApiCode;
+import com.amusing.start.code.CommCode;
 import com.amusing.start.result.ApiResult;
 import com.amusing.start.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * Create By 2021/8/29
@@ -37,7 +34,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public ApiResult login(LoginDTO loginDTO) {
+    public ApiResult login(LoginDto loginDTO) {
         Integer loginType = loginDTO.getLoginType();
         if (LoginType.PHONE.getKey() == loginType) {
             return phoneLogin(loginDTO);
@@ -45,54 +42,52 @@ public class LoginServiceImpl implements LoginService {
         if (LoginType.USERNAME.getKey() == loginType) {
             return usernameLogin(loginDTO);
         }
-        return ApiResult.fail(ApiCode.SYSTEM_LOGIN_EXCEPTION);
+        return ApiResult.fail(CommCode.SYSTEM_LOGIN_EXCEPTION);
     }
 
-    private ApiResult phoneLogin(LoginDTO loginDTO) {
-        SysUserBase sysUserBase = userBase(loginDTO);
+    /**
+     * 手机号码登陆
+     *
+     * @param loginDTO
+     * @return
+     */
+    private ApiResult phoneLogin(LoginDto loginDTO) {
+        SysUserBase sysUserBase = sysUserBaseMapper.selectValidByPhone(loginDTO.getUsername());
         if (sysUserBase == null) {
-            return ApiResult.fail(ApiCode.ERROR_AUTH);
+            return ApiResult.fail(AuthCode.ERROR_AUTH);
         }
         return generateToken(sysUserBase);
     }
 
-    private ApiResult usernameLogin(LoginDTO loginDTO) {
-        SysUserBase userBase = userBase(loginDTO);
+    /**
+     * 用户名登陆
+     *
+     * @param loginDTO
+     * @return
+     */
+    private ApiResult usernameLogin(LoginDto loginDTO) {
+        SysUserBase userBase = sysUserBaseMapper.selectValidByName(loginDTO.getUsername());
         if (userBase == null) {
-            return ApiResult.fail(ApiCode.ERROR_AUTH);
+            return ApiResult.fail(AuthCode.ERROR_AUTH);
         }
         String dtoPassword = loginDTO.getPassword();
         String password = userBase.getPassword();
         boolean matches = passwordEncoder.matches(dtoPassword, password);
         if (!matches) {
-            return ApiResult.fail(ApiCode.ERROR_AUTH);
+            return ApiResult.fail(AuthCode.ERROR_AUTH);
         }
         return generateToken(userBase);
     }
 
-    private SysUserBase userBase(LoginDTO loginDTO) {
-        Integer loginType = loginDTO.getLoginType();
-        SysUserBaseExample example = new SysUserBaseExample();
-        SysUserBaseExample.Criteria criteria = example.createCriteria();
-        if (LoginType.PHONE.getKey() == loginType) {
-            criteria.andPhoneEqualTo(loginDTO.getUsername());
-        }
-        if (LoginType.USERNAME.getKey() == loginType) {
-            criteria.andUserNameEqualTo(loginDTO.getUsername());
-        }
-        criteria.andSourcesEqualTo(loginDTO.getUserType());
-        criteria.andStatusEqualTo(UserStatus.VALID.getKey());
-        criteria.andIsDelEqualTo(UserDel.NOT_DELETED.getKey());
-        List<SysUserBase> baseList = sysUserBaseMapper.selectByExample(example);
-        if (baseList == null || baseList.isEmpty()) {
-            return null;
-        }
-        SysUserBase sysUserBase = baseList.get(0);
-        return sysUserBase;
-    }
-
+    /**
+     * 根据基础信息，生成Token
+     *
+     * @param userBase
+     * @return
+     */
     private ApiResult generateToken(SysUserBase userBase) {
         String token = TokenUtils.generateToken(userBase.getUserId(), userBase.getSecret());
         return ApiResult.ok(token);
     }
+
 }

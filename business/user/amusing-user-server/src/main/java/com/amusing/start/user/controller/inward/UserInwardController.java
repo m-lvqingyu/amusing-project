@@ -3,7 +3,7 @@ package com.amusing.start.user.controller.inward;
 import com.amusing.start.client.api.UserClient;
 import com.amusing.start.client.input.UserSettlementInput;
 import com.amusing.start.client.output.UserAccountOutput;
-import com.amusing.start.result.ApiCode;
+import com.amusing.start.code.CommCode;
 import com.amusing.start.result.ApiResult;
 import com.amusing.start.user.enums.AmountType;
 import com.amusing.start.user.service.UserAccountInfoService;
@@ -37,7 +37,7 @@ public class UserInwardController implements UserClient {
         String amount = input.getAmount();
         Integer amountType = input.getAmountType();
         if (amountType == null || StringUtils.isEmpty(userId) || StringUtils.isEmpty(amount)) {
-            return ApiResult.fail(ApiCode.PARAMETER_EXCEPTION);
+            return ApiResult.fail(CommCode.PARAMETER_EXCEPTION);
         }
         if (amountType == AmountType.MAIN.getKey()) {
             return userAccountInfoService.userMainSettlement(userId, amount);
@@ -45,6 +45,6 @@ public class UserInwardController implements UserClient {
         if (amountType == AmountType.GIVE.getKey()) {
             return userAccountInfoService.userGiveSettlement(userId, amount);
         }
-        return ApiResult.fail(ApiCode.PARAMETER_EXCEPTION);
+        return ApiResult.fail(CommCode.PARAMETER_EXCEPTION);
     }
 }

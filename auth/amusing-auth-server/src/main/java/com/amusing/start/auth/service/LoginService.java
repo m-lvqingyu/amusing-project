@@ -1,6 +1,6 @@
 package com.amusing.start.auth.service;
 
-import com.amusing.start.auth.dto.LoginDTO;
+import com.amusing.start.auth.dto.LoginDto;
 import com.amusing.start.result.ApiResult;
 
 /**
@@ -16,6 +16,6 @@ public interface LoginService {
      * @param loginDTO
      * @return
      */
-    ApiResult login(LoginDTO loginDTO);
+    ApiResult login(LoginDto loginDTO);
 
 }

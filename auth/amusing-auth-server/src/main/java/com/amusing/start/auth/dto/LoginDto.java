@@ -8,7 +8,7 @@ import lombok.Data;
  * @author lvqingyu
  */
 @Data
-public class LoginDTO {
+public class LoginDto {
 
     /**
      * 用户名

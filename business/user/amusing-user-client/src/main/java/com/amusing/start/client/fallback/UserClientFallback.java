@@ -3,7 +3,7 @@ package com.amusing.start.client.fallback;
 import com.amusing.start.client.api.UserClient;
 import com.amusing.start.client.input.UserSettlementInput;
 import com.amusing.start.client.output.UserAccountOutput;
-import com.amusing.start.result.ApiCode;
+import com.amusing.start.code.CommCode;
 import com.amusing.start.result.ApiResult;
 import feign.hystrix.FallbackFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class UserClientFallback implements FallbackFactory<UserClient> {
             @Override
             public ApiResult userSettlement(UserSettlementInput input) {
                 log.error("[user-client]-用户账户：{}结算降级！", input);
-                return ApiResult.fail(ApiCode.DEGRADE_ERROR);
+                return ApiResult.fail(CommCode.DEGRADE_ERROR);
             }
         };
     }

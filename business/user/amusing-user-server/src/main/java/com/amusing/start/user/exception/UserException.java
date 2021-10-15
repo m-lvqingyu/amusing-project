@@ -1,6 +1,6 @@
 package com.amusing.start.user.exception;
 
-import com.amusing.start.result.ApiCode;
+import com.amusing.start.code.CommCode;
 
 /**
  * Create By 2021/9/21
@@ -9,9 +9,9 @@ import com.amusing.start.result.ApiCode;
  */
 public class UserException extends Exception {
 
-    private ApiCode apiCode;
+    private CommCode apiCode;
 
-    public UserException(ApiCode apiCode) {
+    public UserException(CommCode apiCode) {
         super(apiCode.getMsg());
         this.apiCode = apiCode;
     }

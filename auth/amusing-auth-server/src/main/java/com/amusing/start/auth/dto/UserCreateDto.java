@@ -10,7 +10,7 @@ import java.util.Date;
  * @author lvqingyu
  */
 @Data
-public class UserCreateDTO {
+public class UserCreateDto {
 
     /**
      * 用户唯一ID
