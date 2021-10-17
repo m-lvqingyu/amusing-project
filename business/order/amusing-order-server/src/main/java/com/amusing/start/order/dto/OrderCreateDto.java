@@ -12,6 +12,11 @@ import lombok.Data;
 public class OrderCreateDto {
 
     /**
+     * 预定人ID
+     */
+    private String reserveUserId;
+
+    /**
      * 商铺ID
      */
     private String shopsId;

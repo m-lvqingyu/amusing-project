@@ -11,9 +11,8 @@ import com.amusing.start.code.ResultCode;
 public enum OrderCode implements ResultCode<OrderCode> {
 
     ORDER_SAVE_FAIL(4000, "订单创建失败"),
-
     ORDER_NOT_FOUND(4001, "订单信息不存在"),
-    ;
+    USER_NOT_FOUND(4002, "用户信息不存在");
 
     private final int code;
     private final String msg;

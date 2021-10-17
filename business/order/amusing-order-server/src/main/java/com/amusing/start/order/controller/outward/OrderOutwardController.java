@@ -74,7 +74,8 @@ public class OrderOutwardController extends BaseController {
 
         OrderCreateDto orderCreateDto = new OrderCreateDto();
         BeanUtils.copyProperties(from, orderCreateDto);
-        String orderId = orderCreateService.create(orderCreateDto);
+        orderCreateDto.setReserveUserId(userId);
+        String orderId = orderCreateService.create( orderCreateDto);
         if (StringUtils.isEmpty(orderId)) {
             return ApiResult.fail(OrderCode.ORDER_SAVE_FAIL);
         }

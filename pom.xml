@@ -30,6 +30,8 @@
         <module>business/user/amusing-user-server</module>
         <module>business/user/amusing-user-client</module>
         <module>core/web-core</module>
+        <module>business/product/amusing-product-server</module>
+        <module>business/product/amusing-product-client</module>
     </modules>
 
     <packaging>pom</packaging>
