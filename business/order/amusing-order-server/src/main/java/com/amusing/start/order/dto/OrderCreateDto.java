@@ -27,6 +27,11 @@ public class OrderCreateDto {
     private String productId;
 
     /**
+     * 价格ID
+     */
+    private String priceId;
+
+    /**
      * 商品数量
      */
     private Integer productNum;

@@ -1,5 +1,6 @@
 package com.amusing.start.order.pojo;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -9,6 +10,7 @@ import java.util.Date;
  * @author
  */
 @Data
+@Builder
 public class OrderInfo {
     /**
      * 主键ID

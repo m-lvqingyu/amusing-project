@@ -24,6 +24,10 @@
     update_by, update_time
   </sql>
 
+  <select id="selectOrderStatus" resultType="java.lang.Integer">
+    select status from order_info where order_no = #{orderNo} limit 1;
+  </select>
+
   <select id="selectOrderNoAndUserId" resultType="com.amusing.start.order.pojo.OrderInfo">
     select
     <include refid="Base_Column_List"/>
@@ -169,6 +173,10 @@
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateOrderStatus">
+    update order_info set status = #{status} where order_no = #{orderNo}
   </update>
 
 </mapper>

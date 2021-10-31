@@ -27,6 +27,12 @@ public class OrderCreateFrom {
     private String productId;
 
     /**
+     * 价格ID
+     */
+    @NotEmpty(message = "商品价格不存在")
+    private String priceId;
+
+    /**
      * 商品数量
      */
     @NotNull(message = "商品数量不能为空")

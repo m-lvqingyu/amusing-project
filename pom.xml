@@ -54,6 +54,7 @@
         <mysql.version>8.0.26</mysql.version>
         <mybatis.version>3.4.3.2</mybatis.version>
         <sentinel.nacos.version>1.8.1</sentinel.nacos.version>
+        <rocketmq.version>2.2.1</rocketmq.version>
     </properties>
 
     <dependencyManagement>
@@ -157,6 +158,12 @@
                 <groupId>com.alibaba.csp</groupId>
                 <artifactId>sentinel-datasource-nacos</artifactId>
                 <version>${sentinel.nacos.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>${rocketmq.version}</version>
             </dependency>
 
         </dependencies>

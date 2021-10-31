@@ -1,36 +1,50 @@
 package com.amusing.start.user.mapper;
 
 import com.amusing.start.user.pojo.UserAccountInfo;
-import com.amusing.start.user.pojo.UserAccountInfoExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 /**
  * @author lv.qingyu
  */
 @Mapper
 public interface UserAccountInfoMapper {
-    long countByExample(UserAccountInfoExample example);
 
-    int deleteByExample(UserAccountInfoExample example);
+    /**
+     * 更新主账户金额
+     *
+     * @param userId
+     * @param originalAmount
+     * @param updateAmount
+     * @return
+     */
+    int updateMainAccount(@Param("userId") String userId,
+                          @Param("originalAmount") BigDecimal originalAmount,
+                          @Param("updateAmount") BigDecimal updateAmount);
 
-    int deleteByPrimaryKey(Long id);
-
-    int insert(UserAccountInfo record);
+    /**
+     * 更新副账户金额
+     *
+     * @param userId
+     * @param originalAmount
+     * @param updateAmount
+     * @return
+     */
+    int updateGiveAccount(@Param("userId") String userId,
+                          @Param("originalAmount") BigDecimal originalAmount,
+                          @Param("updateAmount") BigDecimal updateAmount);
 
     int insertSelective(UserAccountInfo record);
 
-    List<UserAccountInfo> selectByExample(UserAccountInfoExample example);
-
-    UserAccountInfo selectByPrimaryKey(Long id);
-
-    int updateByExampleSelective(@Param("record") UserAccountInfo record, @Param("example") UserAccountInfoExample example);
-
-    int updateByExample(@Param("record") UserAccountInfo record, @Param("example") UserAccountInfoExample example);
-
     int updateByPrimaryKeySelective(UserAccountInfo record);
 
-    int updateByPrimaryKey(UserAccountInfo record);
+    /**
+     * 获取账户详情
+     *
+     * @param userId 用户ID
+     * @return
+     */
+    UserAccountInfo selectByUserId(@Param("userId") String userId);
 }

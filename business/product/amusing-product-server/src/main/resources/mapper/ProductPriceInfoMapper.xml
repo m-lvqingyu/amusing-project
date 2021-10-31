@@ -1,117 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.amusing.start.product.mapper.ProductPriceInfoMapper">
-  <resultMap id="BaseResultMap" type="com.amusing.start.product.pojo.ProductPriceInfo">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="price_id" jdbcType="VARCHAR" property="priceId" />
-    <result column="product_id" jdbcType="VARCHAR" property="productId" />
-    <result column="version" jdbcType="INTEGER" property="version" />
-    <result column="price" jdbcType="DECIMAL" property="price" />
-    <result column="activity_id" jdbcType="VARCHAR" property="activityId" />
-    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-  </resultMap>
-  <sql id="Base_Column_List">
+    <resultMap id="BaseResultMap" type="com.amusing.start.product.pojo.ProductPriceInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="price_id" jdbcType="VARCHAR" property="priceId"/>
+        <result column="product_id" jdbcType="VARCHAR" property="productId"/>
+        <result column="version" jdbcType="INTEGER" property="version"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="activity_id" jdbcType="VARCHAR" property="activityId"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, price_id, product_id, version, price, activity_id, create_by, create_time, update_by, 
     update_time
   </sql>
 
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.amusing.start.product.pojo.ProductPriceInfo" useGeneratedKeys="true">
-    insert into product_price_info
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="priceId != null">
-        price_id,
-      </if>
-      <if test="productId != null">
-        product_id,
-      </if>
-      <if test="version != null">
-        version,
-      </if>
-      <if test="price != null">
-        price,
-      </if>
-      <if test="activityId != null">
-        activity_id,
-      </if>
-      <if test="createBy != null">
-        create_by,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="updateBy != null">
-        update_by,
-      </if>
-      <if test="updateTime != null">
-        update_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="priceId != null">
-        #{priceId,jdbcType=VARCHAR},
-      </if>
-      <if test="productId != null">
-        #{productId,jdbcType=VARCHAR},
-      </if>
-      <if test="version != null">
-        #{version,jdbcType=INTEGER},
-      </if>
-      <if test="price != null">
-        #{price,jdbcType=DECIMAL},
-      </if>
-      <if test="activityId != null">
-        #{activityId,jdbcType=VARCHAR},
-      </if>
-      <if test="createBy != null">
-        #{createBy,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateBy != null">
-        #{updateBy,jdbcType=VARCHAR},
-      </if>
-      <if test="updateTime != null">
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.amusing.start.product.pojo.ProductPriceInfo" useGeneratedKeys="true">
+        insert into product_price_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="priceId != null">
+                price_id,
+            </if>
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="activityId != null">
+                activity_id,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="priceId != null">
+                #{priceId,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null">
+                #{productId,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="activityId != null">
+                #{activityId,jdbcType=VARCHAR},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
 
-  <update id="updateByPrimaryKeySelective" parameterType="com.amusing.start.product.pojo.ProductPriceInfo">
-    update product_price_info
-    <set>
-      <if test="priceId != null">
-        price_id = #{priceId,jdbcType=VARCHAR},
-      </if>
-      <if test="productId != null">
-        product_id = #{productId,jdbcType=VARCHAR},
-      </if>
-      <if test="version != null">
-        version = #{version,jdbcType=INTEGER},
-      </if>
-      <if test="price != null">
-        price = #{price,jdbcType=DECIMAL},
-      </if>
-      <if test="activityId != null">
-        activity_id = #{activityId,jdbcType=VARCHAR},
-      </if>
-      <if test="createBy != null">
-        create_by = #{createBy,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateBy != null">
-        update_by = #{updateBy,jdbcType=VARCHAR},
-      </if>
-      <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.amusing.start.product.pojo.ProductPriceInfo">
+        update product_price_info
+        <set>
+            <if test="priceId != null">
+                price_id = #{priceId,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null">
+                product_id = #{productId,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="activityId != null">
+                activity_id = #{activityId,jdbcType=VARCHAR},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectByProductAndPriceId" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" /> from product_price_info where product_id = #{productId} and price_id = #{priceId}
+    </select>
 
 </mapper>

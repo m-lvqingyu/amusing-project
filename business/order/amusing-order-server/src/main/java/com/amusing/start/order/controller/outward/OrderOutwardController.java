@@ -10,6 +10,7 @@ import com.amusing.start.order.service.IOrderCreateService;
 import com.amusing.start.order.service.IOrderService;
 import com.amusing.start.order.vo.OrderDetailVO;
 import com.amusing.start.result.ApiResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,9 @@ import javax.validation.Valid;
  *
  * @author lvqingyu
  */
+@Slf4j
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/outward/order")
 public class OrderOutwardController extends BaseController {
 
     @Autowired
@@ -69,14 +71,16 @@ public class OrderOutwardController extends BaseController {
     public ApiResult create(@Valid @RequestBody OrderCreateFrom from) throws OrderException {
         String userId = getUserId();
         if (StringUtils.isEmpty(userId)) {
+            log.warn("[Order]-[create]-User not login! params:{}", from);
             throw new OrderException(CommCode.UNAUTHORIZED);
         }
 
         OrderCreateDto orderCreateDto = new OrderCreateDto();
         BeanUtils.copyProperties(from, orderCreateDto);
         orderCreateDto.setReserveUserId(userId);
-        String orderId = orderCreateService.create( orderCreateDto);
+        String orderId = orderCreateService.create(orderCreateDto);
         if (StringUtils.isEmpty(orderId)) {
+            log.warn("[Order]-[create]-Order creation failed! userId:{}, params:{}", userId, from);
             return ApiResult.fail(OrderCode.ORDER_SAVE_FAIL);
         }
         return ApiResult.ok(orderId);

@@ -115,4 +115,8 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
+    <select id="selectByShopId" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" /> from shop_info where shop_id = #{shopId} and status = 1 and is_del = 1
+    </select>
+
 </mapper>
