@@ -1,11 +1,13 @@
 package com.amusing.start.order.pojo;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * @author 订单商铺信息
  */
 @Data
+@Builder
 public class OrderShopsInfo {
     /**
      * 主键ID

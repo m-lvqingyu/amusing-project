@@ -1,8 +1,9 @@
-package com.amusing.start.order.listener.product;
+package com.amusing.start.order.listener.transactional.product;
 
 import com.alibaba.fastjson.JSONObject;
 import com.amusing.start.order.enums.OrderStatus;
 import com.amusing.start.order.mapper.OrderInfoMapper;
+import com.amusing.start.order.message.OrderCreateMsg;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +28,7 @@ public class ReduceStockListener implements RocketMQLocalTransactionListener {
     @Resource
     private OrderInfoMapper orderInfoMapper;
 
-    private static final String ORDER_NO_KEY = "orderNo";
+    private static final String ORDER_NO_KEY = "SimpleOrderInfo";
 
     @Override
     public RocketMQLocalTransactionState executeLocalTransaction(Message msg, Object arg) {
@@ -87,8 +88,11 @@ public class ReduceStockListener implements RocketMQLocalTransactionListener {
     private String orderNo(Message message) {
         String str = new String((byte[]) message.getPayload());
         JSONObject object = JSONObject.parseObject(str);
-        String orderNo = object.getString(ORDER_NO_KEY);
-        return orderNo;
+        OrderCreateMsg createMsg = object.getObject(ORDER_NO_KEY, OrderCreateMsg.class);
+        if (createMsg == null) {
+            return "";
+        }
+        return createMsg.getOrderNo();
     }
 
 }

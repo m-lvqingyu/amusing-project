@@ -1,4 +1,4 @@
-package com.amusing.start.order.listener.product;
+package com.amusing.start.order.listener.transactional.product;
 
 import org.apache.rocketmq.spring.annotation.ExtRocketMQTemplateConfiguration;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  *
  * @author lvqingyu
  */
-@ExtRocketMQTemplateConfiguration(nameServer = "${reduce.stock.name.server}", group = "OrderCreateGroup")
+@ExtRocketMQTemplateConfiguration(nameServer = "${rocketmq.name-server}", group = "ReduceStockGroup")
 @Component("reduceStockMqTemplate")
 public class ReduceStockMqTemplate extends RocketMQTemplate {
 }

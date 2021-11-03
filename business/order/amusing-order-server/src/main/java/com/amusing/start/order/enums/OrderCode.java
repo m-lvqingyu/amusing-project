@@ -16,8 +16,11 @@ public enum OrderCode implements ResultCode<OrderCode> {
 
     USER_NOT_FOUND(102, "用户信息不存在"),
 
-    PRODUCT_NOT_FOUND(103, "商品信息不存在");
-    ;
+    PRODUCT_NOT_FOUND(103, "商品信息不存在"),
+
+    INSUFFICIENT_BALANCE(104, "账户余额不足"),
+
+    UNABLE_PROVIDE_SERVICE(105, "服务开小差了，请稍后再试~~~");
 
     private final int code;
     private final String msg;

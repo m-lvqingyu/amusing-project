@@ -13,7 +13,9 @@ public enum OrderStatus {
 
     IN_PAYMENT(30, "支付中"),
 
-    ALREADY_PAID(40, "已支付")
+    ALREADY_PAID(40, "已支付"),
+
+    CANCEL(100, "已取消"),
     ;
 
     private int key;
