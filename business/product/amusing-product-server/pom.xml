@@ -20,6 +20,12 @@
         </dependency>
 
         <dependency>
+            <artifactId>amusing-order-client</artifactId>
+            <groupId>com.amusing.start</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>

@@ -1,4 +1,4 @@
-package com.amusing.start.order.message;
+package com.amusing.start.order.listener.message;
 
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +19,8 @@ public class OrderCreateMsg {
     private String shopsId;
 
     private String productId;
+
+    private Integer productNum;
 
     private String priceId;
 

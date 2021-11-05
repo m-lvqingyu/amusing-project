@@ -35,4 +35,14 @@ public interface ProductInfoMapper {
      */
     ProductInfo selectByShopAndProductId(@Param("shopId") String shopId, @Param("productId") String productId);
 
+    /**
+     * 扣减商品库存
+     *
+     * @param shopId     商铺ID
+     * @param productId  商品ID
+     * @param productNum 商品数量
+     * @return
+     */
+    int deductionProductStock(@Param("shopId") String shopId, @Param("productId") String productId, @Param("productNum") Integer productNum);
+
 }

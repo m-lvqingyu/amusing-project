@@ -16,7 +16,7 @@ import com.amusing.start.order.listener.transactional.product.ReduceStockMqTempl
 import com.amusing.start.order.mapper.OrderInfoMapper;
 import com.amusing.start.order.mapper.OrderProductInfoMapper;
 import com.amusing.start.order.mapper.OrderShopsInfoMapper;
-import com.amusing.start.order.message.OrderCreateMsg;
+import com.amusing.start.order.listener.message.OrderCreateMsg;
 import com.amusing.start.order.pojo.OrderInfo;
 import com.amusing.start.order.pojo.OrderProductInfo;
 import com.amusing.start.order.pojo.OrderShopsInfo;
@@ -51,9 +51,7 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
     private final OrderProductInfoMapper orderProductInfoMapper;
 
     private static final String MESSAGE_ID_KEY = "msgUid";
-
     private static final String REDUCE_STOCK_TOPIC = "reduce_stock";
-
     private static final String REDUCE_STOCK_MSG_ID_PREFIX = "reduce_stock_";
 
     @Value("${order.worker}")
@@ -241,6 +239,7 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
                 .orderNo(orderNo)
                 .shopsId(orderCreateDto.getShopsId())
                 .productId(orderCreateDto.getProductId())
+                .productNum(orderCreateDto.getProductNum())
                 .priceId(orderCreateDto.getPriceId())
                 .amount(totalAmount)
                 .build();

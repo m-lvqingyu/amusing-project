@@ -1,6 +1,7 @@
 package com.amusing.start.order.service.impl;
 
 import com.amusing.start.order.enums.OrderCode;
+import com.amusing.start.order.enums.OrderStatus;
 import com.amusing.start.order.exception.OrderException;
 import com.amusing.start.order.mapper.OrderInfoMapper;
 import com.amusing.start.order.mapper.OrderProductInfoMapper;
@@ -82,6 +83,18 @@ public class OrderServiceImpl implements IOrderService {
 
         orderDetail.setOrderShopsVOList(orderShopsVOList);
         return orderDetail;
+    }
+
+    @Override
+    public Boolean isCancel(String orderNo) {
+        Integer orderStatus = orderInfoMapper.selectOrderStatus(orderNo);
+        if (orderStatus == null) {
+            return null;
+        }
+        if (orderStatus == OrderStatus.CANCEL.getKey()) {
+            return true;
+        }
+        return false;
     }
 
 }

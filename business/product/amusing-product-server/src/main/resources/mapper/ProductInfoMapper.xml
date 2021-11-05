@@ -150,4 +150,8 @@
         select <include refid="Base_Column_List" /> from product_info where shop_id = #{shopId} and product_id = #{productId} and status = 1 and is_del = 1
     </select>
 
+    <update id="deductionProductStock">
+        update product_info set product_stock = product_stock - #{productNum} where shop_id = #{shopId} and product_id = #{productId} and product_stock >= 0
+    </update>
+
 </mapper>

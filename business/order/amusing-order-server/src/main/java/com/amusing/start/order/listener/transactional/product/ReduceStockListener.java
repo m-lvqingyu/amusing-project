@@ -3,7 +3,7 @@ package com.amusing.start.order.listener.transactional.product;
 import com.alibaba.fastjson.JSONObject;
 import com.amusing.start.order.enums.OrderStatus;
 import com.amusing.start.order.mapper.OrderInfoMapper;
-import com.amusing.start.order.message.OrderCreateMsg;
+import com.amusing.start.order.listener.message.OrderCreateMsg;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
