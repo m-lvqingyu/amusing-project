@@ -8,7 +8,7 @@ import com.amusing.start.product.pojo.ProductInfo;
  *
  * @author lvqingyu
  */
-public interface ProductService {
+public interface IProductService {
 
     /**
      * 获取商品详情
@@ -28,7 +28,7 @@ public interface ProductService {
      * @param productNum 商品数量
      * @return
      */
-    boolean deductionProductStock(String shopId, String productId, Integer productNum);
+    boolean deductionProductStock(String txId, String shopId, String productId, Integer productNum);
 
     /**
      * 获取商品详情

@@ -1,17 +1,21 @@
 package com.amusing.start.product.service.impl;
 
 import com.amusing.start.client.output.ProductOutput;
+import com.amusing.start.product.enums.MessageStatus;
+import com.amusing.start.product.enums.ResultStatus;
 import com.amusing.start.product.mapper.ProductInfoMapper;
+import com.amusing.start.product.mapper.ProductMessageInfoMapper;
 import com.amusing.start.product.mapper.ProductPriceInfoMapper;
 import com.amusing.start.product.mapper.ShopInfoMapper;
 import com.amusing.start.product.pojo.ProductInfo;
 import com.amusing.start.product.pojo.ProductPriceInfo;
 import com.amusing.start.product.pojo.ShopInfo;
-import com.amusing.start.product.service.ProductService;
+import com.amusing.start.product.service.IProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -22,17 +26,22 @@ import java.math.BigDecimal;
  */
 @Slf4j
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl implements IProductService {
 
     private ShopInfoMapper shopInfoMapper;
     private ProductInfoMapper productInfoMapper;
     private ProductPriceInfoMapper productPriceInfoMapper;
+    private ProductMessageInfoMapper productMessageInfoMapper;
 
     @Autowired
-    public ProductServiceImpl(ShopInfoMapper shopInfoMapper, ProductInfoMapper productInfoMapper, ProductPriceInfoMapper productPriceInfoMapper) {
+    public ProductServiceImpl(ShopInfoMapper shopInfoMapper,
+                              ProductInfoMapper productInfoMapper,
+                              ProductPriceInfoMapper productPriceInfoMapper,
+                              ProductMessageInfoMapper productMessageInfoMapper) {
         this.shopInfoMapper = shopInfoMapper;
         this.productInfoMapper = productInfoMapper;
         this.productPriceInfoMapper = productPriceInfoMapper;
+        this.productMessageInfoMapper = productMessageInfoMapper;
     }
 
     @Override
@@ -56,7 +65,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean deductionProductStock(String shopId, String productId, Integer productNum) {
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deductionProductStock(String txId, String shopId, String productId, Integer productNum) {
         ProductInfo productInfo = productInfoMapper.selectByShopAndProductId(shopId, productId);
         if (productInfo == null) {
             log.warn("[Product]-[deductionProductStock]-ProductInfo does not exist! shopId:{}, productId:{}", shopId, productId);
@@ -74,8 +84,10 @@ public class ProductServiceImpl implements ProductService {
         int result = productInfoMapper.deductionProductStock(shopId, productId, productNum);
         if (result <= 0) {
             log.warn("[Product]-[deductionProductStock]-ProductInfo insufficient inventory! shopId:{}, productId:{}, productStock:{}, productNum:{}", shopId, productId, productStock, productNum);
+            productMessageInfoMapper.updateStatus(txId, MessageStatus.PROCESSED.getCode(), ResultStatus.FAIL.getCode());
             return false;
         }
+        productMessageInfoMapper.updateStatus(txId, MessageStatus.PROCESSED.getCode(), ResultStatus.SUCCESS.getCode());
         return true;
     }
 

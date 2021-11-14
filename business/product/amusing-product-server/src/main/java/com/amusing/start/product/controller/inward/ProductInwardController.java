@@ -2,7 +2,7 @@ package com.amusing.start.product.controller.inward;
 
 import com.amusing.start.client.api.ProductClient;
 import com.amusing.start.client.output.ProductOutput;
-import com.amusing.start.product.service.ProductService;
+import com.amusing.start.product.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ProductInwardController implements ProductClient {
 
-    private final ProductService productService;
+    private final IProductService productService;
 
     @Autowired
-    public ProductInwardController(ProductService productService) {
+    public ProductInwardController(IProductService productService) {
         this.productService = productService;
     }
 

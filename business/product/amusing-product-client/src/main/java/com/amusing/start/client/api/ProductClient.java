@@ -5,7 +5,6 @@ import com.amusing.start.client.output.ProductOutput;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * Create By 2021/10/23
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author lvqingyu
  */
 @FeignClient(name = "amusing-product-server", fallbackFactory = ProductClientFallback.class)
-@RequestMapping("product")
 public interface ProductClient {
 
     /**
@@ -24,7 +22,7 @@ public interface ProductClient {
      * @param priceId   价格ID
      * @return
      */
-    @GetMapping("/{shopId}/{productId}/{priceId}")
+    @GetMapping("product/{shopId}/{productId}/{priceId}")
     ProductOutput get(@PathVariable(value = "shopId") String shopId,
                       @PathVariable(value = "productId") String productId,
                       @PathVariable(value = "priceId") String priceId);

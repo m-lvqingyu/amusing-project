@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @date 2021/11/5 22:58
  */
 @FeignClient(name = "amusing-order-server", fallbackFactory = OrderClientFallback.class)
-@RequestMapping("/inward/order")
 public interface OrderClient {
 
     /**
@@ -22,7 +21,7 @@ public interface OrderClient {
      * @param orderNo 订单编号
      * @return
      */
-    @GetMapping("isCancel/{orderNo}")
+    @GetMapping("/inward/order/v1/isCancel/{orderNo}")
     Boolean isCancel(@PathVariable("orderNo") String orderNo);
 
 

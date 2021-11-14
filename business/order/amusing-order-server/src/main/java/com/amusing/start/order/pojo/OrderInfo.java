@@ -28,6 +28,11 @@ public class OrderInfo {
     private String reserveUserId;
 
     /**
+     * 收件人ID
+     */
+    private String receivingUserId;
+
+    /**
      * 运费
      */
     private BigDecimal freightAmount;

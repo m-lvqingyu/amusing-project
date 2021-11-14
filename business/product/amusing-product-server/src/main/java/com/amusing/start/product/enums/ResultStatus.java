@@ -1,21 +1,23 @@
 package com.amusing.start.product.enums;
 
 /**
- * @author lv.QingYu
- * @version 1.0
- * @description: 消息状态
- * @date 2021/11/4 22:54
+ * Create By 2021/11/14
+ *
+ * @author lvqingyu
  */
-public enum MessageStatus {
+public enum ResultStatus {
 
     INIT(0, "待处理"),
 
-    PROCESSED(1, "已处理");
+    SUCCESS(1, "成功"),
+
+    FAIL(2, "失败");
+
 
     private final int code;
     private final String msg;
 
-    MessageStatus(final int code, final String msg) {
+    ResultStatus(final int code, final String msg) {
         this.code = code;
         this.msg = msg;
     }

@@ -2,27 +2,27 @@ package com.amusing.start.order.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.amusing.start.client.api.ProductClient;
 import com.amusing.start.client.api.UserClient;
 import com.amusing.start.client.output.ProductOutput;
 import com.amusing.start.client.output.UserAccountOutput;
 import com.amusing.start.order.dto.OrderCreateDto;
-import com.amusing.start.order.enums.OrderCode;
-import com.amusing.start.order.enums.OrderStatus;
-import com.amusing.start.order.enums.YesNo;
+import com.amusing.start.order.enums.*;
 import com.amusing.start.order.exception.OrderException;
-import com.amusing.start.order.listener.transactional.product.ReduceStockMqTemplate;
+import com.amusing.start.order.listener.message.OrderCreateMsg;
+import com.amusing.start.order.listener.transactional.product.CreateOrderMqTemplate;
 import com.amusing.start.order.mapper.OrderInfoMapper;
 import com.amusing.start.order.mapper.OrderProductInfoMapper;
 import com.amusing.start.order.mapper.OrderShopsInfoMapper;
-import com.amusing.start.order.listener.message.OrderCreateMsg;
+import com.amusing.start.order.pojo.OrderMessageInfo;
 import com.amusing.start.order.pojo.OrderInfo;
 import com.amusing.start.order.pojo.OrderProductInfo;
 import com.amusing.start.order.pojo.OrderShopsInfo;
+import com.amusing.start.order.service.IOrderMessageInfoService;
 import com.amusing.start.order.service.IOrderCreateService;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.spring.support.RocketMQHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
@@ -46,13 +46,13 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
     private final UserClient userClient;
     private final ProductClient productClient;
     private final OrderInfoMapper orderInfoMapper;
-    private final ReduceStockMqTemplate reduceStockMqTemplate;
     private final OrderShopsInfoMapper orderShopsInfoMapper;
     private final OrderProductInfoMapper orderProductInfoMapper;
+    private final IOrderMessageInfoService createOrderMsgService;
+    private final CreateOrderMqTemplate createOrderMqTemplate;
 
-    private static final String MESSAGE_ID_KEY = "msgUid";
-    private static final String REDUCE_STOCK_TOPIC = "reduce_stock";
-    private static final String REDUCE_STOCK_MSG_ID_PREFIX = "reduce_stock_";
+    private static final String CREATE_ORDER_TOPIC = "create_order";
+    private static final String TX_ID_PREFIX = "tx_";
 
     @Value("${order.worker}")
     private Long orderWorker;
@@ -64,20 +64,21 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
     public OrderCreateServiceImpl(UserClient userClient,
                                   ProductClient productClient,
                                   OrderInfoMapper orderInfoMapper,
-                                  ReduceStockMqTemplate reduceStockMqTemplate,
                                   OrderShopsInfoMapper orderShopsInfoMapper,
-                                  OrderProductInfoMapper orderProductInfoMapper) {
+                                  OrderProductInfoMapper orderProductInfoMapper,
+                                  IOrderMessageInfoService createOrderMsgService,
+                                  CreateOrderMqTemplate createOrderMqTemplate) {
         this.userClient = userClient;
         this.productClient = productClient;
         this.orderInfoMapper = orderInfoMapper;
-        this.reduceStockMqTemplate = reduceStockMqTemplate;
         this.orderShopsInfoMapper = orderShopsInfoMapper;
         this.orderProductInfoMapper = orderProductInfoMapper;
+        this.createOrderMsgService = createOrderMsgService;
+        this.createOrderMqTemplate = createOrderMqTemplate;
     }
 
     /**
-     * 创建订单 创建订单
-     * ------> 扣减库存MQ
+     * 创建订单
      *
      * @param orderCreateDto
      * @return
@@ -86,19 +87,15 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
     @Override
     public String create(OrderCreateDto orderCreateDto) throws OrderException {
         String reserveUserId = orderCreateDto.getReserveUserId();
-
         // 获取预定人账户信息
         UserAccountOutput userAccountOutput = getUserAccountDetails(reserveUserId);
-
         // 获取商品信息及单价
         ProductOutput productOutput = getProductDetails(reserveUserId, orderCreateDto);
-
         // 判断预定人账户金额是否足够
         BigDecimal price = productOutput.getPrice();
         Integer productNum = orderCreateDto.getProductNum();
         BigDecimal totalAmount = price.multiply(new BigDecimal(productNum));
         checkoutOrderAccount(totalAmount, userAccountOutput);
-
         // 保存订单
         OrderInfo orderInfo;
         try {
@@ -107,13 +104,24 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
             log.error("[Order]-[create]-saveOrder err！userId:{}, msg:{}", reserveUserId, Throwables.getStackTraceAsString(e));
             throw new OrderException(OrderCode.UNABLE_PROVIDE_SERVICE);
         }
-
-        // 发送扣减库存消息
         String orderNo = orderInfo.getOrderNo();
-        boolean result = sendReduceStockMsg(orderNo, totalAmount, orderCreateDto);
-        if (!result) {
-            cancelOrder(orderNo);
-            throw new OrderException(OrderCode.UNABLE_PROVIDE_SERVICE);
+        OrderCreateMsg createMsg = OrderCreateMsg.builder()
+                .orderNo(orderNo)
+                .userId(orderInfo.getReserveUserId())
+                .shopsId(orderCreateDto.getShopsId())
+                .productId(orderCreateDto.getProductId())
+                .productNum(orderCreateDto.getProductNum())
+                .priceId(orderCreateDto.getPriceId())
+                .amount(totalAmount)
+                .build();
+        String transactionId = TX_ID_PREFIX + orderNo;
+        Message msg = MessageBuilder.withPayload(createMsg).
+                setHeader(RocketMQHeaders.TRANSACTION_ID, transactionId)
+                .build();
+        try {
+            createOrderMqTemplate.sendMessageInTransaction(CREATE_ORDER_TOPIC, msg, null);
+        } catch (Exception e) {
+            log.error("[Order]-[create]-senMsg err！userId:{}, msg:{}", reserveUserId, Throwables.getStackTraceAsString(e));
         }
         return orderNo;
     }
@@ -222,37 +230,9 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
         // 保存订单信息
         OrderInfo orderInfo = buildOrderInfo(orderNo, totalAmount, orderCreateDto);
         orderInfoMapper.insertSelective(orderInfo);
+        OrderMessageInfo createOrderMsg = buildCreateOrderMsg(orderNo);
+        createOrderMsgService.save(createOrderMsg);
         return orderInfo;
-    }
-
-    /**
-     * 发送扣减库存MQ消息
-     *
-     * @param orderNo        订单编号
-     * @param totalAmount    订单金额
-     * @param orderCreateDto
-     * @return
-     */
-    public boolean sendReduceStockMsg(String orderNo, BigDecimal totalAmount, OrderCreateDto orderCreateDto) {
-        JSONObject object = new JSONObject();
-        OrderCreateMsg msg = OrderCreateMsg.builder()
-                .orderNo(orderNo)
-                .shopsId(orderCreateDto.getShopsId())
-                .productId(orderCreateDto.getProductId())
-                .productNum(orderCreateDto.getProductNum())
-                .priceId(orderCreateDto.getPriceId())
-                .amount(totalAmount)
-                .build();
-        object.put("SimpleOrderInfo", msg);
-        String msgId = REDUCE_STOCK_MSG_ID_PREFIX + IdUtil.simpleUUID();
-        Message message = MessageBuilder.withPayload(object.toJSONString()).setHeader(MESSAGE_ID_KEY, msgId).build();
-        try {
-            reduceStockMqTemplate.sendMessageInTransaction(REDUCE_STOCK_TOPIC, message, null);
-            return true;
-        } catch (Exception e) {
-            log.error("[Order]-[create]-sendReduceStockMsg err! orderNo:{}, msgId:{}, msg:{}", orderNo, msgId, Throwables.getStackTraceAsString(e));
-            return false;
-        }
     }
 
     /**
@@ -288,7 +268,10 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
      * @param orderCreateDto
      * @return
      */
-    private OrderProductInfo buildOrderProductInfo(String orderNo, BigDecimal price, BigDecimal totalAmount, OrderCreateDto orderCreateDto) {
+    private OrderProductInfo buildOrderProductInfo(String orderNo,
+                                                   BigDecimal price,
+                                                   BigDecimal totalAmount,
+                                                   OrderCreateDto orderCreateDto) {
         return OrderProductInfo.builder()
                 .orderNo(orderNo)
                 .shopsId(orderCreateDto.getShopsId())
@@ -327,6 +310,20 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
                 .updateBy(orderCreateDto.getReserveUserId())
                 .createTime(currentTime)
                 .updateTime(currentTime)
+                .build();
+    }
+
+    private OrderMessageInfo buildCreateOrderMsg(String orderNo) {
+        Date currentDate = new Date();
+        String transactionId = TX_ID_PREFIX + orderNo;
+        return OrderMessageInfo.builder()
+                .orderNo(orderNo)
+                .transactionId(transactionId)
+                .msgStatus(MsgStatus.NOT_SEND.getKey())
+                .productBusinessStatus(BusinessStatus.INIT.getKey())
+                .userBusinessStatus(BusinessStatus.INIT.getKey())
+                .createTime(currentDate)
+                .updateTime(currentDate)
                 .build();
     }
 }

@@ -5,6 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
     <result column="reserve_user_id" jdbcType="VARCHAR" property="reserveUserId" />
+    <result column="receiving_user_id" jdbcType="VARCHAR" property="receivingUserId" />
     <result column="freight_amount" jdbcType="DECIMAL" property="freightAmount" />
     <result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
     <result column="total_coupon_amount" jdbcType="DECIMAL" property="totalCouponAmount" />

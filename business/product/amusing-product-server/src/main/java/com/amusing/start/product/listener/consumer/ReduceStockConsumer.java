@@ -2,19 +2,21 @@ package com.amusing.start.product.listener.consumer;
 
 import com.alibaba.fastjson.JSONObject;
 import com.amusing.start.product.enums.MessageStatus;
-import com.amusing.start.product.listener.producer.ProductProducer;
+import com.amusing.start.product.enums.ResultStatus;
+import com.amusing.start.product.listener.message.ReduceStockMsg;
 import com.amusing.start.product.pojo.ProductInfo;
-import com.amusing.start.product.pojo.ReduceStockMsgInfo;
-import com.amusing.start.product.service.ProductService;
-import com.amusing.start.product.service.ReduceStockMsgInfoService;
+import com.amusing.start.product.pojo.ProductMessageInfo;
+import com.amusing.start.product.service.IProductMessageInfoService;
+import com.amusing.start.product.service.IProductService;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
+import org.apache.rocketmq.spring.support.RocketMQHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -28,60 +30,73 @@ import java.util.Date;
  */
 @Slf4j
 @Component
-@RocketMQMessageListener(topic = "reduce_stock", consumerGroup = "ReduceStockGroup")
+@RocketMQMessageListener(topic = "create_order", consumerGroup = "ReduceStockGroup")
 public class ReduceStockConsumer implements RocketMQListener<Message> {
 
-    private static final String MESSAGE_ID_KEY = "msgUid";
+    private final IProductService productService;
+    private final IProductMessageInfoService productMessageInfoService;
 
-    private static final String ORDER_NO_KEY = "SimpleOrderInfo";
+    @Value("${product.worker}")
+    private Long productWorker;
 
-    private final ProductService productService;
-
-    private final ProductProducer productProducer;
-
-    private final ReduceStockMsgInfoService reduceStockMsgInfoService;
+    @Value("${product.dataCenter}")
+    private Long productDataCenter;
 
     @Autowired
-    public ReduceStockConsumer(ProductService productService,
-                               ProductProducer productProducer,
-                               ReduceStockMsgInfoService reduceStockMsgInfoService) {
+    public ReduceStockConsumer(IProductService productService,
+                               IProductMessageInfoService productMessageInfoService) {
         this.productService = productService;
-        this.productProducer = productProducer;
-        this.reduceStockMsgInfoService = reduceStockMsgInfoService;
+        this.productMessageInfoService = productMessageInfoService;
     }
 
     @Override
     public void onMessage(Message message) {
-        ReduceStockMsgInfo reduceStockMsgInfo = analysisBody(message);
-        if (reduceStockMsgInfo == null) {
-            log.warn("[Product]-[ReduceStockConsumer]-message body format error!");
+        String txId = getTxId(message);
+        if (StringUtils.isEmpty(txId)) {
+            log.warn("[Product]-[ReduceStockConsumer]-txId is null");
+            return;
+        }
+        ReduceStockMsg reduceStockMsg = analysisBody(txId, message);
+        if (reduceStockMsg == null) {
+            log.warn("[Product]-[ReduceStockConsumer]-message body format error! txId:{}", txId);
             return;
         }
 
-        String msgId = reduceStockMsgInfo.getMsgId();
-        ReduceStockMsgInfo msgInfo = reduceStockMsgInfoService.getMsgInfo(msgId);
-        if (msgInfo != null) {
-            log.warn("[Product]-[ReduceStockConsumer]-message already exists! msgId:{}", msgId);
-            return;
-        }
-        // 消息入库
+        ProductMessageInfo productMessageInfo = buildProductMessageInfo(txId, reduceStockMsg);
         try {
-            reduceStockMsgInfoService.saveReduceStockMsgInfo(reduceStockMsgInfo);
+            productMessageInfoService.save(productMessageInfo);
         } catch (Exception e) {
-            log.error("[Product]-[ReduceStockConsumer]-save message err! msgId:{}, msg:{}", msgId, Throwables.getStackTraceAsString(e));
+            log.error("[Product]-[ReduceStockConsumer]-productMessageInfo save error! txId:{}", txId);
             return;
         }
 
         // 判断商品库存是否足够
-        String orderNo = reduceStockMsgInfo.getOrderNo();
-        boolean checkProductStockResult = checkProductStock(reduceStockMsgInfo);
+        boolean checkProductStockResult = checkProductStock(productMessageInfo);
         if (!checkProductStockResult) {
-            productProducer.sendCancelOrderMsg(msgId, orderNo);
+            productMessageInfoService.updateStatus(txId, MessageStatus.PROCESSED.getCode(), ResultStatus.FAIL.getCode());
         } else {
-            String userId = reduceStockMsgInfo.getUserId();
-            BigDecimal amount = reduceStockMsgInfo.getAmount();
-            productProducer.sendAccountDeductionMsg(msgId, orderNo, userId, amount);
+            String shopId = productMessageInfo.getShopId();
+            String productId = productMessageInfo.getProductId();
+            Integer productNum = productMessageInfo.getProductNum();
+            boolean productStock = false;
+            try {
+                productStock = productService.deductionProductStock(txId, shopId, productId, productNum);
+            } catch (Exception e) {
+                log.error("[Product]-[ReduceStockConsumer]-productMessageInfo save error! txId:{}", txId);
+                productMessageInfoService.updateStatus(txId, MessageStatus.PROCESSED.getCode(), ResultStatus.FAIL.getCode());
+            }
         }
+    }
+
+    /**
+     * 获得消息ID
+     *
+     * @param message
+     * @return
+     */
+    private String getTxId(Message message) {
+        String txId = message.getHeaders().get(RocketMQHeaders.TRANSACTION_ID, String.class);
+        return txId;
     }
 
     /**
@@ -90,56 +105,51 @@ public class ReduceStockConsumer implements RocketMQListener<Message> {
      * @param message
      * @return
      */
-    private ReduceStockMsgInfo analysisBody(Message message) {
-        MessageHeaders headers = message.getHeaders();
-        if (headers == null) {
-            log.warn("[Product]-[ReduceStockConsumer]-MessageHeaders is null");
-            return null;
-        }
-        String msgId = headers.get(MESSAGE_ID_KEY, String.class);
-        if (StringUtils.isEmpty(msgId)) {
-            log.warn("[Product]-[ReduceStockConsumer]-msgId is null");
-            return null;
-        }
+    private ReduceStockMsg analysisBody(String txId, Message message) {
         Object payload = message.getPayload();
         if (payload == null) {
-            log.warn("[Product]-[ReduceStockConsumer]-message payload is null! msgId:{}", msgId);
+            log.warn("[Product]-[ReduceStockConsumer]-message payload is null! txId:{}", txId);
             return null;
         }
 
         String str = new String((byte[]) payload);
-        JSONObject object = null;
+        ReduceStockMsg reduceStockMsg = null;
         try {
-            object = JSONObject.parseObject(str);
+            reduceStockMsg = JSONObject.parseObject(str, ReduceStockMsg.class);
         } catch (Exception e) {
-            log.error("[Product]-[ReduceStockConsumer]-message body format err! msgId:{}, msg:{}",
-                    msgId,
+            log.error("[Product]-[ReduceStockConsumer]-message body format err! txId:{}, msg:{}",
+                    txId,
                     Throwables.getStackTraceAsString(e));
         }
-        log.info("[Product]-[ReduceStockConsumer]-msgId:{}, message:{}", msgId, object);
-        if (object == null) {
-            log.warn("[Product]-[ReduceStockConsumer]-message payload is null! msgId:{}", msgId);
-            return null;
-        }
+        log.info("[Product]-[ReduceStockConsumer]-txId:{}, reduceStockMsg:{}", txId, reduceStockMsg);
+        return reduceStockMsg;
+    }
 
-        JSONObject jsonObject = object.getJSONObject(ORDER_NO_KEY);
-        if (jsonObject == null) {
-            log.warn("[Product]-[ReduceStockConsumer]-message body is null! msgId:{} payload:{}", msgId, object);
-            return null;
-        }
-        ReduceStockMsgInfo reduceStockMsgInfo = checkMessage(msgId, jsonObject);
-        return reduceStockMsgInfo;
+    private ProductMessageInfo buildProductMessageInfo(String txId, ReduceStockMsg reduceStockMsg) {
+        Date currentTime = new Date();
+        return ProductMessageInfo.builder()
+                .txId(txId)
+                .status(MessageStatus.INIT.getCode())
+                .resultStatus(ResultStatus.INIT.getCode())
+                .shopId(reduceStockMsg.getShopsId())
+                .productId(reduceStockMsg.getProductId())
+                .priceId(reduceStockMsg.getPriceId())
+                .productNum(reduceStockMsg.getProductNum())
+                .amount(reduceStockMsg.getAmount())
+                .createTime(currentTime)
+                .updateTime(currentTime)
+                .build();
     }
 
     /**
      * 判断库存是否足够
      *
-     * @param reduceStockMsgInfo
+     * @param productMessageInfo
      * @return
      */
-    private boolean checkProductStock(ReduceStockMsgInfo reduceStockMsgInfo) {
-        String shopsId = reduceStockMsgInfo.getShopsId();
-        String productId = reduceStockMsgInfo.getProductId();
+    private boolean checkProductStock(ProductMessageInfo productMessageInfo) {
+        String shopsId = productMessageInfo.getShopId();
+        String productId = productMessageInfo.getProductId();
         ProductInfo productInfo = null;
         try {
             productInfo = productService.getProductInfo(shopsId, productId);
@@ -163,7 +173,7 @@ public class ReduceStockConsumer implements RocketMQListener<Message> {
                     productStock);
             return false;
         }
-        Integer productNum = reduceStockMsgInfo.getProductNum();
+        Integer productNum = productMessageInfo.getProductNum();
         if (new BigDecimal(productNum).compareTo(productStock) < -1) {
             log.warn("[Product]-[ReduceStockConsumer]-ProductInfo insufficient inventory! shopId:{}, productId:{}, productStock:{}, productNum:{}",
                     shopsId,
@@ -173,51 +183,6 @@ public class ReduceStockConsumer implements RocketMQListener<Message> {
             return false;
         }
         return true;
-    }
-
-    private ReduceStockMsgInfo checkMessage(String msgId, JSONObject jsonObject) {
-        String userId = jsonObject.getObject("userId", String.class);
-        if (StringUtils.isEmpty(userId)) {
-            return null;
-        }
-        String shopsId = jsonObject.getObject("shopsId", String.class);
-        if (StringUtils.isEmpty(shopsId)) {
-            return null;
-        }
-        String productId = jsonObject.getObject("productId", String.class);
-        if (StringUtils.isEmpty(productId)) {
-            return null;
-        }
-        String priceId = jsonObject.getObject("priceId", String.class);
-        if (StringUtils.isEmpty(priceId)) {
-            return null;
-        }
-        BigDecimal amount = jsonObject.getObject("amount", BigDecimal.class);
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) < -1) {
-            return null;
-        }
-        String orderNo = jsonObject.getObject("orderNo", String.class);
-        if (StringUtils.isEmpty(orderNo)) {
-            return null;
-        }
-        Integer productNum = jsonObject.getObject("productNum", Integer.class);
-        if (productNum == null || productNum <= 0) {
-            return null;
-        }
-        Date currentTime = new Date();
-        return ReduceStockMsgInfo.builder()
-                .msgId(msgId)
-                .userId(userId)
-                .shopsId(shopsId)
-                .productId(productId)
-                .productNum(productNum)
-                .priceId(priceId)
-                .amount(amount)
-                .orderNo(orderNo)
-                .status(MessageStatus.INIT.getCode())
-                .createTime(currentTime)
-                .updateTime(currentTime)
-                .build();
     }
 
 }

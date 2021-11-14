@@ -1,5 +1,6 @@
 package com.amusing.start.order;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -11,6 +12,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  */
 @SpringBootApplication(scanBasePackages = {"com.amusing.start"})
 @EnableFeignClients(basePackages = "com.amusing.start.client")
+@MapperScan("com.amusing.start.order.mapper")
 public class OrderApplication {
 
     public static void main(String[] args) {
