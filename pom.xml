@@ -32,6 +32,8 @@
         <module>core/web-core</module>
         <module>business/product/amusing-product-server</module>
         <module>business/product/amusing-product-client</module>
+        <module>business/map/amusing-map-server</module>
+        <module>business/map/amusing-map-client</module>
     </modules>
 
     <packaging>pom</packaging>
