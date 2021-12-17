@@ -1,6 +1,5 @@
 package com.amusing.start.product.mapper;
 
-import com.amusing.start.product.pojo.ProductMessageInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

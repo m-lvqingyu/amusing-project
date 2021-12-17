@@ -1,6 +1,8 @@
 package com.amusing.start.client.fallback;
 
 import com.amusing.start.client.api.MapClient;
+import com.amusing.start.code.CommCode;
+import com.amusing.start.result.ApiResult;
 import feign.hystrix.FallbackFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,9 +20,9 @@ public class MapClientFallback implements FallbackFactory<MapClient> {
     public MapClient create(Throwable throwable) {
         return new MapClient() {
             @Override
-            public String gaoDeGeoCode(String address) {
+            public ApiResult gaoDeGeoCode(String address) {
                 log.error("[map]-[gaoDeGeoCode]-service is degradation! address:{}", address);
-                return null;
+                return ApiResult.fail(CommCode.AUTHORITY_ERROR);
             }
         };
     }

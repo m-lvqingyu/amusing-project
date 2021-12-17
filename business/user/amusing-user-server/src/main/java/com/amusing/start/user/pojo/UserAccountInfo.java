@@ -1,6 +1,9 @@
 package com.amusing.start.user.pojo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -9,6 +12,9 @@ import java.util.Date;
  * @author 用户账户表
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserAccountInfo {
 
     private Long id;

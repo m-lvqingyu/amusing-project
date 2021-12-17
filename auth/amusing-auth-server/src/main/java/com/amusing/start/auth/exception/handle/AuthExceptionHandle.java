@@ -31,8 +31,7 @@ public class AuthExceptionHandle {
     public ApiResult paramHandler(MethodArgumentNotValidException exception) {
         List<ObjectError> errorList = exception.getBindingResult().getAllErrors();
         String message = errorList.get(0).getDefaultMessage();
-        // TODO logger
-        return ApiResult.fail(CommCode.PARAMETER_EXCEPTION);
+        return ApiResult.result(CommCode.PARAMETER_EXCEPTION);
     }
 
     /**
@@ -45,7 +44,7 @@ public class AuthExceptionHandle {
     @ExceptionHandler(value = AuthException.class)
     public ApiResult authHandler(AuthException exception) {
         ResultCode authCode = exception.getAuthCode();
-        return ApiResult.fail(authCode);
+        return ApiResult.result(authCode);
     }
 
 }

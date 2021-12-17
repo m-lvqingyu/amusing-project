@@ -36,7 +36,7 @@ public class OrderExceptionHandle {
         for (ObjectError error : errorList) {
             log.error("[order-service]-[params]-msg:{}", error.getDefaultMessage());
         }
-        return ApiResult.fail(CommCode.PARAMETER_EXCEPTION);
+        return ApiResult.result(CommCode.PARAMETER_EXCEPTION);
     }
 
     /**
@@ -49,7 +49,7 @@ public class OrderExceptionHandle {
     @ExceptionHandler(value = OrderException.class)
     public ApiResult orderExceptionHandler(OrderException exception) {
         ResultCode resultCode = exception.getResultCode();
-        return ApiResult.fail(resultCode);
+        return ApiResult.result(resultCode);
     }
 
 }

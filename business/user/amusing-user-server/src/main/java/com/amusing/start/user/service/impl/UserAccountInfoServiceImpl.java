@@ -2,24 +2,29 @@ package com.amusing.start.user.service.impl;
 
 import com.amusing.start.client.output.UserAccountOutput;
 import com.amusing.start.code.CommCode;
-import com.amusing.start.result.ApiResult;
+import com.amusing.start.user.constant.UserConstant;
 import com.amusing.start.user.enums.UserCode;
+import com.amusing.start.user.exception.UserException;
 import com.amusing.start.user.mapper.UserAccountInfoMapper;
 import com.amusing.start.user.pojo.UserAccountInfo;
-import com.amusing.start.user.service.UserAccountInfoService;
+import com.amusing.start.user.service.IUserAccountInfoService;
+import com.google.common.base.Throwables;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 /**
  * Create By 2021/9/21
  *
  * @author lvqingyu
  */
+@Slf4j
 @Service
-public class UserAccountInfoServiceImpl implements UserAccountInfoService {
+public class UserAccountInfoServiceImpl implements IUserAccountInfoService {
 
     private final UserAccountInfoMapper userAccountInfoMapper;
 
@@ -30,61 +35,56 @@ public class UserAccountInfoServiceImpl implements UserAccountInfoService {
 
     @Override
     public UserAccountOutput account(String userId) {
-        UserAccountInfo info = userAccountInfoMapper.selectByUserId(userId);
-        if (info == null) {
-            return null;
-        }
         UserAccountOutput output = new UserAccountOutput();
-        BeanUtils.copyProperties(info, output);
+        UserAccountInfo info = userAccountInfoMapper.selectByUserId(userId);
+        Optional.ofNullable(info).ifPresent(i -> {
+            BeanUtils.copyProperties(info, output);
+        });
         return output;
     }
 
     @Override
-    public ApiResult userMainSettlement(String userId, String amount) {
+    public boolean userMainSettlement(String userId, String amount) throws UserException {
+        // 根据用户ID,获取其主账户余额，获取不到则抛出异常
         UserAccountInfo info = userAccountInfoMapper.selectByUserId(userId);
-        if (info == null) {
-            return ApiResult.fail(UserCode.USER_INFORMATION_NOT_EXIST);
-        }
+        BigDecimal mainAmount = Optional.ofNullable(info).map(UserAccountInfo::getMainAmount)
+                .orElseThrow(() -> new UserException(UserCode.USER_INFORMATION_NOT_EXIST));
 
-        BigDecimal mainAmount = info.getMainAmount();
-        if (mainAmount == null) {
-            return ApiResult.fail(UserCode.USER_INFORMATION_NOT_EXIST);
-        }
+        // 判断用户主账户余额是否足够，不足则抛出异常
+        BigDecimal updateAmount = Optional.ofNullable(amount).map(BigDecimal::new).filter(i -> i.compareTo(mainAmount) > UserConstant.ZERO)
+                .orElseThrow(() -> new UserException(UserCode.USER_AMOUNT_INSUFFICIENT_ERROR));
 
-        BigDecimal updateAmount = new BigDecimal(amount);
-        if (mainAmount.compareTo(updateAmount) < 0) {
-            return ApiResult.fail(UserCode.USER_AMOUNT_INSUFFICIENT_ERROR);
+        // 更新用户主账户余额，更新失败抛出异常
+        Integer result = null;
+        try {
+            result = userAccountInfoMapper.updateMainAccount(userId, mainAmount, updateAmount);
+        } catch (Exception e) {
+            log.error("[user]-updateMainAccount err! userId:{}, amount:{}, msg:{}", userId, amount, Throwables.getStackTraceAsString(e));
         }
-
-        int result = userAccountInfoMapper.updateMainAccount(userId, mainAmount, updateAmount);
-        if (result <= 0) {
-            return ApiResult.fail(CommCode.FAIL);
-        }
-        return ApiResult.ok();
+        Optional.ofNullable(result).filter(i -> i > UserConstant.ZERO).orElseThrow(() -> new UserException(CommCode.FAIL));
+        return UserConstant.TRUE;
     }
 
     @Override
-    public ApiResult userGiveSettlement(String userId, String amount) {
+    public boolean userGiveSettlement(String userId, String amount) throws UserException {
+        // 根据用户ID,获取其副账户余额，获取不到则抛出异常
         UserAccountInfo info = userAccountInfoMapper.selectByUserId(userId);
-        if (info == null) {
-            return ApiResult.fail(UserCode.USER_INFORMATION_NOT_EXIST);
-        }
+        BigDecimal giveAmount = Optional.ofNullable(info).map(UserAccountInfo::getGiveAmount)
+                .orElseThrow(() -> new UserException(UserCode.USER_INFORMATION_NOT_EXIST));
 
-        BigDecimal giveAmount = info.getGiveAmount();
-        if (giveAmount == null) {
-            return ApiResult.fail(UserCode.USER_INFORMATION_NOT_EXIST);
-        }
+        // 判断用户副账户余额是否足够，不足则抛出异常
+        BigDecimal updateAmount = Optional.ofNullable(amount).map(BigDecimal::new).filter(i -> i.compareTo(giveAmount) > UserConstant.ZERO)
+                .orElseThrow(() -> new UserException(UserCode.USER_AMOUNT_INSUFFICIENT_ERROR));
 
-        BigDecimal updateAmount = new BigDecimal(amount);
-        if (giveAmount.compareTo(updateAmount) < 0) {
-            return ApiResult.fail(UserCode.USER_AMOUNT_INSUFFICIENT_ERROR);
+        // 更新用户副账户余额，更新失败抛出异常
+        Integer result = null;
+        try {
+            result = userAccountInfoMapper.updateGiveAccount(userId, giveAmount, updateAmount);
+        } catch (Exception e) {
+            log.error("[user]-updateGiveAccount err! userId:{}, amount:{}, msg:{}", userId, amount, Throwables.getStackTraceAsString(e));
         }
-
-        int result = userAccountInfoMapper.updateGiveAccount(userId, giveAmount, updateAmount);
-        if (result <= 0) {
-            return ApiResult.fail(CommCode.FAIL);
-        }
-        return ApiResult.ok();
+        Optional.ofNullable(result).filter(i -> i > UserConstant.ZERO).orElseThrow(() -> new UserException(CommCode.FAIL));
+        return UserConstant.TRUE;
     }
 
 }

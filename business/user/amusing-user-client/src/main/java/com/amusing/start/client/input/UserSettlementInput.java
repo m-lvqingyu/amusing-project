@@ -1,6 +1,9 @@
 package com.amusing.start.client.input;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Create By 2021/9/21
@@ -8,6 +11,9 @@ import lombok.Data;
  * @author lvqingyu
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserSettlementInput {
 
     /**
@@ -16,12 +22,8 @@ public class UserSettlementInput {
     private String userId;
 
     /**
-     * 账户类型
-     */
-    private Integer amountType;
-
-    /**
      * 结算金额
      */
     private String amount;
+
 }

@@ -3,8 +3,6 @@ package com.amusing.start.client.fallback;
 import com.amusing.start.client.api.UserClient;
 import com.amusing.start.client.input.UserSettlementInput;
 import com.amusing.start.client.output.UserAccountOutput;
-import com.amusing.start.code.CommCode;
-import com.amusing.start.result.ApiResult;
 import feign.hystrix.FallbackFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,17 +18,25 @@ public class UserClientFallback implements FallbackFactory<UserClient> {
     @Override
     public UserClient create(Throwable throwable) {
         return new UserClient() {
+            
             @Override
             public UserAccountOutput account(String userId) {
-                log.error("[user-client]-根据用户ID:{}获取账户信息降级！", userId);
+                log.error("[user]-getAccount fallback! userId:{}", userId);
                 return null;
             }
 
             @Override
-            public ApiResult userSettlement(UserSettlementInput input) {
-                log.error("[user-client]-用户账户：{}结算降级！", input);
-                return ApiResult.fail(CommCode.DEGRADE_ERROR);
+            public boolean userMainSettlement(UserSettlementInput input) {
+                log.error("[user]-userMainSettlement fallback! param:{}", input);
+                return false;
             }
+
+            @Override
+            public boolean userGiveSettlement(UserSettlementInput input) {
+                log.error("[user]-userGiveSettlement fallback! param:{}", input);
+                return false;
+            }
+
         };
     }
 }

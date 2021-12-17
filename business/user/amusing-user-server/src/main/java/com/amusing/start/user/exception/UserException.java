@@ -1,6 +1,5 @@
 package com.amusing.start.user.exception;
 
-import com.amusing.start.code.CommCode;
 import com.amusing.start.code.ResultCode;
 
 /**
@@ -12,8 +11,12 @@ public class UserException extends Exception {
 
     private ResultCode resultCode;
 
-    public UserException(CommCode resultCode) {
+    public UserException(ResultCode resultCode) {
         super(resultCode.value());
         this.resultCode = resultCode;
+    }
+
+    public ResultCode getResultCode() {
+        return resultCode;
     }
 }

@@ -1,8 +1,11 @@
 package com.amusing.start.product.mapper;
 
+import com.amusing.start.client.input.StockDeductionInput;
 import com.amusing.start.product.pojo.ProductInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author lvqingyu
@@ -36,13 +39,11 @@ public interface ProductInfoMapper {
     ProductInfo selectByShopAndProductId(@Param("shopId") String shopId, @Param("productId") String productId);
 
     /**
-     * 扣减商品库存
+     * 批量扣减商品库存 (一次不能超过20条)
      *
-     * @param shopId     商铺ID
-     * @param productId  商品ID
-     * @param productNum 商品数量
+     * @param inputList 商品信息集合
      * @return
      */
-    int deductionProductStock(@Param("shopId") String shopId, @Param("productId") String productId, @Param("productNum") Integer productNum);
+    Integer batchDeductionStock(@Param("shopId") List<StockDeductionInput> inputList);
 
 }

@@ -2,6 +2,8 @@ package com.amusing.start.client.output;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * Create By 2021/10/23
  *
@@ -29,6 +31,11 @@ public class ShopOutput {
      * 状态
      */
     private Integer status;
+
+    /**
+     * 商品信息集合
+     */
+    List<ProductOutput> productList;
 
 
 }

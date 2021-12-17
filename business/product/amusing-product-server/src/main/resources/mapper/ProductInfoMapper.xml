@@ -18,8 +18,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-    id, shop_id, product_id, product_name, init_price, product_stock, `status`, is_del, 
-    `describe`, create_by, create_time, update_by, update_time
+        id, shop_id, product_id, product_name, init_price, product_stock, `status`, is_del,
+        `describe`, create_by, create_time, update_by, update_time
     </sql>
 
     <insert id="insertSelective" keyColumn="id" keyProperty="id"
@@ -147,11 +147,16 @@
     </update>
 
     <select id="selectByShopAndProductId" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List" /> from product_info where shop_id = #{shopId} and product_id = #{productId} and status = 1 and is_del = 1
+        select
+        <include refid="Base_Column_List"/>
+        from product_info where shop_id = #{shopId} and product_id = #{productId} and status = 1 and is_del = 1
     </select>
 
-    <update id="deductionProductStock">
-        update product_info set product_stock = product_stock - #{productNum} where shop_id = #{shopId} and product_id = #{productId} and product_stock >= 0
+    <update id="batchDeductionStock">
+        <foreach collection="inputList" separator=";" item="item">
+            update product_info set product_stock = product_stock - #{item.productNum} where product_id =
+            #{item.productId} and product_stock >= 0
+        </foreach>
     </update>
 
 </mapper>

@@ -3,26 +3,30 @@ package com.amusing.start.user.controller.inward;
 import com.amusing.start.client.api.UserClient;
 import com.amusing.start.client.input.UserSettlementInput;
 import com.amusing.start.client.output.UserAccountOutput;
-import com.amusing.start.code.CommCode;
-import com.amusing.start.result.ApiResult;
-import com.amusing.start.user.enums.AmountType;
-import com.amusing.start.user.service.UserAccountInfoService;
+import com.amusing.start.user.constant.UserConstant;
+import com.amusing.start.user.exception.UserException;
+import com.amusing.start.user.service.IUserAccountInfoService;
+import com.google.common.base.Throwables;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 /**
  * Create By 2021/9/21
  *
  * @author lvqingyu
  */
+@Slf4j
 @RestController
 public class UserInwardController implements UserClient {
 
-    private UserAccountInfoService userAccountInfoService;
+    private final IUserAccountInfoService userAccountInfoService;
 
     @Autowired
-    public UserInwardController(UserAccountInfoService userAccountInfoService) {
+    public UserInwardController(IUserAccountInfoService userAccountInfoService) {
         this.userAccountInfoService = userAccountInfoService;
     }
 
@@ -32,19 +36,44 @@ public class UserInwardController implements UserClient {
     }
 
     @Override
-    public ApiResult userSettlement(UserSettlementInput input) {
-        String userId = input.getUserId();
-        String amount = input.getAmount();
-        Integer amountType = input.getAmountType();
-        if (amountType == null || StringUtils.isEmpty(userId) || StringUtils.isEmpty(amount)) {
-            return ApiResult.fail(CommCode.PARAMETER_EXCEPTION);
+    public boolean userMainSettlement(UserSettlementInput input) {
+        Optional<UserSettlementInput> optional = checkoutParams(input);
+        if (!optional.isPresent()) {
+            log.warn("[user]-MainSettlement param err! param:{}", input);
+            return UserConstant.FALSE;
         }
-        if (amountType == AmountType.MAIN.getKey()) {
-            return userAccountInfoService.userMainSettlement(userId, amount);
+        try {
+            return userAccountInfoService.userMainSettlement(input.getUserId(), input.getAmount());
+        } catch (UserException e) {
+            log.error("[user]-MainSettlement err! param:{}, msg:{}", input, Throwables.getStackTraceAsString(e));
+            return UserConstant.FALSE;
         }
-        if (amountType == AmountType.GIVE.getKey()) {
-            return userAccountInfoService.userGiveSettlement(userId, amount);
-        }
-        return ApiResult.fail(CommCode.PARAMETER_EXCEPTION);
     }
+
+    @Override
+    public boolean userGiveSettlement(UserSettlementInput input) {
+        Optional<UserSettlementInput> optional = checkoutParams(input);
+        if (!optional.isPresent()) {
+            log.warn("[user]-GiveSettlement param err! param:{}", input);
+            return UserConstant.FALSE;
+        }
+        try {
+            return userAccountInfoService.userGiveSettlement(input.getUserId(), input.getAmount());
+        } catch (UserException e) {
+            log.error("[user]-GiveSettlement err! param:{}, msg:{}", input, Throwables.getStackTraceAsString(e));
+            return UserConstant.FALSE;
+        }
+    }
+
+    /**
+     * 结算接口参数校验
+     *
+     * @param input 支付信息
+     * @return
+     */
+    private Optional<UserSettlementInput> checkoutParams(UserSettlementInput input) {
+        return Optional.ofNullable(input)
+                .filter(i -> StringUtils.isNotEmpty(i.getUserId()) && StringUtils.isNotEmpty(i.getAmount()));
+    }
+
 }

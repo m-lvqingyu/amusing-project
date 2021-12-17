@@ -1,6 +1,9 @@
 package com.amusing.start.order.vo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -10,6 +13,9 @@ import java.util.List;
  * @author lvqingyu
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderShopsVO {
 
     /**
@@ -22,6 +28,9 @@ public class OrderShopsVO {
      */
     private String shopsName;
 
-    private List<OrderProductVO> orderProductVOList;
+    /**
+     * 商品信息集合
+     */
+    private List<OrderProductVO> productVOList;
 
 }

@@ -1,6 +1,6 @@
 package com.amusing.start.order.service;
 
-import com.amusing.start.order.dto.OrderCreateDto;
+import com.amusing.start.order.dto.create.OrderCreateDto;
 import com.amusing.start.order.exception.OrderException;
 
 /**

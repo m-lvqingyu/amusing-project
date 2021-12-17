@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 @Builder
 public class OrderShopsInfo {
+
     /**
      * 主键ID
      */
@@ -23,5 +24,10 @@ public class OrderShopsInfo {
      * 商铺ID
      */
     private String shopsId;
+
+    /**
+     * 商铺名称
+     */
+    private String shopsName;
 
 }

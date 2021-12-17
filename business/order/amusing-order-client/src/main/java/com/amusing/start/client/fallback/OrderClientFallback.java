@@ -19,13 +19,8 @@ public class OrderClientFallback implements FallbackFactory<OrderClient> {
     public OrderClient create(Throwable throwable) {
 
         return new OrderClient() {
-            @Override
-            public Boolean isCancel(String orderNo) {
-                log.error("[Order]-[isCancel]-server degradation!orderNo:{}", orderNo);
-                return null;
-            }
+
         };
-        
     }
 
 }

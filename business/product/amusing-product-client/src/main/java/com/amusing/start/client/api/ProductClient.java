@@ -1,10 +1,16 @@
 package com.amusing.start.client.api;
 
 import com.amusing.start.client.fallback.ProductClientFallback;
+import com.amusing.start.client.input.StockDeductionInput;
 import com.amusing.start.client.output.ProductOutput;
+import com.amusing.start.client.output.ShopOutput;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Create By 2021/10/23
@@ -15,15 +21,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface ProductClient {
 
     /**
+     * 扣减商品库存
+     *
+     * @param inputs 扣减库存信息
+     * @return true: 成功 false: 失败
+     */
+    @PostMapping("/product/inward/v1/stock/deduction")
+    boolean deductionStock(@RequestBody List<StockDeductionInput> inputs);
+
+    /**
      * 获取商品详情
      *
-     * @param shopId    商铺ID
-     * @param productId 商品ID
-     * @param priceId   价格ID
+     * @param productIds 商品ID集合
      * @return
      */
-    @GetMapping("product/{shopId}/{productId}/{priceId}")
-    ProductOutput get(@PathVariable(value = "shopId") String shopId,
-                      @PathVariable(value = "productId") String productId,
-                      @PathVariable(value = "priceId") String priceId);
+    @PostMapping("/product/inward/v1/details/{ids}")
+    List<ShopOutput> getDetails(@PathVariable("ids") Set<String> productIds);
+
 }

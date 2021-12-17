@@ -6,7 +6,7 @@ package com.amusing.start.code;
  * @description: 公共枚举封装
  * @date 2021/10/15 22:43
  */
-public interface ResultCode<C extends Enum> {
+public interface ResultCode<C> {
 
     /**
      * 获取当前枚举本身

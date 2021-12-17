@@ -15,16 +15,18 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-    id, user_id, main_amount, give_amount, frozen_amount, vip_level, create_by, create_time, 
-    update_by, update_time
-  </sql>
+        id, user_id, main_amount, give_amount, frozen_amount, vip_level, create_by, create_time,
+        update_by, update_time
+    </sql>
 
     <update id="updateMainAccount">
-        update user_account_info set main_amount = main_amount - #{updateAmount} where user_id = #{userId} and main_amount = #{originalAmount}
+        update user_account_info set main_amount = main_amount - #{updateAmount} where user_id = #{userId} and
+        main_amount = #{originalAmount}
     </update>
 
     <update id="updateGiveAccount">
-        update user_account_info set give_amount = give_amount - #{updateAmount} where user_id = #{userId} and give_amount = #{originalAmount}
+        update user_account_info set give_amount = give_amount - #{updateAmount} where user_id = #{userId} and
+        give_amount = #{originalAmount}
     </update>
 
     <insert id="insertSelective" keyColumn="id" keyProperty="id"
@@ -125,7 +127,9 @@
     </update>
 
     <select id="selectByUserId" resultType="com.amusing.start.user.pojo.UserAccountInfo">
-        select <include refid="Base_Column_List"/> from user_account_info where user_id = #{userId}
+        select
+        <include refid="Base_Column_List"/>
+        from user_account_info where user_id = #{userId} limit 1;
     </select>
 
 </mapper>

@@ -15,30 +15,42 @@ public interface UserAccountInfoMapper {
     /**
      * 更新主账户金额
      *
-     * @param userId
-     * @param originalAmount
-     * @param updateAmount
+     * @param userId         用户ID
+     * @param originalAmount 原主账户金额
+     * @param updateAmount   支付金额
      * @return
      */
-    int updateMainAccount(@Param("userId") String userId,
-                          @Param("originalAmount") BigDecimal originalAmount,
-                          @Param("updateAmount") BigDecimal updateAmount);
+    Integer updateMainAccount(@Param("userId") String userId,
+                              @Param("originalAmount") BigDecimal originalAmount,
+                              @Param("updateAmount") BigDecimal updateAmount);
 
     /**
      * 更新副账户金额
      *
-     * @param userId
-     * @param originalAmount
-     * @param updateAmount
+     * @param userId         用户ID
+     * @param originalAmount 原副账户金额
+     * @param updateAmount   支付金额
      * @return
      */
-    int updateGiveAccount(@Param("userId") String userId,
-                          @Param("originalAmount") BigDecimal originalAmount,
-                          @Param("updateAmount") BigDecimal updateAmount);
+    Integer updateGiveAccount(@Param("userId") String userId,
+                              @Param("originalAmount") BigDecimal originalAmount,
+                              @Param("updateAmount") BigDecimal updateAmount);
 
-    int insertSelective(UserAccountInfo record);
+    /**
+     * 保存账户信息
+     *
+     * @param record 账户信息
+     * @return
+     */
+    Integer insertSelective(UserAccountInfo record);
 
-    int updateByPrimaryKeySelective(UserAccountInfo record);
+    /**
+     * 更新账户信息
+     *
+     * @param record 账户信息
+     * @return
+     */
+    Integer updateByPrimaryKeySelective(UserAccountInfo record);
 
     /**
      * 获取账户详情

@@ -1,6 +1,8 @@
 package com.amusing.start.client.output;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
@@ -10,6 +12,8 @@ import java.math.BigDecimal;
  * @author lvqingyu
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserAccountOutput {
 
     private String userId;

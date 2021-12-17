@@ -24,8 +24,6 @@
         <module>gateway/amusing-gateway</module>
         <module>business/order/amusing-order-server</module>
         <module>business/order/amusing-order-client</module>
-        <module>business/settlement/amusing-settlement-server</module>
-        <module>business/settlement/amusing-settlement-client</module>
         <module>auth/amusing-auth-server</module>
         <module>business/user/amusing-user-server</module>
         <module>business/user/amusing-user-client</module>

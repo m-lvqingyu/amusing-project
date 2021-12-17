@@ -1,7 +1,9 @@
 package com.amusing.start.product.service;
 
-import com.amusing.start.client.output.ProductOutput;
-import com.amusing.start.product.pojo.ProductInfo;
+import com.amusing.start.client.input.StockDeductionInput;
+import com.amusing.start.product.exception.ProductException;
+
+import java.util.List;
 
 /**
  * Create By 2021/10/23
@@ -11,32 +13,13 @@ import com.amusing.start.product.pojo.ProductInfo;
 public interface IProductService {
 
     /**
-     * 获取商品详情
-     *
-     * @param shopId    商铺ID
-     * @param productId 商品ID
-     * @param priceId   价格ID
-     * @return
-     */
-    ProductOutput getProductDetail(String shopId, String productId, String priceId);
-
-    /**
      * 扣减库存
      *
-     * @param shopId     商铺ID
-     * @param productId  商品ID
-     * @param productNum 商品数量
-     * @return
+     * @param inputs 商品信息
+     * @return true: 成功 false: 失败
+     * @throws ProductException
      */
-    boolean deductionProductStock(String txId, String shopId, String productId, Integer productNum);
+    boolean deductionStock(List<StockDeductionInput> inputs) throws ProductException;
 
-    /**
-     * 获取商品详情
-     *
-     * @param shopId    商铺ID
-     * @param productId 商品ID
-     * @return
-     */
-    ProductInfo getProductInfo(String shopId, String productId);
 
 }

@@ -20,12 +20,4 @@ public interface IOrderService {
      */
     OrderDetailVO get(String orderId, String userId) throws OrderException;
 
-    /**
-     * 判断订单是否已经取消
-     *
-     * @param orderNo 订单编号
-     * @return
-     */
-    Boolean isCancel(String orderNo);
-
 }

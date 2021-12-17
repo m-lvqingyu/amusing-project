@@ -5,12 +5,10 @@ import com.amusing.start.code.ResultCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author lv.QingYu
@@ -19,9 +17,10 @@ import java.util.Map;
  * @date 2021/10/15 22:46
  */
 @Data
-@Accessors(chain = true)
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
+@Accessors(chain = true)
 public class ApiResult<T> implements Serializable {
 
     private int code;
@@ -30,42 +29,20 @@ public class ApiResult<T> implements Serializable {
 
     private T data;
 
-    public static ApiResult result(ResultCode resultCode) {
+    public static <T> ApiResult<T> result(ResultCode<?> resultCode) {
         return result(resultCode, null);
     }
 
-    public static ApiResult result(ResultCode resultCode, Object data) {
-        return result(resultCode, null, data);
+    public static <T> ApiResult<T> result(ResultCode<?> resultCode, T data) {
+        return new ApiResult<T>(resultCode.key(), resultCode.value(), data);
     }
 
-    public static ApiResult result(ResultCode resultCode, String msg, Object data) {
-        String message = resultCode.value();
-        if (StringUtils.isNotBlank(msg)) {
-            message = msg;
-        }
-        return ApiResult.builder().code(resultCode.key()).msg(message).data(data).build();
-    }
-
-    public static ApiResult ok() {
+    public static <T> ApiResult<T> ok() {
         return ok(null);
     }
 
-    public static ApiResult ok(Object data) {
+    public static <T> ApiResult<T> ok(T data) {
         return result(CommCode.SUCCESS, data);
-    }
-
-    public static ApiResult ok(String key, Object value) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(key, value);
-        return ok(map);
-    }
-
-    public static ApiResult fail(ResultCode resultCode) {
-        return result(resultCode, null);
-    }
-
-    public static ApiResult fail(ResultCode resultCode, Object data) {
-        return result(resultCode, data);
     }
 
 }

@@ -1,7 +1,6 @@
 package com.amusing.start.order.service.impl;
 
 import com.amusing.start.order.enums.OrderCode;
-import com.amusing.start.order.enums.OrderStatus;
 import com.amusing.start.order.exception.OrderException;
 import com.amusing.start.order.mapper.OrderInfoMapper;
 import com.amusing.start.order.mapper.OrderProductInfoMapper;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Create By 2021/10/10
@@ -37,64 +37,49 @@ public class OrderServiceImpl implements IOrderService {
         this.orderProductInfoMapper = orderProductInfoMapper;
     }
 
-    private OrderInfoMapper orderInfoMapper;
+    private final OrderInfoMapper orderInfoMapper;
 
-    private OrderShopsInfoMapper orderShopsInfoMapper;
+    private final OrderShopsInfoMapper orderShopsInfoMapper;
 
-    private OrderProductInfoMapper orderProductInfoMapper;
+    private final OrderProductInfoMapper orderProductInfoMapper;
 
     @Override
     public OrderDetailVO get(String orderId, String userId) throws OrderException {
         // 查询订单基础信息
         OrderInfo orderInfo = orderInfoMapper.selectOrderNoAndUserId(orderId, userId);
-        if (orderInfo == null) {
-            throw new OrderException(OrderCode.ORDER_NOT_FOUND);
-        }
+        Optional.ofNullable(orderInfo).orElseThrow(() -> new OrderException(OrderCode.ORDER_NOT_FOUND));
 
         OrderDetailVO orderDetail = new OrderDetailVO();
         BeanUtils.copyProperties(orderInfo, orderDetail);
 
-        // 查询订单-商铺关联关系信息
         String orderNo = orderInfo.getOrderNo();
+
+        // 查询订单-商铺关联关系信息
         List<OrderShopsInfo> shopsInfoList = orderShopsInfoMapper.selectOrderNo(orderNo);
         List<OrderShopsVO> orderShopsVOList = new ArrayList<>();
-        if (shopsInfoList == null || shopsInfoList.isEmpty()) {
-            orderDetail.setOrderShopsVOList(orderShopsVOList);
-            return orderDetail;
-        }
 
-        // 查询订单-商铺-商铺关联关系信息
-        for (OrderShopsInfo orderShopsInfo : shopsInfoList) {
-            String shopsId = orderShopsInfo.getShopsId();
-            List<OrderProductInfo> productInfoList = orderProductInfoMapper.selectOrderNoAndShopsId(orderNo, shopsId);
-            OrderShopsVO orderShopsVO = new OrderShopsVO();
-            orderShopsVO.setShopsId(orderShopsInfo.getShopsId());
-            List<OrderProductVO> orderProductVOList = new ArrayList<>();
-            if (productInfoList != null && !productInfoList.isEmpty()) {
-                productInfoList.stream().forEach(i -> {
-                    OrderProductVO productVO = new OrderProductVO();
-                    BeanUtils.copyProperties(i, productVO);
-                    orderProductVOList.add(productVO);
+        Optional.ofNullable(shopsInfoList).ifPresent(i -> {
+            i.forEach(x -> {
+                String shopsId = x.getShopsId();
+                OrderShopsVO orderShopsVO = new OrderShopsVO();
+                orderShopsVO.setShopsId(shopsId);
+                orderShopsVO.setShopsName(x.getShopsName());
+
+                List<OrderProductVO> orderProductVOList = new ArrayList<>();
+                List<OrderProductInfo> productInfoList = orderProductInfoMapper.selectOrderNoAndShopsId(orderNo, shopsId);
+                Optional.ofNullable(productInfoList).ifPresent(c -> {
+                    c.forEach(z -> {
+                        OrderProductVO productVO = new OrderProductVO();
+                        BeanUtils.copyProperties(z, productVO);
+                        orderProductVOList.add(productVO);
+                    });
                 });
-            }
-            orderShopsVO.setOrderProductVOList(orderProductVOList);
-            orderShopsVOList.add(orderShopsVO);
-        }
-
+                orderShopsVO.setProductVOList(orderProductVOList);
+                orderShopsVOList.add(orderShopsVO);
+            });
+        });
         orderDetail.setOrderShopsVOList(orderShopsVOList);
         return orderDetail;
-    }
-
-    @Override
-    public Boolean isCancel(String orderNo) {
-        Integer orderStatus = orderInfoMapper.selectOrderStatus(orderNo);
-        if (orderStatus == null) {
-            return null;
-        }
-        if (orderStatus == OrderStatus.CANCEL.getKey()) {
-            return true;
-        }
-        return false;
     }
 
 }
