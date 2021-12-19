@@ -2,14 +2,19 @@ package com.amusing.start.order.manager;
 
 import com.amusing.start.client.api.ProductClient;
 import com.amusing.start.client.api.UserClient;
+import com.amusing.start.client.input.StockDeductionInput;
+import com.amusing.start.client.input.UserSettlementInput;
 import com.amusing.start.client.output.ShopOutput;
 import com.amusing.start.client.output.UserAccountOutput;
 import com.amusing.start.order.dto.create.OrderShopDto;
 import com.amusing.start.order.exception.OrderException;
+import com.amusing.start.order.pojo.OrderProductInfo;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,11 +73,23 @@ public class InwardServletManager {
         try {
             shopList = productClient.getDetails(productIdSet);
         } catch (Exception e) {
-            log.error("[order]-create getProductDetails err! reserveUserId:{}, param:{} , msg:{}",
-                    reserveUserId,
-                    productIdSet,
-                    Throwables.getStackTraceAsString(e));
+            log.error("[order]-create getProductDetails err! reserveUserId:{}, param:{} , msg:{}", reserveUserId, productIdSet, Throwables.getStackTraceAsString(e));
         }
         return shopList;
+    }
+
+    public boolean mainSettlement(String userId, BigDecimal amount) {
+        UserSettlementInput input = new UserSettlementInput();
+        input.setUserId(userId);
+        input.setAmount(amount);
+        return userClient.userMainSettlement(input);
+    }
+
+    public boolean deductionStock(List<OrderProductInfo> productInfoList) {
+        List<StockDeductionInput> inputs = new ArrayList<>();
+        productInfoList.forEach(i -> {
+            inputs.add(new StockDeductionInput(i.getProductId(), i.getProductNum()));
+        });
+        return productClient.deductionStock(inputs);
     }
 }

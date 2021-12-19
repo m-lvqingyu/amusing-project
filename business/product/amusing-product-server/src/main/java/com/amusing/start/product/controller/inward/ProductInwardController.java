@@ -3,7 +3,6 @@ package com.amusing.start.product.controller.inward;
 import cn.hutool.core.collection.CollectionUtil;
 import com.amusing.start.client.api.ProductClient;
 import com.amusing.start.client.input.StockDeductionInput;
-import com.amusing.start.client.output.ProductOutput;
 import com.amusing.start.client.output.ShopOutput;
 import com.amusing.start.product.exception.ProductException;
 import com.amusing.start.product.service.IProductService;
@@ -55,7 +54,7 @@ public class ProductInwardController implements ProductClient {
 
     @Override
     public List<ShopOutput> getDetails(Set<String> productIds) {
-        return null;
+        return productService.getDetails(productIds);
     }
 
 }

@@ -1,138 +1,147 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.amusing.start.order.mapper.OrderProductInfoMapper">
-  <resultMap id="BaseResultMap" type="com.amusing.start.order.pojo.OrderProductInfo">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
-    <result column="shops_id" jdbcType="VARCHAR" property="shopsId" />
-    <result column="product_id" jdbcType="VARCHAR" property="productId" />
-    <result column="product_price" jdbcType="DECIMAL" property="productPrice" />
-    <result column="product_num" jdbcType="INTEGER" property="productNum" />
-    <result column="amount" jdbcType="DECIMAL" property="amount" />
-    <result column="coupon_id" jdbcType="VARCHAR" property="couponId" />
-    <result column="coupon_amount" jdbcType="DECIMAL" property="couponAmount" />
-    <result column="activity_id" jdbcType="VARCHAR" property="activityId" />
-    <result column="activity_amount" jdbcType="DECIMAL" property="activityAmount" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.amusing.start.order.pojo.OrderProductInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="shops_id" jdbcType="VARCHAR" property="shopsId"/>
+        <result column="product_id" jdbcType="VARCHAR" property="productId"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="price_id" jdbcType="VARCHAR" property="priceId"/>
+        <result column="product_price" jdbcType="DECIMAL" property="productPrice"/>
+        <result column="product_num" jdbcType="INTEGER" property="productNum"/>
+        <result column="amount" jdbcType="DECIMAL" property="amount"/>
 
-  <sql id="Base_Column_List">
-    id, order_no, shops_id, product_id, product_price, product_num, amount, coupon_id, 
-    coupon_amount, activity_id, activity_amount
-  </sql>
+    </resultMap>
 
-  <select id="selectOrderNoAndShopsId" resultMap="BaseResultMap">
-    select <include refid="Base_Column_List"/> from order_product_info where order_no = #{orderNo} and shops_id = #{shopsId}
-  </select>
+    <sql id="Base_Column_List">
+        id, order_no, shops_id, product_id, product_name, price_id, product_price, product_num, amount
+    </sql>
 
-  <insert id="insertSelective" parameterType="com.amusing.start.order.pojo.OrderProductInfo">
-    insert into order_product_info
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="orderNo != null">
-        order_no,
-      </if>
-      <if test="shopsId != null">
-        shops_id,
-      </if>
-      <if test="productId != null">
-        product_id,
-      </if>
-      <if test="productPrice != null">
-        product_price,
-      </if>
-      <if test="productNum != null">
-        product_num,
-      </if>
-      <if test="amount != null">
-        amount,
-      </if>
-      <if test="couponId != null">
-        coupon_id,
-      </if>
-      <if test="couponAmount != null">
-        coupon_amount,
-      </if>
-      <if test="activityId != null">
-        activity_id,
-      </if>
-      <if test="activityAmount != null">
-        activity_amount,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="orderNo != null">
-        #{orderNo,jdbcType=VARCHAR},
-      </if>
-      <if test="shopsId != null">
-        #{shopsId,jdbcType=VARCHAR},
-      </if>
-      <if test="productId != null">
-        #{productId,jdbcType=VARCHAR},
-      </if>
-      <if test="productPrice != null">
-        #{productPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="productNum != null">
-        #{productNum,jdbcType=INTEGER},
-      </if>
-      <if test="amount != null">
-        #{amount,jdbcType=DECIMAL},
-      </if>
-      <if test="couponId != null">
-        #{couponId,jdbcType=VARCHAR},
-      </if>
-      <if test="couponAmount != null">
-        #{couponAmount,jdbcType=DECIMAL},
-      </if>
-      <if test="activityId != null">
-        #{activityId,jdbcType=VARCHAR},
-      </if>
-      <if test="activityAmount != null">
-        #{activityAmount,jdbcType=DECIMAL},
-      </if>
-    </trim>
-  </insert>
+    <select id="selectOrderNoAndShopsId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from order_product_info where order_no = #{orderNo} and shops_id = #{shopsId}
+    </select>
 
-  <update id="updateByPrimaryKeySelective" parameterType="com.amusing.start.order.pojo.OrderProductInfo">
-    update order_product_info
-    <set>
-      <if test="orderNo != null">
-        order_no = #{orderNo,jdbcType=VARCHAR},
-      </if>
-      <if test="shopsId != null">
-        shops_id = #{shopsId,jdbcType=VARCHAR},
-      </if>
-      <if test="productId != null">
-        product_id = #{productId,jdbcType=VARCHAR},
-      </if>
-      <if test="productPrice != null">
-        product_price = #{productPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="productNum != null">
-        product_num = #{productNum,jdbcType=INTEGER},
-      </if>
-      <if test="amount != null">
-        amount = #{amount,jdbcType=DECIMAL},
-      </if>
-      <if test="couponId != null">
-        coupon_id = #{couponId,jdbcType=VARCHAR},
-      </if>
-      <if test="couponAmount != null">
-        coupon_amount = #{couponAmount,jdbcType=DECIMAL},
-      </if>
-      <if test="activityId != null">
-        activity_id = #{activityId,jdbcType=VARCHAR},
-      </if>
-      <if test="activityAmount != null">
-        activity_amount = #{activityAmount,jdbcType=DECIMAL},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+    <insert id="insertSelective" parameterType="com.amusing.start.order.pojo.OrderProductInfo">
+        insert into order_product_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="orderNo != null">
+                order_no,
+            </if>
+            <if test="shopsId != null">
+                shops_id,
+            </if>
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="productPrice != null">
+                product_price,
+            </if>
+            <if test="productNum != null">
+                product_num,
+            </if>
+            <if test="amount != null">
+                amount,
+            </if>
+            <if test="couponId != null">
+                coupon_id,
+            </if>
+            <if test="couponAmount != null">
+                coupon_amount,
+            </if>
+            <if test="activityId != null">
+                activity_id,
+            </if>
+            <if test="activityAmount != null">
+                activity_amount,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="orderNo != null">
+                #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="shopsId != null">
+                #{shopsId,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null">
+                #{productId,jdbcType=VARCHAR},
+            </if>
+            <if test="productPrice != null">
+                #{productPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="productNum != null">
+                #{productNum,jdbcType=INTEGER},
+            </if>
+            <if test="amount != null">
+                #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="couponId != null">
+                #{couponId,jdbcType=VARCHAR},
+            </if>
+            <if test="couponAmount != null">
+                #{couponAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="activityId != null">
+                #{activityId,jdbcType=VARCHAR},
+            </if>
+            <if test="activityAmount != null">
+                #{activityAmount,jdbcType=DECIMAL},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.amusing.start.order.pojo.OrderProductInfo">
+        update order_product_info
+        <set>
+            <if test="orderNo != null">
+                order_no = #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="shopsId != null">
+                shops_id = #{shopsId,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null">
+                product_id = #{productId,jdbcType=VARCHAR},
+            </if>
+            <if test="productPrice != null">
+                product_price = #{productPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="productNum != null">
+                product_num = #{productNum,jdbcType=INTEGER},
+            </if>
+            <if test="amount != null">
+                amount = #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="couponId != null">
+                coupon_id = #{couponId,jdbcType=VARCHAR},
+            </if>
+            <if test="couponAmount != null">
+                coupon_amount = #{couponAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="activityId != null">
+                activity_id = #{activityId,jdbcType=VARCHAR},
+            </if>
+            <if test="activityAmount != null">
+                activity_amount = #{activityAmount,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="batchInsertSelective">
+        insert into order_product_info (order_no, shops_id, product_id, product_name, price_id, product_price,
+        product_num, amount) VALUES
+        <foreach collection="productInfoList" item="item" separator=",">
+            (#{item.orderNo}, #{item.shopsId}, #{item.productId}, #{item.productName}, #{item.priceId},
+            #{item.productPrice}, #{item.productNum}, #{item.amount})
+        </foreach>
+    </insert>
 
 </mapper>

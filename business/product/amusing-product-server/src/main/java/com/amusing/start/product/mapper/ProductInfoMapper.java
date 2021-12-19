@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author lvqingyu
@@ -44,6 +45,8 @@ public interface ProductInfoMapper {
      * @param inputList 商品信息集合
      * @return
      */
-    Integer batchDeductionStock(@Param("shopId") List<StockDeductionInput> inputList);
+    Integer batchDeductionStock(@Param("inputList") List<StockDeductionInput> inputList);
+
+    List<ProductInfo> getDetailsByIds(@Param("productIds") Set<String> productIds);
 
 }

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
  * Create By 2021/9/21
  *
@@ -24,6 +26,6 @@ public class UserSettlementInput {
     /**
      * 结算金额
      */
-    private String amount;
+    private BigDecimal amount;
 
 }

@@ -4,6 +4,8 @@ import com.amusing.start.client.output.UserAccountOutput;
 import com.amusing.start.result.ApiResult;
 import com.amusing.start.user.exception.UserException;
 
+import java.math.BigDecimal;
+
 /**
  * Create By 2021/9/21
  *
@@ -27,7 +29,7 @@ public interface IUserAccountInfoService {
      * @return
      * @throws UserException
      */
-    boolean userMainSettlement(String userId, String amount) throws UserException;
+    boolean userMainSettlement(String userId, BigDecimal amount) throws UserException;
 
     /**
      * 更新副账户余额
@@ -37,6 +39,6 @@ public interface IUserAccountInfoService {
      * @return
      * @throws UserException
      */
-    boolean userGiveSettlement(String userId, String amount) throws UserException;
+    boolean userGiveSettlement(String userId, BigDecimal amount) throws UserException;
 
 }

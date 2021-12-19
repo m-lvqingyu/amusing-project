@@ -35,4 +35,13 @@ public interface ProductPriceInfoMapper {
      */
     ProductPriceInfo selectByProductAndPriceId(@Param("productId") String productId, @Param("priceId") String priceId);
 
+    /**
+     * 根据商品ID，获取最新一条价格信息
+     *
+     * @param productId 商品ID
+     * @return
+     */
+    ProductPriceInfo selectLastRecordByProductId(@Param("productId") String productId);
+
+
 }

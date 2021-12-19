@@ -73,7 +73,7 @@ public class UserInwardController implements UserClient {
      */
     private Optional<UserSettlementInput> checkoutParams(UserSettlementInput input) {
         return Optional.ofNullable(input)
-                .filter(i -> StringUtils.isNotEmpty(i.getUserId()) && StringUtils.isNotEmpty(i.getAmount()));
+                .filter(i -> StringUtils.isNotEmpty(i.getUserId()) && i.getAmount() != null);
     }
 
 }

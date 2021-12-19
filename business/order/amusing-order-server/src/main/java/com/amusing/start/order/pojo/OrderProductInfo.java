@@ -44,7 +44,7 @@ public class OrderProductInfo {
     /**
      * 商品单价
      */
-    private String productPrice;
+    private BigDecimal productPrice;
 
     /**
      * 商品数量

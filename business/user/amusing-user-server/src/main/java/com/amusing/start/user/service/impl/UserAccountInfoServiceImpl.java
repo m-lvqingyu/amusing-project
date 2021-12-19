@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -43,15 +44,16 @@ public class UserAccountInfoServiceImpl implements IUserAccountInfoService {
         return output;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean userMainSettlement(String userId, String amount) throws UserException {
+    public boolean userMainSettlement(String userId, BigDecimal amount) throws UserException {
         // 根据用户ID,获取其主账户余额，获取不到则抛出异常
         UserAccountInfo info = userAccountInfoMapper.selectByUserId(userId);
         BigDecimal mainAmount = Optional.ofNullable(info).map(UserAccountInfo::getMainAmount)
                 .orElseThrow(() -> new UserException(UserCode.USER_INFORMATION_NOT_EXIST));
 
         // 判断用户主账户余额是否足够，不足则抛出异常
-        BigDecimal updateAmount = Optional.ofNullable(amount).map(BigDecimal::new).filter(i -> i.compareTo(mainAmount) > UserConstant.ZERO)
+        BigDecimal updateAmount = Optional.ofNullable(amount).filter(i -> i.compareTo(mainAmount) < UserConstant.ZERO)
                 .orElseThrow(() -> new UserException(UserCode.USER_AMOUNT_INSUFFICIENT_ERROR));
 
         // 更新用户主账户余额，更新失败抛出异常
@@ -66,14 +68,14 @@ public class UserAccountInfoServiceImpl implements IUserAccountInfoService {
     }
 
     @Override
-    public boolean userGiveSettlement(String userId, String amount) throws UserException {
+    public boolean userGiveSettlement(String userId, BigDecimal amount) throws UserException {
         // 根据用户ID,获取其副账户余额，获取不到则抛出异常
         UserAccountInfo info = userAccountInfoMapper.selectByUserId(userId);
         BigDecimal giveAmount = Optional.ofNullable(info).map(UserAccountInfo::getGiveAmount)
                 .orElseThrow(() -> new UserException(UserCode.USER_INFORMATION_NOT_EXIST));
 
         // 判断用户副账户余额是否足够，不足则抛出异常
-        BigDecimal updateAmount = Optional.ofNullable(amount).map(BigDecimal::new).filter(i -> i.compareTo(giveAmount) > UserConstant.ZERO)
+        BigDecimal updateAmount = Optional.ofNullable(amount).filter(i -> i.compareTo(giveAmount) > UserConstant.ZERO)
                 .orElseThrow(() -> new UserException(UserCode.USER_AMOUNT_INSUFFICIENT_ERROR));
 
         // 更新用户副账户余额，更新失败抛出异常

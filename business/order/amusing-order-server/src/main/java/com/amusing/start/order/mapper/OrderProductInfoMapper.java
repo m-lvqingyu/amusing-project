@@ -34,4 +34,12 @@ public interface OrderProductInfoMapper {
      */
     int updateByPrimaryKeySelective(OrderProductInfo record);
 
+    /**
+     * 批量新增订单与商铺关联关系
+     *
+     * @param productInfoList
+     * @return
+     */
+    int batchInsertSelective(@Param("productInfoList") List<OrderProductInfo> productInfoList);
+
 }
