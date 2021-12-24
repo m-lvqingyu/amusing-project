@@ -19,7 +19,6 @@ import com.amusing.start.order.pojo.OrderInfo;
 import com.amusing.start.order.pojo.OrderProductInfo;
 import com.amusing.start.order.pojo.OrderShopsInfo;
 import com.amusing.start.order.service.IOrderCreateService;
-import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
 import org.apache.shardingsphere.transaction.core.TransactionType;

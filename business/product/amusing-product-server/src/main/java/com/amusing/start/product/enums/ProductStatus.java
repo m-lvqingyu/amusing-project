@@ -5,19 +5,17 @@ package com.amusing.start.product.enums;
  *
  * @author lvqingyu
  */
-public enum ResultStatus {
+public enum ProductStatus {
 
-    INIT(0, "待处理"),
+    VALID(1, "有效"),
 
-    SUCCESS(1, "成功"),
-
-    FAIL(2, "失败");
+    INVALID(2, "无效");
 
 
     private final int code;
     private final String msg;
 
-    ResultStatus(final int code, final String msg) {
+    ProductStatus(final int code, final String msg) {
         this.code = code;
         this.msg = msg;
     }

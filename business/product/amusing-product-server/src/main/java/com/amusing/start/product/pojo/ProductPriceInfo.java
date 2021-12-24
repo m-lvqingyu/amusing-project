@@ -1,14 +1,19 @@
 package com.amusing.start.product.pojo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @author 商品价格信息
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductPriceInfo {
     /**
      * 主键
@@ -36,11 +41,6 @@ public class ProductPriceInfo {
     private BigDecimal price;
 
     /**
-     * 活动ID
-     */
-    private String activityId;
-
-    /**
      * 创建人
      */
     private String createBy;
@@ -48,7 +48,7 @@ public class ProductPriceInfo {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Long createTime;
 
     /**
      * 更新人
@@ -58,6 +58,6 @@ public class ProductPriceInfo {
     /**
      * 更新时间
      */
-    private Date updateTime;
+    private Long updateTime;
 
 }

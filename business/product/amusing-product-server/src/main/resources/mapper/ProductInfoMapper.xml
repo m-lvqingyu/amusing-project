@@ -6,7 +6,6 @@
         <result column="shop_id" jdbcType="VARCHAR" property="shopId"/>
         <result column="product_id" jdbcType="VARCHAR" property="productId"/>
         <result column="product_name" jdbcType="VARCHAR" property="productName"/>
-        <result column="init_price" jdbcType="DECIMAL" property="initPrice"/>
         <result column="product_stock" jdbcType="DECIMAL" property="productStock"/>
         <result column="status" jdbcType="BIT" property="status"/>
         <result column="is_del" jdbcType="BIT" property="isDel"/>
@@ -18,7 +17,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, shop_id, product_id, product_name, init_price, product_stock, `status`, is_del,
+        id, shop_id, product_id, product_name, product_stock, `status`, is_del,
         `describe`, create_by, create_time, update_by, update_time
     </sql>
 
@@ -34,9 +33,6 @@
             </if>
             <if test="productName != null">
                 product_name,
-            </if>
-            <if test="initPrice != null">
-                init_price,
             </if>
             <if test="productStock != null">
                 product_stock,
@@ -72,9 +68,6 @@
             </if>
             <if test="productName != null">
                 #{productName,jdbcType=VARCHAR},
-            </if>
-            <if test="initPrice != null">
-                #{initPrice,jdbcType=DECIMAL},
             </if>
             <if test="productStock != null">
                 #{productStock,jdbcType=DECIMAL},
@@ -115,9 +108,6 @@
             <if test="productName != null">
                 product_name = #{productName,jdbcType=VARCHAR},
             </if>
-            <if test="initPrice != null">
-                init_price = #{initPrice,jdbcType=DECIMAL},
-            </if>
             <if test="productStock != null">
                 product_stock = #{productStock,jdbcType=DECIMAL},
             </if>
@@ -155,15 +145,27 @@
     <update id="batchDeductionStock">
         <foreach collection="inputList" separator=";" item="item">
             update product_info set product_stock = product_stock - #{item.productNum} where product_id =
-            #{item.productId} and product_stock >= 0
+            #{item.productId} and product_stock >= 0 and status = 1 and is_del = 1
         </foreach>
     </update>
 
     <select id="getDetailsByIds" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List" /> from product_info where id in
+        select
+        <include refid="Base_Column_List"/>
+        from product_info where product_id in
         <foreach collection="productIds" item="productId" index="index" open="(" close=")" separator=",">
             #{productId}
         </foreach>
+        and status = 1 and is_del = 1
     </select>
+
+    <select id="checkExistByShopIdAndName" resultType="java.lang.String">
+        select product_id from product_info where shop_id = #{shopId} and product_name = #{productName} and status = 1
+        and is_del = 1
+    </select>
+
+    <update id="updateStatusByShopId">
+        update product_info set status = #{status} where shop_id = #{shopId} and status = 1 and is_del = 1
+    </update>
 
 </mapper>

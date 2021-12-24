@@ -14,9 +14,9 @@
         <result column="update_time" jdbcType="BIGINT" property="updateTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, shop_id, shop_name, grade, `status`, is_del, create_by, create_time, update_by, 
-    update_time
-  </sql>
+        id, shop_id, shop_name, grade, `status`, is_del, create_by, create_time, update_by,
+        update_time
+    </sql>
 
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.amusing.start.product.pojo.ShopInfo"
             useGeneratedKeys="true">
@@ -116,7 +116,22 @@
     </update>
 
     <select id="selectByShopId" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List" /> from shop_info where shop_id = #{shopId} and status = 1 and is_del = 1
+        select
+        <include refid="Base_Column_List"/>
+        from shop_info where shop_id = #{shopId} and status = 1 and is_del = 1
     </select>
+
+    <select id="checkExistById" resultType="java.lang.String">
+        select shop_id from shop_info where shop_id = #{shopId} and status = 1 and is_del = 1 limit 1
+    </select>
+
+    <select id="checkExistByName" resultType="java.lang.String">
+        select shop_id from shop_info where shop_name = #{shopName} and status = 1 and is_del = 1 limit 1
+    </select>
+
+    <select id="selectStatusById">
+        select status from shop_info where shop_id = #{shopId} and status = 1 and is_del = 1 limit 1
+    </select>
+
 
 </mapper>

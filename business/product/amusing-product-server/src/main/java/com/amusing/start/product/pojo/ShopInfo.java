@@ -1,13 +1,17 @@
 package com.amusing.start.product.pojo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-
-import java.util.Date;
+import lombok.NoArgsConstructor;
 
 /**
  * @author 商品信息
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ShopInfo {
     /**
      * 主键
@@ -47,7 +51,7 @@ public class ShopInfo {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Long createTime;
 
     /**
      * 更新人
@@ -57,6 +61,6 @@ public class ShopInfo {
     /**
      * 更新时间
      */
-    private Date updateTime;
+    private Long updateTime;
 
 }

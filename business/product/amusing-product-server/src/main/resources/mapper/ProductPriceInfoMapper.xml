@@ -7,16 +7,14 @@
         <result column="product_id" jdbcType="VARCHAR" property="productId"/>
         <result column="version" jdbcType="INTEGER" property="version"/>
         <result column="price" jdbcType="DECIMAL" property="price"/>
-        <result column="activity_id" jdbcType="VARCHAR" property="activityId"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="create_time" jdbcType="BIGINT" property="createTime"/>
         <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
         <result column="update_time" jdbcType="BIGINT" property="updateTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, price_id, product_id, version, price, activity_id, create_by, create_time, update_by, 
-    update_time
-  </sql>
+        id, price_id, product_id, version, price, create_by, create_time, update_by, update_time
+    </sql>
 
     <insert id="insertSelective" keyColumn="id" keyProperty="id"
             parameterType="com.amusing.start.product.pojo.ProductPriceInfo" useGeneratedKeys="true">
@@ -33,9 +31,6 @@
             </if>
             <if test="price != null">
                 price,
-            </if>
-            <if test="activityId != null">
-                activity_id,
             </if>
             <if test="createBy != null">
                 create_by,
@@ -62,9 +57,6 @@
             </if>
             <if test="price != null">
                 #{price,jdbcType=DECIMAL},
-            </if>
-            <if test="activityId != null">
-                #{activityId,jdbcType=VARCHAR},
             </if>
             <if test="createBy != null">
                 #{createBy,jdbcType=VARCHAR},
@@ -96,9 +88,6 @@
             <if test="price != null">
                 price = #{price,jdbcType=DECIMAL},
             </if>
-            <if test="activityId != null">
-                activity_id = #{activityId,jdbcType=VARCHAR},
-            </if>
             <if test="createBy != null">
                 create_by = #{createBy,jdbcType=VARCHAR},
             </if>
@@ -116,11 +105,15 @@
     </update>
 
     <select id="selectByProductAndPriceId" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List" /> from product_price_info where product_id = #{productId} and price_id = #{priceId}
+        select
+        <include refid="Base_Column_List"/>
+        from product_price_info where product_id = #{productId} and price_id = #{priceId}
     </select>
 
     <select id="selectLastRecordByProductId" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List" /> from product_price_info where product_id = #{productId} order BY version desc limit 1;
+        select
+        <include refid="Base_Column_List"/>
+        from product_price_info where product_id = #{productId} order BY version desc limit 1;
     </select>
 
 </mapper>

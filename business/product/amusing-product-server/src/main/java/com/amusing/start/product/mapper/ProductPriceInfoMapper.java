@@ -16,7 +16,7 @@ public interface ProductPriceInfoMapper {
      * @param record
      * @return
      */
-    int insertSelective(ProductPriceInfo record);
+    Integer insertSelective(ProductPriceInfo record);
 
     /**
      * 更新商品价格信息
@@ -24,7 +24,7 @@ public interface ProductPriceInfoMapper {
      * @param record
      * @return
      */
-    int updateByPrimaryKeySelective(ProductPriceInfo record);
+    Integer updateByPrimaryKeySelective(ProductPriceInfo record);
 
     /**
      * 获取商品价格信息

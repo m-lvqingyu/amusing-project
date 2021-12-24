@@ -20,7 +20,7 @@ public interface ProductInfoMapper {
      * @param record
      * @return
      */
-    int insertSelective(ProductInfo record);
+    Integer insertSelective(ProductInfo record);
 
     /**
      * 更新商品信息
@@ -28,7 +28,7 @@ public interface ProductInfoMapper {
      * @param record
      * @return
      */
-    int updateByPrimaryKeySelective(ProductInfo record);
+    Integer updateByPrimaryKeySelective(ProductInfo record);
 
     /**
      * 获取商品信息
@@ -47,6 +47,30 @@ public interface ProductInfoMapper {
      */
     Integer batchDeductionStock(@Param("inputList") List<StockDeductionInput> inputList);
 
+    /**
+     * 根据商品ID集合，获取商品信息
+     *
+     * @param productIds 商品ID集合
+     * @return
+     */
     List<ProductInfo> getDetailsByIds(@Param("productIds") Set<String> productIds);
+
+    /**
+     * 根据商铺ID和商品名称，判断名称是否已存在
+     *
+     * @param shopId      商铺ID
+     * @param productName 商品名称
+     * @return
+     */
+    String checkExistByShopIdAndName(@Param("shopId") String shopId, @Param("productName") String productName);
+
+    /**
+     * 根据商铺ID，更新商品状态
+     *
+     * @param shopId 商铺ID
+     * @param status 状态
+     * @return
+     */
+    Integer updateStatusByShopId(@Param("shopId") String shopId, @Param("status") Integer status);
 
 }
