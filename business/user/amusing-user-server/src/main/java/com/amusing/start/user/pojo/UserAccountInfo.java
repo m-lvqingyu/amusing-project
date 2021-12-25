@@ -52,7 +52,7 @@ public class UserAccountInfo {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Long createTime;
 
     /**
      * 更新人
@@ -62,6 +62,6 @@ public class UserAccountInfo {
     /**
      * 更新时间
      */
-    private Date updateTime;
+    private Long updateTime;
 
 }

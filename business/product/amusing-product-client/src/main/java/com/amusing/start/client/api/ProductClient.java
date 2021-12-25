@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -36,6 +37,15 @@ public interface ProductClient {
      * @return
      */
     @PostMapping("/product/inward/v1/details/{ids}")
-    List<ShopOutput> getDetails(@PathVariable("ids") Set<String> productIds);
+    Map<String, ProductOutput> getProductDetails(@PathVariable("ids") Set<String> productIds);
+
+    /**
+     * 获取商铺详情
+     *
+     * @param shopIds 商铺id集合
+     * @return
+     */
+    @PostMapping("/shop/inward/v1/details/{ids}")
+    Map<String, ShopOutput> getShopDetails(@PathVariable("ids") Set<String> shopIds);
 
 }

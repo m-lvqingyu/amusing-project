@@ -75,7 +75,7 @@ public class OrderInfo {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Long createTime;
 
     /**
      * 更新人
@@ -85,6 +85,6 @@ public class OrderInfo {
     /**
      * 更新时间
      */
-    private Date updateTime;
+    private Long updateTime;
 
 }

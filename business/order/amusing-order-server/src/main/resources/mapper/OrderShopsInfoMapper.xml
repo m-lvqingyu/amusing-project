@@ -30,6 +30,9 @@
             <if test="shopsId != null">
                 shops_id,
             </if>
+            <if test="shopsName != null">
+                shops_name,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -40,6 +43,9 @@
             </if>
             <if test="shopsId != null">
                 #{shopsId,jdbcType=VARCHAR},
+            </if>
+            <if test="shopsName != null">
+                #{shopsName,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

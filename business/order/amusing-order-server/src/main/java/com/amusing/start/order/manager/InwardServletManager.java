@@ -4,9 +4,9 @@ import com.amusing.start.client.api.ProductClient;
 import com.amusing.start.client.api.UserClient;
 import com.amusing.start.client.input.StockDeductionInput;
 import com.amusing.start.client.input.UserSettlementInput;
+import com.amusing.start.client.output.ProductOutput;
 import com.amusing.start.client.output.ShopOutput;
 import com.amusing.start.client.output.UserAccountOutput;
-import com.amusing.start.order.dto.create.OrderShopDto;
 import com.amusing.start.order.exception.OrderException;
 import com.amusing.start.order.pojo.OrderProductInfo;
 import com.google.common.base.Throwables;
@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -58,24 +58,34 @@ public class InwardServletManager {
      * 获取商品信息
      *
      * @param reserveUserId 预定人ID
-     * @param shopDtoList   商品信息
+     * @param productIds    商品ID集合
      * @return
      */
-    public List<ShopOutput> getProductDetails(String reserveUserId, List<OrderShopDto> shopDtoList) {
-        Set<String> productIdSet = new HashSet<>();
-        shopDtoList.forEach(i -> {
-            i.getProductDtoList().forEach(x -> {
-                productIdSet.add(x.getProductId());
-            });
-        });
-
-        List<ShopOutput> shopList = null;
+    public Map<String, ProductOutput> getProductDetails(String reserveUserId, Set<String> productIds) {
+        Map<String, ProductOutput> result = null;
         try {
-            shopList = productClient.getDetails(productIdSet);
+            result = productClient.getProductDetails(productIds);
         } catch (Exception e) {
-            log.error("[order]-create getProductDetails err! reserveUserId:{}, param:{} , msg:{}", reserveUserId, productIdSet, Throwables.getStackTraceAsString(e));
+            log.error("[order]-create getProductDetails err! reserveUserId:{}, param:{} , msg:{}", reserveUserId, productIds, Throwables.getStackTraceAsString(e));
         }
-        return shopList;
+        return result;
+    }
+
+    /**
+     * 获取商铺信息集合
+     *
+     * @param reserveUserId 预定人ID
+     * @param shopIds       商铺ID集合
+     * @return
+     */
+    public Map<String, ShopOutput> getShopDetails(String reserveUserId, Set<String> shopIds) {
+        Map<String, ShopOutput> result = null;
+        try {
+            result = productClient.getShopDetails(shopIds);
+        } catch (Exception e) {
+            log.error("[order]-create getShopDetails err! reserveUserId:{}, param:{} , msg:{}", reserveUserId, shopIds, Throwables.getStackTraceAsString(e));
+        }
+        return result;
     }
 
     public boolean mainSettlement(String userId, BigDecimal amount) {

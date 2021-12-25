@@ -1,8 +1,9 @@
 package com.amusing.start.client.output;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
+import lombok.NoArgsConstructor;
 
 /**
  * Create By 2021/10/23
@@ -10,6 +11,9 @@ import java.util.List;
  * @author lvqingyu
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ShopOutput {
 
     /**
@@ -26,16 +30,5 @@ public class ShopOutput {
      * 等级
      */
     private Integer grade;
-
-    /**
-     * 状态
-     */
-    private Integer status;
-
-    /**
-     * 商品信息集合
-     */
-    List<ProductOutput> productList;
-
 
 }

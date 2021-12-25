@@ -39,6 +39,12 @@
             <if test="productId != null">
                 product_id,
             </if>
+            <if test="productName != null">
+                product_name,
+            </if>
+            <if test="priceId != null">
+                price_id,
+            </if>
             <if test="productPrice != null">
                 product_price,
             </if>
@@ -47,18 +53,6 @@
             </if>
             <if test="amount != null">
                 amount,
-            </if>
-            <if test="couponId != null">
-                coupon_id,
-            </if>
-            <if test="couponAmount != null">
-                coupon_amount,
-            </if>
-            <if test="activityId != null">
-                activity_id,
-            </if>
-            <if test="activityAmount != null">
-                activity_amount,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -74,6 +68,12 @@
             <if test="productId != null">
                 #{productId,jdbcType=VARCHAR},
             </if>
+            <if test="productName != null">
+                #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="priceId != null">
+                #{priceId,jdbcType=VARCHAR},
+            </if>
             <if test="productPrice != null">
                 #{productPrice,jdbcType=DECIMAL},
             </if>
@@ -82,18 +82,6 @@
             </if>
             <if test="amount != null">
                 #{amount,jdbcType=DECIMAL},
-            </if>
-            <if test="couponId != null">
-                #{couponId,jdbcType=VARCHAR},
-            </if>
-            <if test="couponAmount != null">
-                #{couponAmount,jdbcType=DECIMAL},
-            </if>
-            <if test="activityId != null">
-                #{activityId,jdbcType=VARCHAR},
-            </if>
-            <if test="activityAmount != null">
-                #{activityAmount,jdbcType=DECIMAL},
             </if>
         </trim>
     </insert>
@@ -110,6 +98,12 @@
             <if test="productId != null">
                 product_id = #{productId,jdbcType=VARCHAR},
             </if>
+            <if test="productName != null">
+                product_name = #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="priceId != null">
+                price_id = #{priceId,jdbcType=VARCHAR},
+            </if>
             <if test="productPrice != null">
                 product_price = #{productPrice,jdbcType=DECIMAL},
             </if>
@@ -118,18 +112,6 @@
             </if>
             <if test="amount != null">
                 amount = #{amount,jdbcType=DECIMAL},
-            </if>
-            <if test="couponId != null">
-                coupon_id = #{couponId,jdbcType=VARCHAR},
-            </if>
-            <if test="couponAmount != null">
-                coupon_amount = #{couponAmount,jdbcType=DECIMAL},
-            </if>
-            <if test="activityId != null">
-                activity_id = #{activityId,jdbcType=VARCHAR},
-            </if>
-            <if test="activityAmount != null">
-                activity_amount = #{activityAmount,jdbcType=DECIMAL},
             </if>
         </set>
         where id = #{id,jdbcType=BIGINT}

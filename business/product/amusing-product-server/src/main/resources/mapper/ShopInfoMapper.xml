@@ -129,8 +129,18 @@
         select shop_id from shop_info where shop_name = #{shopName} and status = 1 and is_del = 1 limit 1
     </select>
 
-    <select id="selectStatusById">
+    <select id="selectStatusById" resultType="java.lang.Integer">
         select status from shop_info where shop_id = #{shopId} and status = 1 and is_del = 1 limit 1
+    </select>
+
+    <select id="getDetailsByIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_info where shop_id in
+        <foreach collection="shopIds" item="shopId" index="index" open="(" close=")" separator=",">
+            #{shopId}
+        </foreach>
+        and status = 1 and is_del = 1
     </select>
 
 

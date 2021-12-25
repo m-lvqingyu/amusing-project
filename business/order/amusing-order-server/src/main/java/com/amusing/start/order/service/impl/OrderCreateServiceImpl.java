@@ -2,6 +2,7 @@ package com.amusing.start.order.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
+import com.amusing.start.client.output.ProductOutput;
 import com.amusing.start.client.output.ShopOutput;
 import com.amusing.start.client.output.UserAccountOutput;
 import com.amusing.start.order.constant.OrderConstant;
@@ -28,10 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author lv.QingYu
@@ -81,52 +79,59 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
         Optional.ofNullable(userAccount).orElseThrow(() -> new OrderException(OrderCode.USER_NOT_FOUND));
 
         // 获取商品信息及单价
+        Set<String> shopIds = new HashSet<>();
+        Set<String> productIds = new HashSet<>();
         List<OrderShopDto> shopDtoList = orderCreateDto.getShopDtoList();
-        List<ShopOutput> shopList = inwardServletManager.getProductDetails(reserveUserId, shopDtoList);
-        Optional.ofNullable(shopList).filter(i -> i.size() > OrderConstant.ZERO).orElseThrow(() -> new OrderException(OrderCode.PRODUCT_NOT_FOUND));
+        shopDtoList.forEach(i -> {
+            shopIds.add(i.getShopsId());
+            i.getProductDtoList().forEach(product -> {
+                productIds.add(product.getProductId());
+            });
+        });
+        Map<String, ShopOutput> shopDetails = inwardServletManager.getShopDetails(reserveUserId, shopIds);
+        Optional.ofNullable(shopDetails).filter(i -> i.size() > OrderConstant.ZERO).orElseThrow(() -> new OrderException(OrderCode.PRODUCT_NOT_FOUND));
+        Map<String, ProductOutput> productDetails = inwardServletManager.getProductDetails(reserveUserId, productIds);
+        Optional.ofNullable(productDetails).filter(i -> i.size() > OrderConstant.ZERO).orElseThrow(() -> new OrderException(OrderCode.PRODUCT_NOT_FOUND));
 
-        return doSaveOrder(orderCreateDto, userAccount, shopList);
+        return doSaveOrder(orderCreateDto, userAccount, shopDetails, productDetails);
     }
 
-    public String doSaveOrder(OrderCreateDto orderCreateDto, UserAccountOutput userAccount, List<ShopOutput> shopList) throws OrderException {
+    public String doSaveOrder(OrderCreateDto orderCreateDto,
+                              UserAccountOutput userAccount,
+                              Map<String, ShopOutput> shopDetails,
+                              Map<String, ProductOutput> productDetails) throws OrderException {
         Snowflake snowflake = IdUtil.getSnowflake(orderWorker, orderDataCenter);
         String orderNo = snowflake.nextIdStr();
         List<OrderShopsInfo> shopsInfoList = new ArrayList<>();
         List<OrderProductInfo> productInfoList = new ArrayList<>();
         orderCreateDto.getShopDtoList().forEach(i -> {
             String shopsId = i.getShopsId();
-            i.getProductDtoList().forEach(x -> {
-                String productId = x.getProductId();
-                Integer productNum = x.getProductNum();
-                shopList.forEach(shop -> {
-                    String shopId = shop.getShopId();
-                    if (shopsId.equals(shopId)) {
-                        OrderShopsInfo shopsInfo = OrderShopsInfo.builder().orderNo(orderNo).shopsId(shopsId).shopsName(shop.getShopName()).build();
-                        shopsInfoList.add(shopsInfo);
-                        shop.getProductList().forEach(product -> {
-                            String currentProductId = product.getProductId();
-                            if (productId.equals(currentProductId)) {
-                                BigDecimal amount = product.getPrice().multiply(new BigDecimal(productNum));
-                                OrderProductInfo productInfo = OrderProductInfo.builder()
-                                        .orderNo(orderNo)
-                                        .shopsId(shopsId)
-                                        .productId(productId)
-                                        .productName(product.getProductName())
-                                        .productNum(productNum)
-                                        .priceId(product.getPriceId())
-                                        .productPrice(product.getPrice())
-                                        .amount(amount)
-                                        .build();
-                                productInfoList.add(productInfo);
-                            }
-                        });
-                    }
-                });
+            ShopOutput shopOutput = shopDetails.get(shopsId);
+            OrderShopsInfo shopsInfo = OrderShopsInfo.builder().orderNo(orderNo).shopsId(shopOutput.getShopId()).shopsName(shopOutput.getShopName()).build();
+            shopsInfoList.add(shopsInfo);
+            i.getProductDtoList().forEach(product -> {
+                String productId = product.getProductId();
+                Integer productNum = product.getProductNum();
+                ProductOutput productOutput = productDetails.get(productId);
+                BigDecimal price = productOutput.getPrice();
+                BigDecimal amount = new BigDecimal(productNum).multiply(price);
+                OrderProductInfo productInfo = OrderProductInfo.builder()
+                        .orderNo(orderNo)
+                        .shopsId(shopsId)
+                        .productId(productId)
+                        .productName(productOutput.getProductName())
+                        .priceId(productOutput.getPriceId())
+                        .productPrice(price)
+                        .productNum(productNum)
+                        .amount(amount)
+                        .build();
+                productInfoList.add(productInfo);
             });
+
         });
 
         BigDecimal totalAmount = productInfoList.stream().map(OrderProductInfo::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
-        Date currentTime = new Date();
+        Long currentTime = System.currentTimeMillis();
         OrderInfo orderInfo = OrderInfo.builder()
                 .orderNo(orderNo)
                 .reserveUserId(orderCreateDto.getReserveUserId())
@@ -150,15 +155,19 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
 
     public void handleSaveOrder(OrderInfo orderInfo, List<OrderShopsInfo> shopsInfoList, List<OrderProductInfo> productInfoList) throws OrderException {
         orderInfoMapper.insertSelective(orderInfo);
-        orderShopsInfoMapper.batchInsertSelective(shopsInfoList);
-        orderProductInfoMapper.batchInsertSelective(productInfoList);
+        for (OrderShopsInfo orderShopsInfo : shopsInfoList) {
+            orderShopsInfoMapper.insertSelective(orderShopsInfo);
+        }
+        for (OrderProductInfo orderProductInfo : productInfoList) {
+            orderProductInfoMapper.insertSelective(orderProductInfo);
+        }
         boolean result = inwardServletManager.mainSettlement(orderInfo.getReserveUserId(), orderInfo.getTotalAmount());
         if (!result) {
-            throw new RuntimeException(OrderCode.UNABLE_PROVIDE_SERVICE.value());
+            throw new OrderException(OrderCode.UNABLE_PROVIDE_SERVICE);
         }
         result = inwardServletManager.deductionStock(productInfoList);
         if (!result) {
-            throw new RuntimeException(OrderCode.UNABLE_PROVIDE_SERVICE.value());
+            throw new OrderException(OrderCode.UNABLE_PROVIDE_SERVICE);
         }
     }
 

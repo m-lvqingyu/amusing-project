@@ -3,6 +3,7 @@ package com.amusing.start.product.controller.inward;
 import cn.hutool.core.collection.CollectionUtil;
 import com.amusing.start.client.api.ProductClient;
 import com.amusing.start.client.input.StockDeductionInput;
+import com.amusing.start.client.output.ProductOutput;
 import com.amusing.start.client.output.ShopOutput;
 import com.amusing.start.product.exception.ProductException;
 import com.amusing.start.product.service.IProductService;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -53,8 +55,14 @@ public class ProductInwardController implements ProductClient {
     }
 
     @Override
-    public List<ShopOutput> getDetails(Set<String> productIds) {
-        return productService.getDetails(productIds);
+    public Map<String, ProductOutput> getProductDetails(Set<String> productIds) {
+        return productService.getProductDetails(productIds);
     }
+
+    @Override
+    public Map<String, ShopOutput> getShopDetails(Set<String> shopIds) {
+        return productService.getShopDetails(shopIds);
+    }
+
 
 }

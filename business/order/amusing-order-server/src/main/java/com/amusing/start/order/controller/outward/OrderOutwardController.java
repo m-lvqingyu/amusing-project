@@ -53,7 +53,7 @@ public class OrderOutwardController extends BaseController {
      * @return
      * @throws OrderException
      */
-    @GetMapping("/v1/{id}")
+    @GetMapping("/v1/detail{id}")
     public ApiResult<OrderDetailVO> get(@PathVariable("id") String id) throws OrderException {
         Optional.ofNullable(id).filter(i -> StringUtils.isNotEmpty(id)).orElseThrow(() -> new OrderException(CommCode.PARAMETER_EXCEPTION));
 
@@ -70,7 +70,7 @@ public class OrderOutwardController extends BaseController {
      * @param from
      * @return
      */
-    @PostMapping
+    @PostMapping("v1/create")
     public ApiResult<String> create(@Valid @RequestBody OrderCreateFrom from) throws OrderException {
         String userId = getUserId();
         Optional.ofNullable(userId).filter(StringUtils::isNotEmpty).orElseThrow(() -> new OrderException(CommCode.UNAUTHORIZED));

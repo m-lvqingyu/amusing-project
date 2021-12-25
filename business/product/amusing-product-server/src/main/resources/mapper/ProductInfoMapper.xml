@@ -143,9 +143,8 @@
     </select>
 
     <update id="batchDeductionStock">
-        <foreach collection="inputList" separator=";" item="item">
-            update product_info set product_stock = product_stock - #{item.productNum} where product_id =
-            #{item.productId} and product_stock >= 0 and status = 1 and is_del = 1
+        <foreach collection="inputList" separator=";" item="item" index="index">
+            update product_info set product_stock = product_stock - #{item.productNum} where product_id = #{item.productId} and product_stock >= 0 and status = 1 and is_del = 1
         </foreach>
     </update>
 

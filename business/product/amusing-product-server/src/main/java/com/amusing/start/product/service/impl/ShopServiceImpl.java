@@ -17,6 +17,7 @@ import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
 import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -26,6 +27,7 @@ import java.util.Optional;
  * @version 1.0
  * @date 2021/12/24
  */
+@Service
 public class ShopServiceImpl implements IShopService {
 
     private final ShopInfoMapper shopInfoMapper;
@@ -37,10 +39,10 @@ public class ShopServiceImpl implements IShopService {
         this.productInfoMapper = productInfoMapper;
     }
 
-    @Value("product.worker")
+    @Value("${product.worker}")
     private Long productWorker;
 
-    @Value("product.dataCenter")
+    @Value("${product.dataCenter}")
     private Long productDataCenter;
 
     @Transactional(rollbackFor = Exception.class)
@@ -48,8 +50,9 @@ public class ShopServiceImpl implements IShopService {
     @Override
     public String create(String executor, ShopCreateDto createDto) throws ProductException {
         String queryShopId = shopInfoMapper.checkExistByName(createDto.getShopName());
-        Optional.ofNullable(queryShopId).filter(StringUtils::isNotEmpty)
-                .orElseThrow(() -> new ProductException(ProductCode.SHOP_NAME_EXIST));
+        if(StringUtils.isNotEmpty(queryShopId)){
+            throw new ProductException(ProductCode.SHOP_NAME_EXIST);
+        }
 
         String shopId = IdUtil.createSnowflake(productWorker, productDataCenter).nextIdStr();
         long timeMillis = System.currentTimeMillis();

@@ -4,6 +4,9 @@ import com.amusing.start.product.pojo.ShopInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author lvqingyu
  */
@@ -57,5 +60,13 @@ public interface ShopInfoMapper {
      * @return
      */
     Integer selectStatusById(@Param("shopId") String shopId);
+
+    /**
+     * 根据商铺ID，获取商铺信息详情
+     *
+     * @param shopIds 商铺ID集合
+     * @return
+     */
+    List<ShopInfo> getDetailsByIds(Set<String> shopIds);
 
 }
