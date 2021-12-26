@@ -32,6 +32,8 @@
         <module>business/product/amusing-product-client</module>
         <module>business/map/amusing-map-server</module>
         <module>business/map/amusing-map-client</module>
+        <module>business/search/amusing-search-server</module>
+        <module>business/search/amusing-search-client</module>
     </modules>
 
     <packaging>pom</packaging>

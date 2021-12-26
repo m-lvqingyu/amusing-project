@@ -22,7 +22,7 @@ public class MapClientFallback implements FallbackFactory<MapClient> {
             @Override
             public ApiResult gaoDeGeoCode(String address) {
                 log.error("[map]-[gaoDeGeoCode]-service is degradation! address:{}", address);
-                return ApiResult.fail(CommCode.AUTHORITY_ERROR);
+                return ApiResult.result(CommCode.AUTHORITY_ERROR);
             }
         };
     }

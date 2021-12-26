@@ -42,7 +42,7 @@ public class LoginServiceImpl implements LoginService {
         if (LoginType.USERNAME.getKey() == loginType) {
             return usernameLogin(loginDTO);
         }
-        return ApiResult.fail(CommCode.SYSTEM_LOGIN_EXCEPTION);
+        return ApiResult.result(CommCode.SYSTEM_LOGIN_EXCEPTION);
     }
 
     /**
@@ -54,7 +54,7 @@ public class LoginServiceImpl implements LoginService {
     private ApiResult phoneLogin(LoginDto loginDTO) {
         SysUserBase sysUserBase = sysUserBaseMapper.selectValidByPhone(loginDTO.getUsername());
         if (sysUserBase == null) {
-            return ApiResult.fail(AuthCode.ERROR_AUTH);
+            return ApiResult.result(AuthCode.ERROR_AUTH);
         }
         return generateToken(sysUserBase);
     }
@@ -68,13 +68,13 @@ public class LoginServiceImpl implements LoginService {
     private ApiResult usernameLogin(LoginDto loginDTO) {
         SysUserBase userBase = sysUserBaseMapper.selectValidByName(loginDTO.getUsername());
         if (userBase == null) {
-            return ApiResult.fail(AuthCode.ERROR_AUTH);
+            return ApiResult.result(AuthCode.ERROR_AUTH);
         }
         String dtoPassword = loginDTO.getPassword();
         String password = userBase.getPassword();
         boolean matches = passwordEncoder.matches(dtoPassword, password);
         if (!matches) {
-            return ApiResult.fail(AuthCode.ERROR_AUTH);
+            return ApiResult.result(AuthCode.ERROR_AUTH);
         }
         return generateToken(userBase);
     }

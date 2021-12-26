@@ -47,26 +47,26 @@ public class GatewayBlockExceptionHandler extends SentinelGatewayBlockExceptionH
         response.getHeaders().set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         response.getHeaders().set("Access-Control-Allow-Origin", "*");
         response.getHeaders().set("Cache-Control", "no-cache");
-        String body = JSONUtil.toJsonStr(ApiResult.fail(CommCode.FREQUENT_OPERATION_EXCEPTION));
+        String body = JSONUtil.toJsonStr(ApiResult.result(CommCode.FREQUENT_OPERATION_EXCEPTION));
         // 请求触发限流
         if (throwable instanceof FlowException) {
-            body = JSONUtil.toJsonStr(ApiResult.fail(CommCode.FLOW_ERROR));
+            body = JSONUtil.toJsonStr(ApiResult.result(CommCode.FLOW_ERROR));
         }
         // 请求触发熔断
         if (throwable instanceof DegradeException) {
-            body = JSONUtil.toJsonStr(ApiResult.fail(CommCode.DEGRADE_ERROR));
+            body = JSONUtil.toJsonStr(ApiResult.result(CommCode.DEGRADE_ERROR));
         }
         //热点参数限流
         if (throwable instanceof ParamFlowException) {
-            body = JSONUtil.toJsonStr(ApiResult.fail(CommCode.PARAM_FLOW_ERROR));
+            body = JSONUtil.toJsonStr(ApiResult.result(CommCode.PARAM_FLOW_ERROR));
         }
         // 触发系统保护规则
         if (throwable instanceof SystemBlockException) {
-            body = JSONUtil.toJsonStr(ApiResult.fail(CommCode.SYSTEM_BLOCK_ERROR));
+            body = JSONUtil.toJsonStr(ApiResult.result(CommCode.SYSTEM_BLOCK_ERROR));
         }
         // 授权规则不通过
         if (throwable instanceof AuthorityException) {
-            body = JSONUtil.toJsonStr(ApiResult.fail(CommCode.AUTHORITY_ERROR));
+            body = JSONUtil.toJsonStr(ApiResult.result(CommCode.AUTHORITY_ERROR));
         }
         DataBuffer buffer = response.bufferFactory().wrap(body.getBytes(Charset.forName("UTF-8")));
         return response.writeWith(Mono.just(buffer));
