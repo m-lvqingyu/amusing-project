@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Map;
 
 /**
@@ -19,6 +22,7 @@ public class IndexCreateInput {
     /**
      * 索引名称
      */
+    @NotEmpty(message = "索引名称不能为空")
     private String index;
 
     /**
@@ -29,6 +33,8 @@ public class IndexCreateInput {
      * Map<String, Object> properties = new HashMap<>();
      * properties.put("message", message);
      */
+    @NotNull(message = "索引映射不能为空")
+    @Size(min = 1, max = 100, message = "索引映射长度超过限制")
     private Map<String, Object> properties;
 
 }

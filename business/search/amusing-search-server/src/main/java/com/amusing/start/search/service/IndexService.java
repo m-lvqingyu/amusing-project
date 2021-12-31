@@ -1,7 +1,12 @@
 package com.amusing.start.search.service;
 
+import com.amusing.start.search.exception.SearchException;
+
 import java.util.Map;
 
+/**
+ * @author lv.qingyu
+ */
 public interface IndexService {
 
     /**
@@ -9,15 +14,17 @@ public interface IndexService {
      *
      * @param index      索引名称
      * @param properties 映射
-     * @return
+     * @return true-成功 false-失败
+     * @throws SearchException
      */
-    Boolean create(String index, Map<String, Object> properties);
+    boolean create(String index, Map<String, Object> properties) throws SearchException;
 
     /**
      * 索引是否存在
      *
      * @param index 索引
-     * @return
+     * @return true-存在 false-不存在
+     * @throws SearchException
      */
-    Boolean exist(String index);
+    boolean exist(String index) throws SearchException;
 }
