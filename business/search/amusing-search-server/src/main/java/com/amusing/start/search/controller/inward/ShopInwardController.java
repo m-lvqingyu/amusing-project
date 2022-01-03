@@ -1,6 +1,7 @@
 package com.amusing.start.search.controller.inward;
 
 import com.amusing.start.client.api.ShopSearchClient;
+import com.amusing.start.client.input.ShopChangeInput;
 import com.amusing.start.client.input.ShopPageInput;
 import com.amusing.start.client.output.ShopOutput;
 import com.amusing.start.code.CommCode;
@@ -27,6 +28,17 @@ public class ShopInwardController implements ShopSearchClient {
     @Autowired
     public ShopInwardController(IShopService shopService) {
         this.shopService = shopService;
+    }
+
+    @Override
+    public ApiResult<Boolean> change(ShopChangeInput input) {
+        try {
+            boolean result = shopService.change(input);
+            return ApiResult.ok(result);
+        } catch (SearchException e) {
+            log.error("[search]-shop change err! param:{}, msg:{}", input, Throwables.getStackTraceAsString(e));
+            return ApiResult.result(e.getResultCode());
+        }
     }
 
     @Override

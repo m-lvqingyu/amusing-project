@@ -1,6 +1,7 @@
 package com.amusing.start.client.api;
 
 import com.amusing.start.client.fallback.ShopSearchClientFallback;
+import com.amusing.start.client.input.ShopChangeInput;
 import com.amusing.start.client.input.ShopPageInput;
 import com.amusing.start.client.output.ShopOutput;
 import com.amusing.start.result.ApiResult;
@@ -17,6 +18,15 @@ import java.util.List;
  */
 @FeignClient(value = "amusing-search-server", fallbackFactory = ShopSearchClientFallback.class)
 public interface ShopSearchClient {
+
+    /**
+     * 保存或更新商铺信息
+     *
+     * @param input
+     * @return
+     */
+    @PostMapping("/search/inward/shop/v1/change")
+    ApiResult<Boolean> change(@RequestBody ShopChangeInput input);
 
     /**
      * 分页获取商铺信息集合

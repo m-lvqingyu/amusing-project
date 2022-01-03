@@ -1,6 +1,7 @@
 package com.amusing.start.client.fallback;
 
 import com.amusing.start.client.api.ShopSearchClient;
+import com.amusing.start.client.input.ShopChangeInput;
 import com.amusing.start.client.input.ShopPageInput;
 import com.amusing.start.client.output.ShopOutput;
 import com.amusing.start.code.CommCode;
@@ -21,8 +22,14 @@ public class ShopSearchClientFallback implements FallbackFactory<ShopSearchClien
     public ShopSearchClient create(Throwable throwable) {
         return new ShopSearchClient() {
             @Override
+            public ApiResult<Boolean> change(ShopChangeInput input) {
+                log.error("[search]-shop change fallback! param:{}", input);
+                return ApiResult.result(CommCode.DEGRADE_ERROR);
+            }
+
+            @Override
             public ApiResult<List<ShopOutput>> shopPage(ShopPageInput input) {
-                log.error("[search]-shop page fallback! param:{}", input);
+                log.error("[search]-shopPage fallback! param:{}", input);
                 return ApiResult.result(CommCode.DEGRADE_ERROR);
             }
 
