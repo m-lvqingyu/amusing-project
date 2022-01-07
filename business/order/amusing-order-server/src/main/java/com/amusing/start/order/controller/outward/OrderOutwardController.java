@@ -53,7 +53,7 @@ public class OrderOutwardController extends BaseController {
      * @return
      * @throws OrderException
      */
-    @GetMapping("/v1/detail{id}")
+    @GetMapping("v1/detail/{id}")
     public ApiResult<OrderDetailVO> get(@PathVariable("id") String id) throws OrderException {
         Optional.ofNullable(id).filter(i -> StringUtils.isNotEmpty(id)).orElseThrow(() -> new OrderException(CommCode.PARAMETER_EXCEPTION));
 

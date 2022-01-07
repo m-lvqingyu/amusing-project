@@ -1,9 +1,10 @@
 package com.amusing.start.gateway.filter;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONUtil;
+import com.amusing.start.code.CommCode;
 import com.amusing.start.constant.CommonConstant;
 import com.amusing.start.gateway.config.TokenWhiteListConfig;
-import com.amusing.start.code.CommCode;
 import com.amusing.start.result.ApiResult;
 import com.amusing.start.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -37,61 +38,83 @@ public class AmusingAuthFilter implements GlobalFilter {
     private final TokenWhiteListConfig tokenWhiteListConfig;
 
     @Autowired
-    public AmusingAuthFilter(AntPathMatcher antPathMatcher,
-                             TokenWhiteListConfig tokenWhiteListConfig) {
+    public AmusingAuthFilter(AntPathMatcher antPathMatcher, TokenWhiteListConfig tokenWhiteListConfig) {
         this.antPathMatcher = antPathMatcher;
         this.tokenWhiteListConfig = tokenWhiteListConfig;
     }
 
+    private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+
+    private static final String ASTERISK = "*";
+
+    private static final String CACHE_CONTROL = "Cache-Control";
+
+    private static final String NO_CACHE = "no-cache";
+
+    /**
+     * 用户身份信息认证
+     *
+     * @param exchange
+     * @param chain
+     * @return
+     */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        HttpHeaders headers = request.getHeaders();
-        String path = request.getURI().getPath();
-        // 地址白名单校验
-        boolean isWhitePath = checkoutWhiteList(path);
-        if (isWhitePath) {
+        // 请求地址白名单校验
+        if (isIgnorePath(request.getURI().getPath())) {
             return chain.filter(exchange);
         }
-        // Token校验
-        String authToken = headers.getFirst(CommonConstant.AUTH_TOKEN);
-        if (StringUtils.isEmpty(authToken)) {
-            return checkoutFail(exchange);
+        // 用户身份信息认证
+        HttpHeaders headers = request.getHeaders();
+        String authToken = headers.getFirst(CommonConstant.AUTHORIZATION);
+        if (StringUtils.isEmpty(authToken) || !authToken.startsWith(CommonConstant.BEARER)) {
+            return authorizationFail(exchange);
         }
+        // 根据Token信息，获取用户ID
+        authToken = authToken.substring(CommonConstant.BEARER.length());
         String userId = TokenUtils.getUserId(authToken);
         if (StringUtils.isEmpty(userId)) {
-            return checkoutFail(exchange);
+            return authorizationFail(exchange);
         }
-        ServerHttpRequest newRequest = exchange
-                .getRequest()
-                .mutate()
-                .header(CommonConstant.USER_UID_HEADER_KEY, userId)
-                .build();
+        // 将用户ID封装在请求头中，方便后续服务获取
+        ServerHttpRequest newRequest = exchange.getRequest().mutate().header(CommonConstant.USER_UID, userId).build();
         return chain.filter(exchange.mutate().request(newRequest).build());
     }
 
-    private boolean checkoutWhiteList(String path) {
+    /**
+     * 判断是否需要忽略Token校验的地址
+     *
+     * @param path 请求地址
+     * @return true 无需Token校验  false 需要Token校验
+     */
+    private boolean isIgnorePath(String path) {
         List<String> ignoreWhiteList = tokenWhiteListConfig.getList();
-        if (ignoreWhiteList == null || ignoreWhiteList.isEmpty()) {
+        if (CollectionUtil.isEmpty(ignoreWhiteList)) {
             return false;
         }
         for (String uri : ignoreWhiteList) {
-            boolean match = antPathMatcher.match(uri, path);
-            if (match) {
+            if (antPathMatcher.match(uri, path)) {
                 return true;
             }
         }
         return false;
     }
 
-    private Mono<Void> checkoutFail(ServerWebExchange exchange) {
+    /**
+     * Token认证失败响应
+     *
+     * @param exchange 请求/响应封装
+     * @return
+     */
+    private Mono<Void> authorizationFail(ServerWebExchange exchange) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.OK);
         response.getHeaders().set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        response.getHeaders().set("Access-Control-Allow-Origin", "*");
-        response.getHeaders().set("Cache-Control", "no-cache");
+        response.getHeaders().set(ACCESS_CONTROL_ALLOW_ORIGIN, ASTERISK);
+        response.getHeaders().set(CACHE_CONTROL, NO_CACHE);
         String body = JSONUtil.toJsonStr(ApiResult.result(CommCode.UNAUTHORIZED));
-        DataBuffer buffer = response.bufferFactory().wrap(body.getBytes(Charset.forName("UTF-8")));
+        DataBuffer buffer = response.bufferFactory().wrap(body.getBytes(StandardCharsets.UTF_8));
         return response.writeWith(Mono.just(buffer));
     }
 }

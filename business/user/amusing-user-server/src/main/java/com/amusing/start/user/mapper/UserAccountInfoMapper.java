@@ -59,4 +59,13 @@ public interface UserAccountInfoMapper {
      * @return
      */
     UserAccountInfo selectByUserId(@Param("userId") String userId);
+
+    /**
+     * 根据ID，判断账户信息是否存在
+     *
+     * @param userId 用户ID
+     * @return 用户自增ID
+     */
+    Integer checkAmountIsExist(@Param("userId") String userId);
+
 }

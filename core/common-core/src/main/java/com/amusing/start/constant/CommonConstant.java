@@ -7,6 +7,12 @@ package com.amusing.start.constant;
  */
 public class CommonConstant {
 
-    public static final String USER_UID_HEADER_KEY = "user_uid";
-    public static final String AUTH_TOKEN = "auth_token";
+    public static final String AUTHORIZATION = "Authorization";
+
+    public static final String BEARER = "Bearer ";
+
+    public static final String USER_UID = "user_uid";
+
+    public static final String IMEI = "imei";
+
 }

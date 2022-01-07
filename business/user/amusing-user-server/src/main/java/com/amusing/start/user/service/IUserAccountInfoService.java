@@ -1,7 +1,6 @@
 package com.amusing.start.user.service;
 
 import com.amusing.start.client.output.UserAccountOutput;
-import com.amusing.start.result.ApiResult;
 import com.amusing.start.user.exception.UserException;
 
 import java.math.BigDecimal;
@@ -40,5 +39,14 @@ public interface IUserAccountInfoService {
      * @throws UserException
      */
     boolean userGiveSettlement(String userId, BigDecimal amount) throws UserException;
+
+    /**
+     * 初始化账户
+     *
+     * @param userId 用户ID
+     * @return true:成功  false:失败
+     * @throws UserException
+     */
+    boolean init(String userId) throws UserException;
 
 }

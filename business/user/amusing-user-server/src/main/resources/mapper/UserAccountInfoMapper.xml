@@ -132,4 +132,8 @@
         from user_account_info where user_id = #{userId} limit 1;
     </select>
 
+    <select id="checkAmountIsExist" resultType="java.lang.Integer">
+        select id from user_account_info where user_id = #{userId} limit 1;
+    </select>
+
 </mapper>

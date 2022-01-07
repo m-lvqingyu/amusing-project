@@ -3,6 +3,7 @@ package com.amusing.start.user.controller.inward;
 import com.amusing.start.client.api.UserClient;
 import com.amusing.start.client.input.UserSettlementInput;
 import com.amusing.start.client.output.UserAccountOutput;
+import com.amusing.start.result.ApiResult;
 import com.amusing.start.user.constant.UserConstant;
 import com.amusing.start.user.exception.UserException;
 import com.amusing.start.user.service.IUserAccountInfoService;
@@ -28,6 +29,16 @@ public class UserInwardController implements UserClient {
     @Autowired
     public UserInwardController(IUserAccountInfoService userAccountInfoService) {
         this.userAccountInfoService = userAccountInfoService;
+    }
+
+    @Override
+    public ApiResult<Boolean> init(String userId) {
+        try {
+            boolean result = userAccountInfoService.init(userId);
+            return ApiResult.ok(result);
+        } catch (UserException e) {
+            return ApiResult.result(e.getResultCode());
+        }
     }
 
     @Override

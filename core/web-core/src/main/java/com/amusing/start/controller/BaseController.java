@@ -1,9 +1,9 @@
 package com.amusing.start.controller;
 
 import com.amusing.start.constant.CommonConstant;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  * Create By 2021/8/21
@@ -21,17 +21,19 @@ public class BaseController {
     /**
      * 获取用户唯一Id
      *
-     * @return
+     * @return 用户唯一ID
      */
     public String getUserId() {
-        if (request == null) {
-            return "";
-        }
-        String userUid = request.getHeader(CommonConstant.USER_UID_HEADER_KEY);
-        if (StringUtils.isEmpty(userUid)) {
-            return "";
-        }
-        return userUid;
+        return Optional.ofNullable(request).map((i) -> i.getHeader(CommonConstant.USER_UID)).orElseGet(() -> "");
+    }
+
+    /**
+     * 获取设备号
+     *
+     * @return 设备号
+     */
+    public String getImei() {
+        return Optional.ofNullable(request).map((i) -> i.getHeader(CommonConstant.IMEI)).orElseGet(() -> "");
     }
 
 }

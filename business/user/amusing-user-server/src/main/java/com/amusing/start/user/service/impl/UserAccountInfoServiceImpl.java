@@ -89,4 +89,33 @@ public class UserAccountInfoServiceImpl implements IUserAccountInfoService {
         return UserConstant.TRUE;
     }
 
+    @Override
+    public boolean init(String userId) throws UserException {
+        Integer autoId = userAccountInfoMapper.checkAmountIsExist(userId);
+        if (autoId != null && autoId > UserConstant.ZERO) {
+            log.error("[user]-initAccount userId is exist! userId:{}", userId);
+            throw new UserException(UserCode.INSERT_ERR);
+        }
+        long currentTime = System.currentTimeMillis();
+        UserAccountInfo accountInfo = UserAccountInfo.builder()
+                .userId(userId)
+                .mainAmount(BigDecimal.ZERO)
+                .giveAmount(BigDecimal.ZERO)
+                .frozenAmount(BigDecimal.ZERO)
+                .vipLevel(UserConstant.ZERO)
+                .createBy(userId)
+                .createTime(currentTime)
+                .updateBy(userId)
+                .updateTime(currentTime)
+                .build();
+        Integer result = null;
+        try {
+            result = userAccountInfoMapper.insertSelective(accountInfo);
+        } catch (Exception e) {
+            log.error("[user]-initAccount err! userId:{}, msg:{}", userId, Throwables.getStackTraceAsString(e));
+        }
+        Optional.ofNullable(result).filter(i -> i > UserConstant.ZERO).orElseThrow(() -> new UserException(UserCode.INSERT_ERR));
+        return true;
+    }
+
 }

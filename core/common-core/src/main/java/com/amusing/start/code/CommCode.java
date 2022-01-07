@@ -33,24 +33,6 @@ public enum CommCode implements ResultCode<CommCode> {
         this.msg = msg;
     }
 
-//    public static CommCode getApiCode(int code) {
-//        CommCode[] ecs = CommCode.values();
-//        for (CommCode ec : ecs) {
-//            if (ec.getCode() == code) {
-//                return ec;
-//            }
-//        }
-//        return SUCCESS;
-//    }
-//
-//    public int getCode() {
-//        return code;
-//    }
-//
-//    public String getMsg() {
-//        return msg;
-//    }
-
     @Override
     public CommCode get() {
         return this;
