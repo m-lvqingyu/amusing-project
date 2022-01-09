@@ -5,6 +5,7 @@ import com.amusing.start.auth.exception.AuthException;
 import com.amusing.start.auth.from.UserCreateFrom;
 import com.amusing.start.auth.service.IRegisterService;
 import com.amusing.start.controller.BaseController;
+import com.amusing.start.log.LogOutput;
 import com.amusing.start.result.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -42,6 +43,7 @@ public class RegisterController extends BaseController {
      * @return 用户ID
      * @throws AuthException
      */
+    @LogOutput
     @PostMapping("v1/user/register")
     public ApiResult<String> userRegister(@Valid @RequestBody UserCreateFrom from) throws AuthException {
         UserCreateDto createDTO = new UserCreateDto();

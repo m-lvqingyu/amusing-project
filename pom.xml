@@ -14,11 +14,7 @@
     <artifactId>amusing-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>log/log-record-client</module>
         <module>admin/amusing-admin</module>
-        <module>message/message-push-client</module>
-        <module>message/message-push-server</module>
-        <module>message/message-push-core</module>
         <module>core/common-core</module>
         <module>cache/cache-client</module>
         <module>gateway/amusing-gateway</module>

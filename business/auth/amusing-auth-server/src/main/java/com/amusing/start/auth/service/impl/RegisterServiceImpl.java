@@ -83,7 +83,7 @@ public class RegisterServiceImpl implements IRegisterService {
     private void checkInitAccountResult(ApiResult<Boolean> initResult) throws AuthException {
         Optional.ofNullable(initResult)
                 .map(ApiResult::getCode)
-                .filter(code -> !CommCode.SUCCESS.key().equals(code))
+                .filter(code -> CommCode.SUCCESS.key().intValue() == code)
                 .orElseThrow(() -> new AuthException(AuthCode.USER_SAVE_ERROR));
         boolean data = initResult.getData();
         if (!data) {
@@ -92,7 +92,7 @@ public class RegisterServiceImpl implements IRegisterService {
     }
 
     private SysUserBase build(UserCreateDto createDTO) {
-        Date currentTime = new Date();
+        Long currentTime = System.currentTimeMillis();
         String userId = IdUtil.createSnowflake(workerId, dataCenterId).nextIdStr();
         String password = passwordEncoder.encode(createDTO.getPassword());
         return SysUserBase.builder()

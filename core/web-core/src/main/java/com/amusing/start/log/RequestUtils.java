@@ -1,7 +1,4 @@
-package com.amusing.start.log.utils;
-
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+package com.amusing.start.log;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,10 +8,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author lvqingyu
  */
 public class RequestUtils {
-
-    public static HttpServletRequest getHttpServletRequest() {
-        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-    }
 
     /**
      * 请求头中获取IP地址
