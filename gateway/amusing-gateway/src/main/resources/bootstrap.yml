@@ -33,5 +33,9 @@ spring:
       enabled: true
 
 ignore:
-  white:
-    list: /auth/login
+  auth:
+    paths:
+      - /auth/outward/v1/login
+      - /auth/outward/v1/refresh/**
+      - /auth/outward/v1/user/register
+      - /admin/**

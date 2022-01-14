@@ -9,6 +9,8 @@ import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException;
 import com.alibaba.csp.sentinel.slots.system.SystemBlockException;
 import com.amusing.start.code.CommCode;
 import com.amusing.start.result.ApiResult;
+import com.google.common.base.Throwables;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -16,13 +18,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerCodecConfigurer;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.result.view.ViewResolver;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -32,6 +35,7 @@ import java.util.List;
  *
  * @author lvqingyu
  */
+@Slf4j
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class GatewayBlockExceptionHandler extends SentinelGatewayBlockExceptionHandler {
@@ -40,35 +44,57 @@ public class GatewayBlockExceptionHandler extends SentinelGatewayBlockExceptionH
         super(viewResolvers, serverCodecConfigurer);
     }
 
+    private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+    private static final String CACHE_CONTROL = "Cache-Control";
+    private static final String NO_CACHE = "no-cache";
+    private static final String ASTERISK = "*";
+
     @Override
     public Mono<Void> handle(ServerWebExchange serverWebExchange, Throwable throwable) {
         ServerHttpResponse response = serverWebExchange.getResponse();
+        setProps(response);
+
+        ServerHttpRequest request = serverWebExchange.getRequest();
+        String path = request.getURI().getPath();
+
+        // 限流
+        if (throwable instanceof FlowException) {
+            log.error("[gateway-sentinel]-request is flow, path:{}", path);
+            return responseWrite(response, ApiResult.result(CommCode.FLOW_ERROR));
+        }
+        // 熔断
+        if (throwable instanceof DegradeException) {
+            log.error("[gateway-sentinel]-request is degrade, path:{}", path);
+            return responseWrite(response, ApiResult.result(CommCode.DEGRADE_ERROR));
+        }
+        // 热点参数限流
+        if (throwable instanceof ParamFlowException) {
+            log.error("[gateway-sentinel]-request is paramFlow, path:{}", path);
+            return responseWrite(response, ApiResult.result(CommCode.PARAM_FLOW_ERROR));
+        }
+        // 系统保护规则
+        if (throwable instanceof SystemBlockException) {
+            log.error("[gateway-sentinel]-request is systemBlock, path:{}", path);
+            return responseWrite(response, ApiResult.result(CommCode.SYSTEM_BLOCK_ERROR));
+        }
+        // 授权规则
+        if (throwable instanceof AuthorityException) {
+            log.error("[gateway-sentinel]-request is authority, path:{}", path);
+            return responseWrite(response, ApiResult.result(CommCode.AUTHORITY_ERROR));
+        }
+        return responseWrite(response, ApiResult.result(CommCode.FREQUENT_OPERATION_EXCEPTION));
+    }
+
+    private void setProps(ServerHttpResponse response) {
         response.setStatusCode(HttpStatus.OK);
         response.getHeaders().set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        response.getHeaders().set("Access-Control-Allow-Origin", "*");
-        response.getHeaders().set("Cache-Control", "no-cache");
-        String body = JSONUtil.toJsonStr(ApiResult.result(CommCode.FREQUENT_OPERATION_EXCEPTION));
-        // 请求触发限流
-        if (throwable instanceof FlowException) {
-            body = JSONUtil.toJsonStr(ApiResult.result(CommCode.FLOW_ERROR));
-        }
-        // 请求触发熔断
-        if (throwable instanceof DegradeException) {
-            body = JSONUtil.toJsonStr(ApiResult.result(CommCode.DEGRADE_ERROR));
-        }
-        //热点参数限流
-        if (throwable instanceof ParamFlowException) {
-            body = JSONUtil.toJsonStr(ApiResult.result(CommCode.PARAM_FLOW_ERROR));
-        }
-        // 触发系统保护规则
-        if (throwable instanceof SystemBlockException) {
-            body = JSONUtil.toJsonStr(ApiResult.result(CommCode.SYSTEM_BLOCK_ERROR));
-        }
-        // 授权规则不通过
-        if (throwable instanceof AuthorityException) {
-            body = JSONUtil.toJsonStr(ApiResult.result(CommCode.AUTHORITY_ERROR));
-        }
-        DataBuffer buffer = response.bufferFactory().wrap(body.getBytes(Charset.forName("UTF-8")));
+        response.getHeaders().set(ACCESS_CONTROL_ALLOW_ORIGIN, ASTERISK);
+        response.getHeaders().set(CACHE_CONTROL, NO_CACHE);
+    }
+
+    private Mono<Void> responseWrite(ServerHttpResponse response, ApiResult<?> apiResult) {
+        String body = JSONUtil.toJsonStr(apiResult);
+        DataBuffer buffer = response.bufferFactory().wrap(body.getBytes(StandardCharsets.UTF_8));
         return response.writeWith(Mono.just(buffer));
     }
 }

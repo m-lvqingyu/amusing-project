@@ -14,14 +14,12 @@ public class MapConstant {
      * 地理编码地址
      */
     public static final String GEO_CODE_URL = "https://restapi.amap.com/v3/geocode/geo?";
-    public static final String TITLE_GAO_DE_GEOCODE = "gaoDeGeoCode";
     public static final String PARAM_KEY = "key";
     public static final String PARAM_SIG = "sig";
     public static final String PARAM_ADDRESS_KEY = "address";
     public static final String RESULT_GEOCODES_KEY = "geocodes";
     public static final String RESULT_GEOCODES_LOCATION_KEY = "location";
     public static final String RESULT_GEOCODES_LEVEL_KEY = "level";
-
 
 
 }

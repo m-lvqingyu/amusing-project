@@ -30,6 +30,8 @@
         <module>business/map/amusing-map-client</module>
         <module>business/search/amusing-search-server</module>
         <module>business/search/amusing-search-client</module>
+        <module>business/statistics/amusing-statistics-client</module>
+        <module>business/auth/amusing-auth-client</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -54,6 +56,7 @@
         <sentinel.nacos.version>1.8.1</sentinel.nacos.version>
         <rocketmq.version>2.2.1</rocketmq.version>
         <sharding.version>4.1.1</sharding.version>
+        <redisson.version>3.16.7</redisson.version>
     </properties>
 
     <dependencyManagement>
@@ -178,6 +181,12 @@
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>sharding-transaction-base-seata-at</artifactId>
                 <version>${sharding.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

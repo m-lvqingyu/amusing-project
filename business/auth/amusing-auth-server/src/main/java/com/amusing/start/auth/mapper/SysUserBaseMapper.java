@@ -75,5 +75,12 @@ public interface SysUserBaseMapper {
      */
     Long selectNotDelByNameOrPhone(@Param("userName") String userName, @Param("phone") String phone);
 
+    /**
+     * 根据用户ID获取用户状态
+     *
+     * @param userId 用户Id
+     * @return 状态
+     */
+    Integer selectStatusByUserId(@Param("userId") String userId);
 
 }

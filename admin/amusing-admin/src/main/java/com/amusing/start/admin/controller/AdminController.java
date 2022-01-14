@@ -1,6 +1,8 @@
 package com.amusing.start.admin.controller;
 
 import com.amusing.start.admin.from.UserFrom;
+import com.amusing.start.client.api.MapClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -12,14 +14,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @GetMapping
-    public String get() {
-        return "success";
+    @Autowired
+    private MapClient mapClient;
+
+    @GetMapping("/{id}")
+    public String get(@PathVariable("id") String id) {
+        return id;
     }
 
     @PostMapping
     public String post(@RequestBody UserFrom userFrom) {
-        System.out.println("1111111111111");
-        return userFrom + "success";
+        mapClient.gaoDeGeoCode("北京朝阳门");
+        return "success";
     }
 }

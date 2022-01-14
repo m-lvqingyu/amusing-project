@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONUtil;
 import com.amusing.start.code.CommCode;
 import com.amusing.start.constant.CommonConstant;
-import com.amusing.start.gateway.config.TokenWhiteListConfig;
+import com.amusing.start.gateway.config.IgnoreAuthPathConfig;
 import com.amusing.start.result.ApiResult;
 import com.amusing.start.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +35,12 @@ public class AmusingAuthFilter implements GlobalFilter {
 
     private final AntPathMatcher antPathMatcher;
 
-    private final TokenWhiteListConfig tokenWhiteListConfig;
+    private final IgnoreAuthPathConfig ignoreAuthPathConfig;
 
     @Autowired
-    public AmusingAuthFilter(AntPathMatcher antPathMatcher, TokenWhiteListConfig tokenWhiteListConfig) {
+    public AmusingAuthFilter(AntPathMatcher antPathMatcher, IgnoreAuthPathConfig ignoreAuthPathConfig) {
         this.antPathMatcher = antPathMatcher;
-        this.tokenWhiteListConfig = tokenWhiteListConfig;
+        this.ignoreAuthPathConfig = ignoreAuthPathConfig;
     }
 
     private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
@@ -89,11 +89,11 @@ public class AmusingAuthFilter implements GlobalFilter {
      * @return true 无需Token校验  false 需要Token校验
      */
     private boolean isIgnorePath(String path) {
-        List<String> ignoreWhiteList = tokenWhiteListConfig.getList();
-        if (CollectionUtil.isEmpty(ignoreWhiteList)) {
+        List<String> paths = ignoreAuthPathConfig.getPaths();
+        if (CollectionUtil.isEmpty(paths)) {
             return false;
         }
-        for (String uri : ignoreWhiteList) {
+        for (String uri : paths) {
             if (antPathMatcher.match(uri, path)) {
                 return true;
             }

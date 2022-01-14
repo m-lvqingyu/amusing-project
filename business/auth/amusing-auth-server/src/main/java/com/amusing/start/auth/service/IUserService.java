@@ -56,4 +56,13 @@ public interface IUserService {
      */
     Integer saveUser(SysUserBase userBase) throws AuthException;
 
+    /**
+     * 判断用户是否有效
+     *
+     * @param userId 用户ID
+     * @return true:有效 false:无效
+     * @throws AuthException
+     */
+    Boolean checkUserValid(String userId) throws AuthException;
+
 }

@@ -12,7 +12,7 @@ import java.util.Date;
  * @author lvqingyu
  */
 @Data
-public class UserCreateFrom {
+public class UserRegisterFrom {
 
     @NotEmpty(message = "用户名不能为空")
     private String userName;

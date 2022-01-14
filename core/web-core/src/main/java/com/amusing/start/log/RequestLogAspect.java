@@ -1,5 +1,6 @@
 package com.amusing.start.log;
 
+import com.amusing.start.constant.CommonConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -8,7 +9,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,20 +22,25 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class RequestLogAspect {
 
-    @Pointcut(value = "@annotation(com.amusing.start.log.LogOutput)")
+    @Pointcut(value = "@within(org.springframework.web.bind.annotation.RestController)")
     public void pointCut() {
     }
 
     @Around("pointCut()")
     public Object aroundHandler(ProceedingJoinPoint joinPoint) throws Throwable {
         long statTime = System.currentTimeMillis();
-        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String uri = httpServletRequest.getRequestURI();
-        String address = RequestUtils.getIp(httpServletRequest);
+        RequestAttributes attributes = RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest servletRequest = (HttpServletRequest) attributes.resolveReference(RequestAttributes.REFERENCE_REQUEST);
+        if (servletRequest == null) {
+            return joinPoint.proceed();
+        }
+        String userId = servletRequest.getHeader(CommonConstant.USER_UID);
+        String uri = servletRequest.getRequestURI();
+        String address = RequestUtils.getIp(servletRequest);
         String objArgs = findParams(joinPoint.getArgs());
-        log.info("[request]-start-uri:{}, address:{}, param:{}", uri, address, objArgs);
+        log.info("[amusing-request]-start userId:{}, uri:{}, address:{}, param:{}", userId, uri, address, objArgs);
         Object result = joinPoint.proceed();
-        log.info("[request]-end-result:{}, time:{}", result, System.currentTimeMillis() - statTime);
+        log.info("[amusing-request]-end userId:{}, result:{}, timeConsuming:{}ms", userId, result, System.currentTimeMillis() - statTime);
         return result;
     }
 

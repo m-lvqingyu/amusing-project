@@ -47,16 +47,6 @@ public class SysUserBase {
     private Integer sources;
 
     /**
-     * 钉钉用户ID
-     */
-    private String dingTalkId;
-
-    /**
-     * 企业微信用户ID
-     */
-    private String companyWeChatId;
-
-    /**
      * 状态(1:有效 2:冻结 3:无效)
      */
     private Integer status;

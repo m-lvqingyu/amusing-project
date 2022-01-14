@@ -1,0 +1,19 @@
+/**
+ * resource : 流控资源
+ * count : 流控阀值
+ * grade : 阈值类型 (0:线程 1:QPS)
+ * limitApp : 针对来源 (sentinel可以针对调用者进行限流，填写微服务名，指定对哪个微服务进行限流，默认default(不区分来源，全部限制))
+ * strategy : 流控模式 (0:直接，1:关联，2:链路)
+ * controlBehavior : 流控效果 (0:失败，1:warmUp，2:排队等待)
+ */
+
+[
+    {
+        "resource":"amusing-auth-server",
+        "count":2,
+        "grade":1,
+        "limitApp":"default",
+        "strategy":0,
+        "controlBehavior":0
+    }
+]

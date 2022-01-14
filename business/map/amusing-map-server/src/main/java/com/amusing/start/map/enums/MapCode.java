@@ -10,17 +10,19 @@ import com.amusing.start.code.ResultCode;
  */
 public enum MapCode implements ResultCode<MapCode> {
 
-    RESULT_NULL(900, "三方服务返回结果为空"),
+    RESULT_NULL(200, "三方服务返回结果为空"),
 
-    SERVER_REQUEST_ERR(901, "三方服务请求失败"),
+    RESULT_PROCESSING_ERR(201, "三方服务返回结果解析失败"),
 
-    USER_NOT_FOUND(102, "用户信息不存在"),
+    SERVER_REQUEST_ERR(202, "三方服务请求失败"),
 
-    PRODUCT_NOT_FOUND(103, "商品信息不存在"),
+    USER_NOT_FOUND(203, "用户信息不存在"),
 
-    INSUFFICIENT_BALANCE(104, "账户余额不足"),
+    PRODUCT_NOT_FOUND(204, "商品信息不存在"),
 
-    UNABLE_PROVIDE_SERVICE(105, "服务开小差了，请稍后再试~~~");
+    INSUFFICIENT_BALANCE(205, "账户余额不足"),
+
+    UNABLE_PROVIDE_SERVICE(206, "服务开小差了，请稍后再试~~~");
 
     private final int code;
     private final String msg;

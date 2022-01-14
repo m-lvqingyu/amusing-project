@@ -1,8 +1,8 @@
 package com.amusing.start.auth.controller.outward;
 
-import com.amusing.start.auth.dto.UserCreateDto;
+import com.amusing.start.auth.dto.UserRegisterDto;
 import com.amusing.start.auth.exception.AuthException;
-import com.amusing.start.auth.from.UserCreateFrom;
+import com.amusing.start.auth.from.UserRegisterFrom;
 import com.amusing.start.auth.service.IRegisterService;
 import com.amusing.start.controller.BaseController;
 import com.amusing.start.log.LogOutput;
@@ -45,10 +45,10 @@ public class RegisterController extends BaseController {
      */
     @LogOutput
     @PostMapping("v1/user/register")
-    public ApiResult<String> userRegister(@Valid @RequestBody UserCreateFrom from) throws AuthException {
-        UserCreateDto createDTO = new UserCreateDto();
-        BeanUtils.copyProperties(from, createDTO);
-        String userId = registerService.userRegister(createDTO);
+    public ApiResult<String> userRegister(@Valid @RequestBody UserRegisterFrom from) throws AuthException {
+        UserRegisterDto registerDto = new UserRegisterDto();
+        BeanUtils.copyProperties(from, registerDto);
+        String userId = registerService.userRegister(registerDto);
         return ApiResult.ok(userId);
     }
 

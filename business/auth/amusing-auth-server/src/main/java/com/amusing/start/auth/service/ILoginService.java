@@ -16,6 +16,7 @@ public interface ILoginService {
      *
      * @param loginDTO 用户登陆信息
      * @return Token信息
+     * @throws AuthException
      */
     TokenVo login(LoginDto loginDTO) throws AuthException;
 

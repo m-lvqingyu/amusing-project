@@ -1,6 +1,9 @@
 package com.amusing.start.map.service;
 
-import com.amusing.start.result.ApiResult;
+import com.amusing.start.map.exception.MapException;
+import com.amusing.start.map.vo.GeoCodeVo;
+
+import java.util.List;
 
 /**
  * Create By 2021/11/26
@@ -14,6 +17,7 @@ public interface IGaoDeGeoCodeService {
      *
      * @param address 地址
      * @return 地址--转化-->经纬度
+     * @throws MapException
      */
-    ApiResult gaoDeGeoCode(String address);
+    List<GeoCodeVo> gaoDeGeoCode(String address) throws MapException;
 }

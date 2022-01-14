@@ -19,8 +19,8 @@ public enum AuthCode implements ResultCode<AuthCode> {
     USER_INFORMATION_NOT_EXIST(405, "用户信息不存在"),
     USER_AMOUNT_UPDATE_ERROR(406, "用户账户信息更新失败"),
     USER_PHONE_EXISTS(407, "此用户名或手机号太受欢迎,请更换一个"),
-    IMEI_ERROR(408, "该账户已绑定其他设备。您可在原设备解绑后，继续使用服务。")
-    ;
+    IMEI_ERROR(408, "该账户已绑定其他设备。您可在原设备解绑后，继续使用服务。"),
+    USER_FROZEN_ERR(409, "该账户已被冻结");
 
     private final int code;
 
