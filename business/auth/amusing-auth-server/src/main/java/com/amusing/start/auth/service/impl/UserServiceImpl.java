@@ -9,6 +9,8 @@ import com.amusing.start.auth.service.IUserService;
 import com.amusing.start.code.CommCode;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
+import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -46,6 +48,7 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    @ShardingTransactionType(value = TransactionType.BASE)
     @Override
     public SysUserBase queryByUserId(String userId) throws AuthException {
         try {

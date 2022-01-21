@@ -1,15 +1,17 @@
 package com.amusing.start.auth.pojo;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.Date;
+import lombok.NoArgsConstructor;
 
 /**
  * @author lv.qingyu
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SysUserBase {
     /**
      * 主键

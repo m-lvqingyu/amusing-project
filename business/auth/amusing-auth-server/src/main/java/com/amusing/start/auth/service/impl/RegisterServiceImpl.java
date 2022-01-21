@@ -67,6 +67,11 @@ public class RegisterServiceImpl implements IRegisterService {
         Optional.ofNullable(result).filter(i -> i > AuthConstant.ZERO).orElseThrow(() -> new AuthException(AuthCode.USER_SAVE_ERROR));
         // 初始化用户账户信息
         String userId = userBase.getUserId();
+        try {
+            Thread.sleep(50000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         ApiResult<Boolean> initResult;
         try {
             initResult = userClient.init(userId);
