@@ -13,10 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SysUserBase {
-    /**
-     * 主键
-     */
-    private Long id;
 
     /**
      * 用户唯一ID

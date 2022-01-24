@@ -45,7 +45,7 @@ public interface IUserService {
      * @return 用户ID
      * @throws AuthException
      */
-    Long queryNotDelByNameOrPhone(String userName, String phone) throws AuthException;
+    String queryNotDelByNameOrPhone(String userName, String phone) throws AuthException;
 
     /**
      * 保存基础用户

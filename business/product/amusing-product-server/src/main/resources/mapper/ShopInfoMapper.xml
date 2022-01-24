@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.amusing.start.product.mapper.ShopInfoMapper">
     <resultMap id="BaseResultMap" type="com.amusing.start.product.pojo.ShopInfo">
-        <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="shop_id" jdbcType="VARCHAR" property="shopId"/>
         <result column="shop_name" jdbcType="VARCHAR" property="shopName"/>
         <result column="grade" jdbcType="BIT" property="grade"/>
@@ -14,12 +13,10 @@
         <result column="update_time" jdbcType="BIGINT" property="updateTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-        id, shop_id, shop_name, grade, `status`, is_del, create_by, create_time, update_by,
-        update_time
+        shop_id, shop_name, grade, `status`, is_del, create_by, create_time, update_by, update_time
     </sql>
 
-    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.amusing.start.product.pojo.ShopInfo"
-            useGeneratedKeys="true">
+    <insert id="insertSelective" parameterType="com.amusing.start.product.pojo.ShopInfo">
         insert into shop_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="shopId != null">
@@ -84,9 +81,6 @@
     <update id="updateByPrimaryKeySelective" parameterType="com.amusing.start.product.pojo.ShopInfo">
         update shop_info
         <set>
-            <if test="shopId != null">
-                shop_id = #{shopId,jdbcType=VARCHAR},
-            </if>
             <if test="shopName != null">
                 shop_name = #{shopName,jdbcType=VARCHAR},
             </if>
@@ -112,7 +106,7 @@
                 update_time = #{updateTime,jdbcType=BIGINT},
             </if>
         </set>
-        where id = #{id,jdbcType=BIGINT}
+        where shop_id = #{shopId,jdbcType=VARCHAR}
     </update>
 
     <select id="selectByShopId" resultMap="BaseResultMap">

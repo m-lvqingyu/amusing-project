@@ -8,6 +8,7 @@ import com.amusing.start.auth.pojo.SysUserBase;
 import com.amusing.start.auth.service.IUserService;
 import com.amusing.start.code.CommCode;
 import com.google.common.base.Throwables;
+import io.seata.spring.annotation.GlobalLock;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
 import org.apache.shardingsphere.transaction.core.TransactionType;
@@ -49,6 +50,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @ShardingTransactionType(value = TransactionType.BASE)
+    @GlobalLock
     @Override
     public SysUserBase queryByUserId(String userId) throws AuthException {
         try {
@@ -60,7 +62,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public Long queryNotDelByNameOrPhone(String userName, String phone) throws AuthException {
+    public String queryNotDelByNameOrPhone(String userName, String phone) throws AuthException {
         try {
             return sysUserBaseMapper.selectNotDelByNameOrPhone(userName, phone);
         } catch (Exception e) {

@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.amusing.start.user.mapper.UserAccountInfoMapper">
     <resultMap id="BaseResultMap" type="com.amusing.start.user.pojo.UserAccountInfo">
-        <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="user_id" jdbcType="VARCHAR" property="userId"/>
         <result column="main_amount" jdbcType="DECIMAL" property="mainAmount"/>
         <result column="give_amount" jdbcType="DECIMAL" property="giveAmount"/>
@@ -15,8 +14,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, user_id, main_amount, give_amount, frozen_amount, vip_level, create_by, create_time,
-        update_by, update_time
+        user_id, main_amount, give_amount, frozen_amount, vip_level, create_by, create_time, update_by, update_time
     </sql>
 
     <update id="updateMainAccount">
@@ -29,8 +27,7 @@
         give_amount = #{originalAmount}
     </update>
 
-    <insert id="insertSelective" keyColumn="id" keyProperty="id"
-            parameterType="com.amusing.start.user.pojo.UserAccountInfo" useGeneratedKeys="true">
+    <insert id="insertSelective" parameterType="com.amusing.start.user.pojo.UserAccountInfo">
         insert into user_account_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null">
@@ -95,9 +92,6 @@
     <update id="updateByPrimaryKeySelective" parameterType="com.amusing.start.user.pojo.UserAccountInfo">
         update user_account_info
         <set>
-            <if test="userId != null">
-                user_id = #{userId,jdbcType=VARCHAR},
-            </if>
             <if test="mainAmount != null">
                 main_amount = #{mainAmount,jdbcType=DECIMAL},
             </if>
@@ -123,7 +117,7 @@
                 update_time = #{updateTime,jdbcType=BIGINT},
             </if>
         </set>
-        where id = #{id,jdbcType=BIGINT}
+        where user_id = #{userId,jdbcType=VARCHAR}
     </update>
 
     <select id="selectByUserId" resultType="com.amusing.start.user.pojo.UserAccountInfo">
@@ -132,8 +126,8 @@
         from user_account_info where user_id = #{userId} limit 1;
     </select>
 
-    <select id="checkAmountIsExist" resultType="java.lang.Integer">
-        select id from user_account_info where user_id = #{userId} limit 1;
+    <select id="checkAmountIsExist" resultType="java.lang.String">
+        select user_id from user_account_info where user_id = #{userId} limit 1;
     </select>
 
 </mapper>

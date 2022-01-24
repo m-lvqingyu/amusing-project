@@ -48,7 +48,7 @@ public interface SysUserBaseMapper {
      * @param phone 手机号
      * @return 用户ID
      */
-    Long selectNotDelByPhone(@Param("phone") String phone);
+    String selectNotDelByPhone(@Param("phone") String phone);
 
     /**
      * 根据用户名，查询未删除的用户ID
@@ -56,7 +56,7 @@ public interface SysUserBaseMapper {
      * @param userName 用户名
      * @return 用户ID
      */
-    Long selectNotDelByName(@Param("userName") String userName);
+    String selectNotDelByName(@Param("userName") String userName);
 
     /**
      * 根据用户ID获取基础用户信息(有效)
@@ -73,7 +73,7 @@ public interface SysUserBaseMapper {
      * @param phone    手机号
      * @return 用户ID
      */
-    Long selectNotDelByNameOrPhone(@Param("userName") String userName, @Param("phone") String phone);
+    String selectNotDelByNameOrPhone(@Param("userName") String userName, @Param("phone") String phone);
 
     /**
      * 根据用户ID获取用户状态

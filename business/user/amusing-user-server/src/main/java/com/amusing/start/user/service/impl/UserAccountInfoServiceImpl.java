@@ -10,6 +10,7 @@ import com.amusing.start.user.pojo.UserAccountInfo;
 import com.amusing.start.user.service.IUserAccountInfoService;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -91,8 +92,8 @@ public class UserAccountInfoServiceImpl implements IUserAccountInfoService {
 
     @Override
     public boolean init(String userId) throws UserException {
-        Integer autoId = userAccountInfoMapper.checkAmountIsExist(userId);
-        if (autoId != null && autoId > UserConstant.ZERO) {
+        String autoId = userAccountInfoMapper.checkAmountIsExist(userId);
+        if (StringUtils.isNotEmpty(autoId)) {
             log.error("[user]-initAccount userId is exist! userId:{}", userId);
             throw new UserException(UserCode.INSERT_ERR);
         }

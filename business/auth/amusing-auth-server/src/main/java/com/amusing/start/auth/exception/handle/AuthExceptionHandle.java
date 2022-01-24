@@ -1,22 +1,22 @@
 package com.amusing.start.auth.exception.handle;
 
 import com.amusing.start.auth.exception.AuthException;
+import com.amusing.start.auth.exception.code.AuthCode;
 import com.amusing.start.code.CommCode;
-import com.amusing.start.code.ResultCode;
 import com.amusing.start.result.ApiResult;
-import org.springframework.validation.ObjectError;
+import io.seata.rm.datasource.exec.LockWaitTimeoutException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.List;
 
 /**
  * Create By 2021/8/28
  *
  * @author lvqingyu
  */
+@Slf4j
 @RestControllerAdvice
 public class AuthExceptionHandle {
 
@@ -29,8 +29,7 @@ public class AuthExceptionHandle {
     @ResponseBody
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ApiResult paramHandler(MethodArgumentNotValidException exception) {
-        List<ObjectError> errorList = exception.getBindingResult().getAllErrors();
-        String message = errorList.get(0).getDefaultMessage();
+        exception.getBindingResult().getAllErrors().forEach(i -> log.error("[auth]-paramHandler msg:{}", i.getDefaultMessage()));
         return ApiResult.result(CommCode.PARAMETER_EXCEPTION);
     }
 
@@ -42,9 +41,8 @@ public class AuthExceptionHandle {
      */
     @ResponseBody
     @ExceptionHandler(value = AuthException.class)
-    public ApiResult authHandler(AuthException exception) {
-        ResultCode authCode = exception.getAuthCode();
-        return ApiResult.result(authCode);
+    public ApiResult<AuthCode> authHandler(AuthException exception) {
+        return ApiResult.result(exception.getAuthCode());
     }
-
 }
+

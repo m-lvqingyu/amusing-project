@@ -10,9 +10,11 @@ spring:
       discovery:
         # 注册中心地址
         server-addr: localhost:8848
+        namespace: dev
       config:
         # 配置中心地址
         server-addr: localhost:8848
+        namespace: dev
     sentinel:
       transport:
         dashboard: localhost:8080

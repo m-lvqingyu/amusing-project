@@ -15,6 +15,7 @@ import com.amusing.start.client.api.UserClient;
 import com.amusing.start.result.ApiResult;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
 import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +57,8 @@ public class RegisterServiceImpl implements IRegisterService {
     @Override
     public String userRegister(UserRegisterDto registerDto) throws AuthException {
         // 校验用户名或手机号是否已经存在
-        Long queryUserId = userService.queryNotDelByNameOrPhone(registerDto.getUserName(), registerDto.getPhone());
-        if (queryUserId != null && queryUserId > 0) {
+        String queryUserId = userService.queryNotDelByNameOrPhone(registerDto.getUserName(), registerDto.getPhone());
+        if (StringUtils.isNotEmpty(queryUserId)) {
             log.warn("[auth]-userRegister username:{} or phone:{} is exist!", registerDto.getUserName(), registerDto.getPhone());
             throw new AuthException(AuthCode.USER_PHONE_EXISTS);
         }
@@ -67,11 +68,6 @@ public class RegisterServiceImpl implements IRegisterService {
         Optional.ofNullable(result).filter(i -> i > AuthConstant.ZERO).orElseThrow(() -> new AuthException(AuthCode.USER_SAVE_ERROR));
         // 初始化用户账户信息
         String userId = userBase.getUserId();
-        try {
-            Thread.sleep(50000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         ApiResult<Boolean> initResult;
         try {
             initResult = userClient.init(userId);

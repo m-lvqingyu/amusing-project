@@ -66,6 +66,6 @@ public interface UserAccountInfoMapper {
      * @param userId 用户ID
      * @return 用户自增ID
      */
-    Integer checkAmountIsExist(@Param("userId") String userId);
+    String checkAmountIsExist(@Param("userId") String userId);
 
 }

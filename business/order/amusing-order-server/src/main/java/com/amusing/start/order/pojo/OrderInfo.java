@@ -12,10 +12,6 @@ import java.util.Date;
 @Data
 @Builder
 public class OrderInfo {
-    /**
-     * 主键ID
-     */
-    private Long id;
 
     /**
      * 订单编号

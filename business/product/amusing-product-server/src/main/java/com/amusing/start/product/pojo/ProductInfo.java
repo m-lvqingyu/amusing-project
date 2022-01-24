@@ -15,10 +15,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductInfo {
-    /**
-     * 主键
-     */
-    private Long id;
 
     /**
      * 商铺ID
