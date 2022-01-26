@@ -15,7 +15,6 @@ import com.amusing.start.result.ApiResult;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,12 +53,13 @@ public class OrderOutwardController extends BaseController {
      * @throws OrderException
      */
     @GetMapping("v1/detail/{id}")
-    public ApiResult<OrderDetailVO> get(@PathVariable("id") String id) throws OrderException {
-        Optional.ofNullable(id).filter(i -> StringUtils.isNotEmpty(id)).orElseThrow(() -> new OrderException(CommCode.PARAMETER_EXCEPTION));
-
+    public ApiResult<OrderDetailVO> detail(@PathVariable("id") String id) throws OrderException {
+        // 请求参数校验
+        Optional.ofNullable(id).filter(StringUtils::isNotEmpty).orElseThrow(() -> new OrderException(CommCode.PARAMETER_EXCEPTION));
+        // 用户身份信息校验
         String userId = getUserId();
-        Optional.ofNullable(userId).filter(i -> StringUtils.isNotEmpty(userId)).orElseThrow(() -> new OrderException(CommCode.UNAUTHORIZED));
-
+        Optional.ofNullable(userId).filter(StringUtils::isNotEmpty).orElseThrow(() -> new OrderException(CommCode.UNAUTHORIZED));
+        // 获取订单信息
         OrderDetailVO orderDetailVO = orderService.get(id, userId);
         return ApiResult.ok(orderDetailVO);
     }
@@ -75,33 +75,9 @@ public class OrderOutwardController extends BaseController {
         String userId = getUserId();
         Optional.ofNullable(userId).filter(StringUtils::isNotEmpty).orElseThrow(() -> new OrderException(CommCode.UNAUTHORIZED));
 
-        Optional<OrderCreateDto> optional = Optional.ofNullable(from).map(i -> {
-            OrderCreateDto orderCreateDto = new OrderCreateDto();
-            BeanUtils.copyProperties(i, orderCreateDto);
-            List<OrderShopDto> shopDtoList = new ArrayList<>();
+        OrderCreateDto orderCreateDto = convert(userId, from);
+        Optional.ofNullable(orderCreateDto).orElseThrow(() -> new OrderException(CommCode.PARAMETER_EXCEPTION));
 
-            i.getShopFromList().forEach(x -> {
-                String shopsId = x.getShopsId();
-                OrderShopDto orderShopDto = new OrderShopDto();
-                orderShopDto.setShopsId(shopsId);
-                List<OrderProductDto> productDtoList = new ArrayList<>();
-
-                x.getProductFromList().forEach(c -> {
-                    productDtoList.add(new OrderProductDto(c.getProductId(), c.getProductNum()));
-                });
-                orderShopDto.setProductDtoList(productDtoList);
-                shopDtoList.add(orderShopDto);
-            });
-            orderCreateDto.setShopDtoList(shopDtoList);
-            return orderCreateDto;
-        });
-
-        if (!optional.isPresent()) {
-            return ApiResult.result(CommCode.PARAMETER_EXCEPTION);
-        }
-
-        OrderCreateDto orderCreateDto = optional.get();
-        orderCreateDto.setReserveUserId(userId);
         String orderId = null;
         try {
             orderId = orderCreateService.create(orderCreateDto);
@@ -112,4 +88,48 @@ public class OrderOutwardController extends BaseController {
         return ApiResult.ok(orderId);
     }
 
+    private OrderCreateDto convert(String reserveUserId, OrderCreateFrom from) {
+        Optional<OrderCreateDto> optional = Optional.ofNullable(from).map(item -> {
+            OrderCreateDto orderCreateDto = setUserProps(reserveUserId, item);
+            List<OrderShopDto> shopDtoList = setShopProps(item);
+            orderCreateDto.setShopDtoList(shopDtoList);
+            return orderCreateDto;
+        });
+        return optional.orElse(null);
+    }
+
+    /**
+     * 设置用户信息
+     *
+     * @param reserveUserId 下单人ID
+     * @param item          订单信息
+     * @return
+     */
+    private OrderCreateDto setUserProps(String reserveUserId, OrderCreateFrom item) {
+        OrderCreateDto orderCreateDto = new OrderCreateDto();
+        orderCreateDto.setReserveUserId(reserveUserId);
+        orderCreateDto.setReceiverUserId(item.getReceiverUserId());
+        orderCreateDto.setReceiverAddressId(item.getReceiverAddressId());
+        return orderCreateDto;
+    }
+
+    /**
+     * 设置商品信息
+     *
+     * @param item 商品信息
+     * @return
+     */
+    private List<OrderShopDto> setShopProps(OrderCreateFrom item) {
+        List<OrderShopDto> shopDtoList = new ArrayList<>();
+        item.getShopFromList().forEach(shopDetails -> {
+            OrderShopDto orderShopDto = new OrderShopDto();
+            orderShopDto.setShopsId(shopDetails.getShopsId());
+            List<OrderProductDto> productDtoList = new ArrayList<>();
+            shopDetails.getProductFromList().forEach(productDetail ->
+                    productDtoList.add(new OrderProductDto(productDetail.getProductId(), productDetail.getProductNum())));
+            orderShopDto.setProductDtoList(productDtoList);
+            shopDtoList.add(orderShopDto);
+        });
+        return shopDtoList;
+    }
 }

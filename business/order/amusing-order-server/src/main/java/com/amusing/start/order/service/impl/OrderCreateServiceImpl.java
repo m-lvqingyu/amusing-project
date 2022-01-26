@@ -180,21 +180,13 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
      * @throws OrderException
      */
     private void checkoutOrderAccount(BigDecimal totalAmount, UserAccountOutput userAccount) throws OrderException {
-        BigDecimal mainAmount = Optional.ofNullable(userAccount)
-                .map(UserAccountOutput::getMainAmount).orElse(BigDecimal.ZERO);
-
-        BigDecimal giveAmount = Optional.ofNullable(userAccount)
-                .map(UserAccountOutput::getGiveAmount).orElse(BigDecimal.ZERO);
-
-        BigDecimal frozenAmount = Optional.ofNullable(userAccount)
-                .map(UserAccountOutput::getFrozenAmount).orElse(BigDecimal.ZERO);
-
+        BigDecimal mainAmount = Optional.of(userAccount).map(UserAccountOutput::getMainAmount).orElse(BigDecimal.ZERO);
+        BigDecimal giveAmount = Optional.of(userAccount).map(UserAccountOutput::getGiveAmount).orElse(BigDecimal.ZERO);
+        BigDecimal frozenAmount = Optional.of(userAccount).map(UserAccountOutput::getFrozenAmount).orElse(BigDecimal.ZERO);
         BigDecimal userAmount = mainAmount.add(giveAmount).subtract(frozenAmount);
-
         if (userAmount.compareTo(totalAmount) < OrderConstant.ZERO) {
-            String userId = Optional.ofNullable(userAccount).map(UserAccountOutput::getUserId).orElse("");
             log.warn("[order]-create userAmount insufficient balance！userId:{}, userAmount:{}, totalAmount:{}",
-                    userId,
+                    userAccount.getUserId(),
                     userAmount,
                     totalAmount);
             throw new OrderException(OrderCode.INSUFFICIENT_BALANCE);

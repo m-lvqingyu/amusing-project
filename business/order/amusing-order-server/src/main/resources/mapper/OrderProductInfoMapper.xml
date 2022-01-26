@@ -24,12 +24,10 @@
         from order_product_info where order_no = #{orderNo} and shops_id = #{shopsId}
     </select>
 
-    <insert id="insertSelective" parameterType="com.amusing.start.order.pojo.OrderProductInfo">
+    <insert id="insertSelective" keyProperty="id" keyColumn="id"
+            parameterType="com.amusing.start.order.pojo.OrderProductInfo" useGeneratedKeys="true">
         insert into order_product_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
             <if test="orderNo != null">
                 order_no,
             </if>
@@ -56,9 +54,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=BIGINT},
-            </if>
             <if test="orderNo != null">
                 #{orderNo,jdbcType=VARCHAR},
             </if>

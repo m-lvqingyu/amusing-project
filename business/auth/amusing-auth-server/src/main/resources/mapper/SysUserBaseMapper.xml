@@ -164,7 +164,7 @@
     <select id="selectValidByUserId" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from sys_user_base where user_id = #{userId} and status = 1 and is_del = 1 limit 1 for update
+        from sys_user_base where user_id = #{userId} and status = 1 and is_del = 1 limit 1
     </select>
 
     <select id="selectNotDelByNameOrPhone" resultType="java.lang.String">

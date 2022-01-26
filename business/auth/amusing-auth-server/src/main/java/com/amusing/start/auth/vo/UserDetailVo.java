@@ -30,10 +30,5 @@ public class UserDetailVo {
      * 来源
      */
     private Integer sources;
-
-    /**
-     * imei
-     */
-    private String imei;
     
 }
