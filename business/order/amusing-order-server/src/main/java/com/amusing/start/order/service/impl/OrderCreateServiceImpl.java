@@ -2,11 +2,13 @@ package com.amusing.start.order.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
+import com.amusing.start.client.input.ShopProductIdInput;
 import com.amusing.start.client.output.ProductOutput;
-import com.amusing.start.client.output.ShopOutput;
 import com.amusing.start.client.output.UserAccountOutput;
+import com.amusing.start.code.CommCode;
 import com.amusing.start.order.constant.OrderConstant;
 import com.amusing.start.order.dto.create.OrderCreateDto;
+import com.amusing.start.order.dto.create.OrderProductDto;
 import com.amusing.start.order.dto.create.OrderShopDto;
 import com.amusing.start.order.enums.OrderCode;
 import com.amusing.start.order.enums.OrderStatus;
@@ -15,10 +17,8 @@ import com.amusing.start.order.exception.OrderException;
 import com.amusing.start.order.manager.InwardServletManager;
 import com.amusing.start.order.mapper.OrderInfoMapper;
 import com.amusing.start.order.mapper.OrderProductInfoMapper;
-import com.amusing.start.order.mapper.OrderShopsInfoMapper;
 import com.amusing.start.order.pojo.OrderInfo;
 import com.amusing.start.order.pojo.OrderProductInfo;
-import com.amusing.start.order.pojo.OrderShopsInfo;
 import com.amusing.start.order.service.IOrderCreateService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
@@ -29,7 +29,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author lv.QingYu
@@ -43,7 +45,6 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
 
     private final InwardServletManager inwardServletManager;
     private final OrderInfoMapper orderInfoMapper;
-    private final OrderShopsInfoMapper orderShopsInfoMapper;
     private final OrderProductInfoMapper orderProductInfoMapper;
 
     @Value("${order.worker}")
@@ -54,11 +55,9 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
     @Autowired
     public OrderCreateServiceImpl(InwardServletManager inwardServletManager,
                                   OrderInfoMapper orderInfoMapper,
-                                  OrderShopsInfoMapper orderShopsInfoMapper,
                                   OrderProductInfoMapper orderProductInfoMapper) {
         this.inwardServletManager = inwardServletManager;
         this.orderInfoMapper = orderInfoMapper;
-        this.orderShopsInfoMapper = orderShopsInfoMapper;
         this.orderProductInfoMapper = orderProductInfoMapper;
     }
 
@@ -73,64 +72,36 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
     @ShardingTransactionType(TransactionType.BASE)
     @Override
     public String create(OrderCreateDto orderCreateDto) throws OrderException {
-        String reserveUserId = orderCreateDto.getReserveUserId();
-        // 获取预定人账户信息
-        UserAccountOutput userAccount = inwardServletManager.getUserAccountDetails(reserveUserId);
+        // 1.获取预定人账户信息
+        UserAccountOutput userAccount = inwardServletManager.getUserAccountDetails(orderCreateDto.getReserveUserId());
         Optional.ofNullable(userAccount).orElseThrow(() -> new OrderException(OrderCode.USER_NOT_FOUND));
-
-        // 获取商品信息及单价
-        Set<String> shopIds = new HashSet<>();
-        Set<String> productIds = new HashSet<>();
-        List<OrderShopDto> shopDtoList = orderCreateDto.getShopDtoList();
-        shopDtoList.forEach(i -> {
-            shopIds.add(i.getShopsId());
-            i.getProductDtoList().forEach(product -> {
-                productIds.add(product.getProductId());
-            });
-        });
-        Map<String, ShopOutput> shopDetails = inwardServletManager.getShopDetails(reserveUserId, shopIds);
-        Optional.ofNullable(shopDetails).filter(i -> i.size() > OrderConstant.ZERO).orElseThrow(() -> new OrderException(OrderCode.PRODUCT_NOT_FOUND));
-        Map<String, ProductOutput> productDetails = inwardServletManager.getProductDetails(reserveUserId, productIds);
-        Optional.ofNullable(productDetails).filter(i -> i.size() > OrderConstant.ZERO).orElseThrow(() -> new OrderException(OrderCode.PRODUCT_NOT_FOUND));
-
-        return doSaveOrder(orderCreateDto, userAccount, shopDetails, productDetails);
+        // 2.获取商品信息及单价
+        List<ProductOutput> productsDetails = getProductsDetails(orderCreateDto.getShopDtoList());
+        Optional.ofNullable(productsDetails).filter(i -> i.size() > OrderConstant.ZERO).orElseThrow(() -> new OrderException(OrderCode.PRODUCT_NOT_FOUND));
+        // 3.保存订单相关信息
+        return doSaveOrder(orderCreateDto, userAccount, productsDetails);
     }
 
-    public String doSaveOrder(OrderCreateDto orderCreateDto,
-                              UserAccountOutput userAccount,
-                              Map<String, ShopOutput> shopDetails,
-                              Map<String, ProductOutput> productDetails) throws OrderException {
+    /**
+     * 保存订单
+     *
+     * @param orderCreateDto  订单信息
+     * @param userAccount     账户详情
+     * @param productsDetails 商品详情
+     * @return
+     * @throws OrderException
+     */
+    public String doSaveOrder(OrderCreateDto orderCreateDto, UserAccountOutput userAccount, List<ProductOutput> productsDetails) throws OrderException {
         Snowflake snowflake = IdUtil.getSnowflake(orderWorker, orderDataCenter);
         String orderNo = snowflake.nextIdStr();
-        List<OrderShopsInfo> shopsInfoList = new ArrayList<>();
-        List<OrderProductInfo> productInfoList = new ArrayList<>();
-        orderCreateDto.getShopDtoList().forEach(i -> {
-            String shopsId = i.getShopsId();
-            ShopOutput shopOutput = shopDetails.get(shopsId);
-            OrderShopsInfo shopsInfo = OrderShopsInfo.builder().orderNo(orderNo).shopsId(shopOutput.getShopId()).shopsName(shopOutput.getShopName()).build();
-            shopsInfoList.add(shopsInfo);
-            i.getProductDtoList().forEach(product -> {
-                String productId = product.getProductId();
-                Integer productNum = product.getProductNum();
-                ProductOutput productOutput = productDetails.get(productId);
-                BigDecimal price = productOutput.getPrice();
-                BigDecimal amount = new BigDecimal(productNum).multiply(price);
-                OrderProductInfo productInfo = OrderProductInfo.builder()
-                        .orderNo(orderNo)
-                        .shopsId(shopsId)
-                        .productId(productId)
-                        .productName(productOutput.getProductName())
-                        .priceId(productOutput.getPriceId())
-                        .productPrice(price)
-                        .productNum(productNum)
-                        .amount(amount)
-                        .build();
-                productInfoList.add(productInfo);
-            });
-
-        });
-
+        // 获得订单-商品关系集合
+        List<OrderShopDto> shopDtoList = orderCreateDto.getShopDtoList();
+        List<OrderProductInfo> productInfoList = buildOrderProductInfo(orderNo, shopDtoList, productsDetails);
+        // 获得订单总金额
         BigDecimal totalAmount = productInfoList.stream().map(OrderProductInfo::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        // 判断账户金额是否足够
+        checkoutOrderAccount(totalAmount, userAccount);
+        // 构建订单信息
         Long currentTime = System.currentTimeMillis();
         OrderInfo orderInfo = OrderInfo.builder()
                 .orderNo(orderNo)
@@ -148,16 +119,8 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
                 .updateBy(orderCreateDto.getReserveUserId())
                 .updateTime(currentTime)
                 .build();
-        checkoutOrderAccount(totalAmount, userAccount);
-        handleSaveOrder(orderInfo, shopsInfoList, productInfoList);
-        return orderNo;
-    }
-
-    public void handleSaveOrder(OrderInfo orderInfo, List<OrderShopsInfo> shopsInfoList, List<OrderProductInfo> productInfoList) throws OrderException {
+        // 保存订单-口库存-扣余额
         orderInfoMapper.insertSelective(orderInfo);
-        for (OrderShopsInfo orderShopsInfo : shopsInfoList) {
-            orderShopsInfoMapper.insertSelective(orderShopsInfo);
-        }
         for (OrderProductInfo orderProductInfo : productInfoList) {
             orderProductInfoMapper.insertSelective(orderProductInfo);
         }
@@ -169,6 +132,68 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
         if (!result) {
             throw new OrderException(OrderCode.UNABLE_PROVIDE_SERVICE);
         }
+        return orderNo;
+    }
+
+    private List<OrderProductInfo> buildOrderProductInfo(String orderNo, List<OrderShopDto> shopDtoList, List<ProductOutput> productsDetails) throws OrderException {
+        List<OrderProductInfo> productInfoList = new ArrayList<>();
+        for (OrderShopDto shopDto : shopDtoList) {
+            String shopsId = shopDto.getShopsId();
+            List<OrderProductDto> productDtoList = shopDto.getProductDtoList();
+            for (OrderProductDto productDto : productDtoList) {
+                String productId = productDto.getProductId();
+                ProductOutput currentProductDetail = null;
+                for (ProductOutput output : productsDetails) {
+                    String currentShopId = output.getShopId();
+                    String currentProductId = output.getProductId();
+                    if (shopsId.equals(currentShopId) && productId.equals(currentProductId)) {
+                        currentProductDetail = output;
+                    }
+                }
+                if (currentProductDetail == null) {
+                    throw new OrderException(OrderCode.PRODUCT_NOT_FOUND);
+                }
+                Integer productNum = productDto.getProductNum();
+                if (productNum == null || productNum <= OrderConstant.ZERO) {
+                    throw new OrderException(CommCode.PARAMETER_EXCEPTION);
+                }
+                BigDecimal price = currentProductDetail.getPrice();
+                if (price == null || price.compareTo(BigDecimal.ZERO) < OrderConstant.ZERO) {
+                    throw new OrderException(OrderCode.PRODUCT_NOT_FOUND);
+                }
+                BigDecimal amount = new BigDecimal(productNum).multiply(price);
+                OrderProductInfo productInfo = OrderProductInfo.builder()
+                        .orderNo(orderNo)
+                        .shopsId(shopsId)
+                        .shopsName(currentProductDetail.getShopName())
+                        .productId(productId)
+                        .productName(currentProductDetail.getProductName())
+                        .priceId(currentProductDetail.getPriceId())
+                        .productPrice(price)
+                        .productNum(productNum)
+                        .amount(amount)
+                        .build();
+                productInfoList.add(productInfo);
+            }
+        }
+        return productInfoList;
+    }
+
+    /**
+     * 获取商品信息
+     *
+     * @param shopDtoList 商品ID
+     * @return
+     */
+    private List<ProductOutput> getProductsDetails(List<OrderShopDto> shopDtoList) {
+        List<ShopProductIdInput> inputList = new ArrayList<>();
+        shopDtoList.forEach(i -> {
+            String shopsId = i.getShopsId();
+            i.getProductDtoList().forEach(product -> {
+                inputList.add(ShopProductIdInput.builder().shopId(shopsId).productId(product.getProductId()).build());
+            });
+        });
+        return inwardServletManager.getProductDetails(inputList);
     }
 
 
@@ -185,10 +210,8 @@ public class OrderCreateServiceImpl implements IOrderCreateService {
         BigDecimal frozenAmount = Optional.of(userAccount).map(UserAccountOutput::getFrozenAmount).orElse(BigDecimal.ZERO);
         BigDecimal userAmount = mainAmount.add(giveAmount).subtract(frozenAmount);
         if (userAmount.compareTo(totalAmount) < OrderConstant.ZERO) {
-            log.warn("[order]-create userAmount insufficient balance！userId:{}, userAmount:{}, totalAmount:{}",
-                    userAccount.getUserId(),
-                    userAmount,
-                    totalAmount);
+            String userId = userAccount.getUserId();
+            log.warn("[order]-create userAmount insufficient balance！userId:{}, userAmount:{}, totalAmount:{}", userId, userAmount, totalAmount);
             throw new OrderException(OrderCode.INSUFFICIENT_BALANCE);
         }
     }

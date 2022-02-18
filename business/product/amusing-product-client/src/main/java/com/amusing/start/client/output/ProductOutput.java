@@ -22,7 +22,12 @@ public class ProductOutput {
      * 商铺ID
      */
     private String shopId;
-    
+
+    /**
+     * 商铺名称
+     */
+    private String shopName;
+
     /**
      * 商品ID
      */

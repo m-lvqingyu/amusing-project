@@ -2,9 +2,9 @@ package com.amusing.start.product.controller.inward;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.amusing.start.client.api.ProductClient;
+import com.amusing.start.client.input.ShopProductIdInput;
 import com.amusing.start.client.input.StockDeductionInput;
 import com.amusing.start.client.output.ProductOutput;
-import com.amusing.start.client.output.ShopOutput;
 import com.amusing.start.product.exception.ProductException;
 import com.amusing.start.product.service.IProductService;
 import com.google.common.base.Throwables;
@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Create By 2021/10/23
@@ -39,9 +37,7 @@ public class ProductInwardController implements ProductClient {
             return false;
         }
 
-        long count = inputs.stream()
-                .filter(i -> StringUtils.isNotEmpty(i.getProductId()) && i.getProductNum() != null && i.getProductNum() > 0)
-                .count();
+        long count = inputs.stream().filter(i -> StringUtils.isNotEmpty(i.getProductId()) && i.getProductNum() != null && i.getProductNum() > 0).count();
         if (inputs.size() != count) {
             return false;
         }
@@ -55,13 +51,8 @@ public class ProductInwardController implements ProductClient {
     }
 
     @Override
-    public Map<String, ProductOutput> getProductDetails(Set<String> productIds) {
-        return productService.getProductDetails(productIds);
-    }
-
-    @Override
-    public Map<String, ShopOutput> getShopDetails(Set<String> shopIds) {
-        return productService.getShopDetails(shopIds);
+    public List<ProductOutput> getProductDetails(List<ShopProductIdInput> ids) {
+        return productService.getProductDetails(ids);
     }
 
 

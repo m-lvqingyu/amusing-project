@@ -1,9 +1,9 @@
 package com.amusing.start.product.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import com.amusing.start.client.input.ShopProductIdInput;
 import com.amusing.start.client.input.StockDeductionInput;
 import com.amusing.start.client.output.ProductOutput;
-import com.amusing.start.client.output.ShopOutput;
 import com.amusing.start.code.CommCode;
 import com.amusing.start.product.constant.ProductConstant;
 import com.amusing.start.product.dto.create.ProductCreateDto;
@@ -16,7 +16,6 @@ import com.amusing.start.product.mapper.ProductPriceInfoMapper;
 import com.amusing.start.product.mapper.ShopInfoMapper;
 import com.amusing.start.product.pojo.ProductInfo;
 import com.amusing.start.product.pojo.ProductPriceInfo;
-import com.amusing.start.product.pojo.ShopInfo;
 import com.amusing.start.product.service.IProductService;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Create By 2021/10/23
@@ -98,32 +99,16 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public Map<String, ProductOutput> getProductDetails(Set<String> productIds) {
-        List<ProductInfo> productInfoList = productInfoMapper.getDetailsByIds(productIds);
-        Map<String, ProductOutput> result = new HashMap<>();
-        Optional.ofNullable(productInfoList).ifPresent(list -> {
-            list.forEach(i -> {
-                ProductPriceInfo priceInfo = productPriceInfoMapper.selectLastRecordByProductId(i.getProductId());
-                Optional.ofNullable(priceInfo).ifPresent(info -> {
-                    ProductOutput output = ProductOutput.builder().shopId(i.getShopId()).productId(i.getProductId()).productName(i.getProductName()).productStock(i.getProductStock()).priceId(info.getPriceId()).price(info.getPrice()).build();
-                    result.put(i.getProductId(), output);
-                });
-            });
+    public List<ProductOutput> getProductDetails(List<ShopProductIdInput> ids) {
+        List<ProductOutput> result = new ArrayList<>();
+        ids.forEach(i -> {
+            ProductOutput output = productInfoMapper.getDetailsById(i.getShopId(), i.getProductId());
+            if (output != null) {
+                result.add(output);
+            }
         });
         return result;
     }
 
-    @Override
-    public Map<String, ShopOutput> getShopDetails(Set<String> shopIds) {
-        List<ShopInfo> shopInfoList = shopInfoMapper.getDetailsByIds(shopIds);
-        Map<String, ShopOutput> result = new HashMap<>();
-        Optional.ofNullable(shopInfoList).ifPresent(list -> {
-            list.forEach(i -> {
-                ShopOutput shopOutput = ShopOutput.builder().shopId(i.getShopId()).shopName(i.getShopName()).grade(i.getGrade()).build();
-                result.put(i.getShopId(), shopOutput);
-            });
-        });
-        return result;
-    }
 
 }

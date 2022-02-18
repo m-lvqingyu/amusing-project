@@ -27,6 +27,11 @@ public class OrderProductInfo {
     private String shopsId;
 
     /**
+     * 商铺名称
+     */
+    private String shopsName;
+
+    /**
      * 商品ID
      */
     private String productId;

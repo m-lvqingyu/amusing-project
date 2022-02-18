@@ -2,10 +2,10 @@ package com.amusing.start.order.manager;
 
 import com.amusing.start.client.api.ProductClient;
 import com.amusing.start.client.api.UserClient;
+import com.amusing.start.client.input.ShopProductIdInput;
 import com.amusing.start.client.input.StockDeductionInput;
 import com.amusing.start.client.input.UserSettlementInput;
 import com.amusing.start.client.output.ProductOutput;
-import com.amusing.start.client.output.ShopOutput;
 import com.amusing.start.client.output.UserAccountOutput;
 import com.amusing.start.order.exception.OrderException;
 import com.amusing.start.order.pojo.OrderProductInfo;
@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Administrator
@@ -57,33 +55,15 @@ public class InwardServletManager {
     /**
      * 获取商品信息
      *
-     * @param reserveUserId 预定人ID
-     * @param productIds    商品ID集合
+     * @param inputList 商品ID集合
      * @return
      */
-    public Map<String, ProductOutput> getProductDetails(String reserveUserId, Set<String> productIds) {
-        Map<String, ProductOutput> result = null;
+    public List<ProductOutput> getProductDetails(List<ShopProductIdInput> inputList) {
+        List<ProductOutput> result = null;
         try {
-            result = productClient.getProductDetails(productIds);
+            result = productClient.getProductDetails(inputList);
         } catch (Exception e) {
-            log.error("[order]-create getProductDetails err! reserveUserId:{}, param:{} , msg:{}", reserveUserId, productIds, Throwables.getStackTraceAsString(e));
-        }
-        return result;
-    }
-
-    /**
-     * 获取商铺信息集合
-     *
-     * @param reserveUserId 预定人ID
-     * @param shopIds       商铺ID集合
-     * @return
-     */
-    public Map<String, ShopOutput> getShopDetails(String reserveUserId, Set<String> shopIds) {
-        Map<String, ShopOutput> result = null;
-        try {
-            result = productClient.getShopDetails(shopIds);
-        } catch (Exception e) {
-            log.error("[order]-create getShopDetails err! reserveUserId:{}, param:{} , msg:{}", reserveUserId, shopIds, Throwables.getStackTraceAsString(e));
+            log.error("[order]-create getProductDetails err! param:{}, msg:{}", inputList, Throwables.getStackTraceAsString(e));
         }
         return result;
     }
