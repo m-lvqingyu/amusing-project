@@ -1,17 +1,25 @@
 package com.amusing.start.order.pojo;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
- * @author
+ * @author 订单信息
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderInfo {
+
+    /**
+     * 主键ID
+     */
+    private Long id;
 
     /**
      * 订单编号
@@ -21,17 +29,12 @@ public class OrderInfo {
     /**
      * 预定人ID
      */
-    private String reserveUserId;
+    private String reserveId;
 
     /**
      * 收件人ID
      */
-    private String receivingUserId;
-
-    /**
-     * 运费
-     */
-    private BigDecimal freightAmount;
+    private String consigneeId;
 
     /**
      * 订单总金额
@@ -39,14 +42,19 @@ public class OrderInfo {
     private BigDecimal totalAmount;
 
     /**
+     * 运费
+     */
+    private BigDecimal freightAmount;
+
+    /**
      * 优惠券减免总金额
      */
-    private BigDecimal totalCouponAmount;
+    private BigDecimal couponAmount;
 
     /**
      * 活动减免总金额
      */
-    private BigDecimal totalActivityAmount;
+    private BigDecimal activityAmount;
 
     /**
      * 订单状态
@@ -56,7 +64,7 @@ public class OrderInfo {
     /**
      * 是否包邮
      */
-    private Integer freeFreight;
+    private Integer isFreight;
 
     /**
      * 已评价
@@ -69,14 +77,14 @@ public class OrderInfo {
     private String createBy;
 
     /**
-     * 创建时间
-     */
-    private Long createTime;
-
-    /**
      * 更新人
      */
     private String updateBy;
+
+    /**
+     * 创建时间
+     */
+    private Long createTime;
 
     /**
      * 更新时间

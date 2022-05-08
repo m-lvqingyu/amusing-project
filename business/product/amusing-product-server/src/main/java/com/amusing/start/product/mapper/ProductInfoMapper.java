@@ -59,11 +59,14 @@ public interface ProductInfoMapper {
     /**
      * 根据商品ID，获取商品信息
      *
-     * @param shopId    商铺ID
      * @param productId 商品ID
      * @return
      */
-    ProductOutput getDetailsById(@Param("shopId") String shopId, @Param("productId") String productId);
+    ProductOutput getDetailsById(@Param("productId") String productId);
+
+    List<ProductInfo> getAll();
+
+    ProductInfo getById(@Param("productId") String productId);
 
 
 }

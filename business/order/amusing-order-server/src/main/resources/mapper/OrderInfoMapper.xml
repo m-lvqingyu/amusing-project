@@ -2,64 +2,58 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.amusing.start.order.mapper.OrderInfoMapper">
   <resultMap id="BaseResultMap" type="com.amusing.start.order.pojo.OrderInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
-    <result column="reserve_user_id" jdbcType="VARCHAR" property="reserveUserId" />
-    <result column="receiving_user_id" jdbcType="VARCHAR" property="receivingUserId" />
-    <result column="freight_amount" jdbcType="DECIMAL" property="freightAmount" />
+    <result column="reserve_id" jdbcType="VARCHAR" property="reserveId" />
+    <result column="consignee_id" jdbcType="VARCHAR" property="consigneeId" />
     <result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
-    <result column="total_coupon_amount" jdbcType="DECIMAL" property="totalCouponAmount" />
-    <result column="total_activity_amount" jdbcType="DECIMAL" property="totalActivityAmount" />
+    <result column="freight_amount" jdbcType="DECIMAL" property="freightAmount" />
+    <result column="coupon_amount" jdbcType="DECIMAL" property="couponAmount" />
+    <result column="activity_amount" jdbcType="DECIMAL" property="activityAmount" />
     <result column="status" jdbcType="BIT" property="status" />
-    <result column="free_freight" jdbcType="BIT" property="freeFreight" />
+    <result column="is_freight" jdbcType="BIT" property="isFreight" />
     <result column="is_evaluate" jdbcType="BIT" property="isEvaluate" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
-    <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
 
   <sql id="Base_Column_List">
-    order_no, reserve_user_id, receiving_user_id, freight_amount, total_amount, total_coupon_amount,
-    total_activity_amount, `status`, free_freight, is_evaluate, create_by, create_time, 
-    update_by, update_time
+    id, order_no, reserve_id, consignee_id, total_amount, freight_amount, coupon_amount,
+    activity_amount, `status`, is_freight, is_evaluate, create_by, update_by, create_time, 
+    update_time
   </sql>
 
-  <select id="selectOrderStatus" resultType="java.lang.Integer">
-    select status from order_info where order_no = #{orderNo} limit 1;
-  </select>
-
-  <select id="selectOrderNoAndUserId" resultType="com.amusing.start.order.pojo.OrderInfo">
-    select
-    <include refid="Base_Column_List"/>
-    from order_info where order_no = #{orderNo} and reserve_user_id = #{userId}
-  </select>
-
-  <insert id="insertSelective" parameterType="com.amusing.start.order.pojo.OrderInfo">
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.amusing.start.order.pojo.OrderInfo" useGeneratedKeys="true">
     insert into order_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="orderNo != null">
         order_no,
       </if>
-      <if test="reserveUserId != null">
-        reserve_user_id,
+      <if test="reserveId != null">
+        reserve_id,
       </if>
-      <if test="freightAmount != null">
-        freight_amount,
+      <if test="consigneeId != null">
+        consignee_id,
       </if>
       <if test="totalAmount != null">
         total_amount,
       </if>
-      <if test="totalCouponAmount != null">
-        total_coupon_amount,
+      <if test="freightAmount != null">
+        freight_amount,
       </if>
-      <if test="totalActivityAmount != null">
-        total_activity_amount,
+      <if test="couponAmount != null">
+        coupon_amount,
+      </if>
+      <if test="activityAmount != null">
+        activity_amount,
       </if>
       <if test="status != null">
         `status`,
       </if>
-      <if test="freeFreight != null">
-        free_freight,
+      <if test="isFreight != null">
+        is_freight,
       </if>
       <if test="isEvaluate != null">
         is_evaluate,
@@ -67,11 +61,11 @@
       <if test="createBy != null">
         create_by,
       </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
       <if test="updateBy != null">
         update_by,
+      </if>
+      <if test="createTime != null">
+        create_time,
       </if>
       <if test="updateTime != null">
         update_time,
@@ -81,26 +75,29 @@
       <if test="orderNo != null">
         #{orderNo,jdbcType=VARCHAR},
       </if>
-      <if test="reserveUserId != null">
-        #{reserveUserId,jdbcType=VARCHAR},
+      <if test="reserveId != null">
+        #{reserveId,jdbcType=VARCHAR},
       </if>
-      <if test="freightAmount != null">
-        #{freightAmount,jdbcType=DECIMAL},
+      <if test="consigneeId != null">
+        #{consigneeId,jdbcType=VARCHAR},
       </if>
       <if test="totalAmount != null">
         #{totalAmount,jdbcType=DECIMAL},
       </if>
-      <if test="totalCouponAmount != null">
-        #{totalCouponAmount,jdbcType=DECIMAL},
+      <if test="freightAmount != null">
+        #{freightAmount,jdbcType=DECIMAL},
       </if>
-      <if test="totalActivityAmount != null">
-        #{totalActivityAmount,jdbcType=DECIMAL},
+      <if test="couponAmount != null">
+        #{couponAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="activityAmount != null">
+        #{activityAmount,jdbcType=DECIMAL},
       </if>
       <if test="status != null">
         #{status,jdbcType=BIT},
       </if>
-      <if test="freeFreight != null">
-        #{freeFreight,jdbcType=BIT},
+      <if test="isFreight != null">
+        #{isFreight,jdbcType=BIT},
       </if>
       <if test="isEvaluate != null">
         #{isEvaluate,jdbcType=BIT},
@@ -108,11 +105,11 @@
       <if test="createBy != null">
         #{createBy,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=BIGINT},
-      </if>
       <if test="updateBy != null">
         #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=BIGINT},
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=BIGINT},
@@ -120,32 +117,35 @@
     </trim>
   </insert>
 
-  <update id="updateByPrimaryKeySelective" parameterType="com.amusing.start.order.pojo.OrderInfo">
+  <update id="update" parameterType="com.amusing.start.order.pojo.OrderInfo">
     update order_info
     <set>
-      <if test="reserveUserId != null">
-        reserve_user_id = #{reserveUserId,jdbcType=VARCHAR},
+      <if test="orderNo != null">
+        order_no = #{orderNo,jdbcType=VARCHAR},
       </if>
-      <if test="receivingUserId != null">
-        receiving_user_id = #{receivingUserId,jdbcType=VARCHAR},
+      <if test="reserveId != null">
+        reserve_id = #{reserveId,jdbcType=VARCHAR},
       </if>
-      <if test="freightAmount != null">
-        freight_amount = #{freightAmount,jdbcType=DECIMAL},
+      <if test="consigneeId != null">
+        consignee_id = #{consigneeId,jdbcType=VARCHAR},
       </if>
       <if test="totalAmount != null">
         total_amount = #{totalAmount,jdbcType=DECIMAL},
       </if>
-      <if test="totalCouponAmount != null">
-        total_coupon_amount = #{totalCouponAmount,jdbcType=DECIMAL},
+      <if test="freightAmount != null">
+        freight_amount = #{freightAmount,jdbcType=DECIMAL},
       </if>
-      <if test="totalActivityAmount != null">
-        total_activity_amount = #{totalActivityAmount,jdbcType=DECIMAL},
+      <if test="couponAmount != null">
+        coupon_amount = #{couponAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="activityAmount != null">
+        activity_amount = #{activityAmount,jdbcType=DECIMAL},
       </if>
       <if test="status != null">
         `status` = #{status,jdbcType=BIT},
       </if>
-      <if test="freeFreight != null">
-        free_freight = #{freeFreight,jdbcType=BIT},
+      <if test="isFreight != null">
+        is_freight = #{isFreight,jdbcType=BIT},
       </if>
       <if test="isEvaluate != null">
         is_evaluate = #{isEvaluate,jdbcType=BIT},
@@ -153,21 +153,17 @@
       <if test="createBy != null">
         create_by = #{createBy,jdbcType=VARCHAR},
       </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=BIGINT},
-      </if>
       <if test="updateBy != null">
         update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
       </if>
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=BIGINT},
       </if>
     </set>
-    where order_no = #{orderNo,jdbcType=VARCHAR}
-  </update>
-
-  <update id="updateOrderStatus">
-    update order_info set status = #{status} where order_no = #{orderNo}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 
 </mapper>

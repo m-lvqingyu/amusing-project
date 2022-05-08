@@ -2,7 +2,7 @@ server:
   port: 8001
 spring:
   application:
-    name: amusing-gateway
+    name: amusing-gateway-server
   main:
     allow-bean-definition-overriding: true
   cloud:

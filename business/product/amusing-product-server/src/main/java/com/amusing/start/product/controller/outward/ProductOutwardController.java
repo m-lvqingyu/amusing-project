@@ -1,7 +1,7 @@
 package com.amusing.start.product.controller.outward;
 
-import com.amusing.start.code.CommCode;
 import com.amusing.start.controller.BaseController;
+import com.amusing.start.exception.UnauthorizedException;
 import com.amusing.start.product.dto.create.ProductCreateDto;
 import com.amusing.start.product.enums.ProductCode;
 import com.amusing.start.product.exception.ProductException;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Optional;
 
 /**
  * @author Administrator
@@ -25,7 +24,7 @@ import java.util.Optional;
  * @date 2021/12/24
  */
 @RestController
-@RequestMapping("product/outward")
+@RequestMapping("outward")
 public class ProductOutwardController extends BaseController {
 
     @Autowired
@@ -43,25 +42,21 @@ public class ProductOutwardController extends BaseController {
      * @return
      */
     @PostMapping("v1/create")
-    public ApiResult<String> v1Create(@Valid @RequestBody ProductCreateFrom createFrom) throws ProductException {
-        String userId = getUserId();
-        Optional.ofNullable(userId)
-                .filter(StringUtils::isNotEmpty)
-                .orElseThrow(() -> new ProductException(CommCode.UNAUTHORIZED));
+    public ApiResult<String> v1Create(@Valid @RequestBody ProductCreateFrom createFrom) throws ProductException, UnauthorizedException {
+        ProductCreateDto createDto = fromToDto(createFrom);
+        String productId = productService.create(getUserId(), createDto);
+        return StringUtils.isNotEmpty(productId) ? ApiResult.ok(productId) : ApiResult.result(ProductCode.PRODUCT_CREATE_ERR);
+    }
 
-        ProductCreateDto createDto = ProductCreateDto.builder()
+    private ProductCreateDto fromToDto(ProductCreateFrom createFrom) {
+        return ProductCreateDto.builder()
                 .shopId(createFrom.getShopId())
                 .productName(createFrom.getName())
                 .productStock(createFrom.getStock())
                 .productPrice(createFrom.getPrice())
                 .describe(createFrom.getDescribe())
                 .build();
-
-        String productId = productService.create(userId, createDto);
-        Optional.ofNullable(productId)
-                .filter(StringUtils::isNotEmpty)
-                .orElseThrow(() -> new ProductException(ProductCode.PRODUCT_CREATE_ERR));
-
-        return ApiResult.ok(productId);
     }
+
+
 }

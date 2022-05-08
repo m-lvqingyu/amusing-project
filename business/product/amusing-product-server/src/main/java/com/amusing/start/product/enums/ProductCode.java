@@ -13,6 +13,8 @@ public enum ProductCode implements ResultCode<ProductCode> {
     PRODUCT_CREATE_ERR(201, "商品新增失败"),
     PRODUCT_NAME_EXIST(202, "商品名称已经存在"),
     PRODUCT_PRICE_ERR(203, "商品单价需大于零"),
+    PRODUCT_DEDUCTION_STOCK(204, "商品库存更新失败"),
+
     SHOP_NOT_FOUND(250, "商铺不存在或已被删除"),
     SHOP_CREATE_ERR(251, "商铺新增失败"),
     SHOP_NAME_EXIST(252, "商铺名称已经存在");

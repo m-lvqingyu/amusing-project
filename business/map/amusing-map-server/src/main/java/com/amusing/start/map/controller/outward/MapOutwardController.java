@@ -42,10 +42,6 @@ public class MapOutwardController extends BaseController {
         if (StringUtils.isEmpty(address)) {
             return ApiResult.result(CommCode.PARAMETER_EXCEPTION);
         }
-        String userId = getUserId();
-        if (StringUtils.isEmpty(userId)) {
-            return ApiResult.result(CommCode.UNAUTHORIZED);
-        }
         try {
             List<GeoCodeVo> geoCodeVos = gaoDeMapService.gaoDeGeoCode(address);
             return ApiResult.ok(geoCodeVos);

@@ -1,15 +1,19 @@
 package com.amusing.start.order.pojo;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 /**
- * @author
+ * @author 订单商铺信息
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderProductInfo {
     /**
      * 主键ID
@@ -24,12 +28,12 @@ public class OrderProductInfo {
     /**
      * 商铺ID
      */
-    private String shopsId;
+    private String shopId;
 
     /**
      * 商铺名称
      */
-    private String shopsName;
+    private String shopName;
 
     /**
      * 商品ID
@@ -42,22 +46,22 @@ public class OrderProductInfo {
     private String productName;
 
     /**
-     * 价格ID
+     * 单价ID
      */
     private String priceId;
 
     /**
-     * 商品单价
+     * 单价
      */
-    private BigDecimal productPrice;
+    private BigDecimal price;
 
     /**
      * 商品数量
      */
-    private Integer productNum;
+    private Integer num;
 
     /**
-     * 商品金额
+     * 订单金额
      */
     private BigDecimal amount;
 

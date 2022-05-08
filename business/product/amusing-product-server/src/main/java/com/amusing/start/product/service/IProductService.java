@@ -1,12 +1,13 @@
 package com.amusing.start.product.service;
 
-import com.amusing.start.client.input.ShopProductIdInput;
 import com.amusing.start.client.input.StockDeductionInput;
 import com.amusing.start.client.output.ProductOutput;
 import com.amusing.start.product.dto.create.ProductCreateDto;
 import com.amusing.start.product.exception.ProductException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Create By 2021/10/23
@@ -22,7 +23,7 @@ public interface IProductService {
      * @return true: 成功 false: 失败
      * @throws ProductException
      */
-    boolean deductionStock(List<StockDeductionInput> inputs) throws ProductException;
+    Boolean deductionStock(List<StockDeductionInput> inputs) throws ProductException;
 
     /**
      * 商品新增
@@ -37,9 +38,13 @@ public interface IProductService {
     /**
      * 获取商品详细
      *
-     * @param ids 商铺/商品ID集合
+     * @param productIds 商品ID集合
      * @return
      */
-    List<ProductOutput> getProductDetails(List<ShopProductIdInput> ids);
+    List<ProductOutput> productDetails(Set<String> productIds);
+
+    Map<String, Long> productStock(Set<String> productIds);
+
+    Boolean updateStockCache(Set<String> productIds);
 
 }

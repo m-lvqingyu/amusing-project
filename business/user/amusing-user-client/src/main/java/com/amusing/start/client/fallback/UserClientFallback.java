@@ -34,14 +34,14 @@ public class UserClientFallback implements FallbackFactory<UserClient> {
             }
 
             @Override
-            public boolean userMainSettlement(UserSettlementInput input) {
-                log.error("[user]-userMainSettlement fallback! param:{}", input);
+            public Boolean mainSettlement(UserSettlementInput input) {
+                log.error("[user]-mainSettlement fallback! param:{}", input);
                 return false;
             }
 
             @Override
-            public boolean userGiveSettlement(UserSettlementInput input) {
-                log.error("[user]-userGiveSettlement fallback! param:{}", input);
+            public Boolean giveSettlement(UserSettlementInput input) {
+                log.error("[user]-giveSettlement fallback! param:{}", input);
                 return false;
             }
 

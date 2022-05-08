@@ -16,7 +16,6 @@
     <modules>
         <module>admin/amusing-admin</module>
         <module>core/common-core</module>
-        <module>cache/cache-client</module>
         <module>gateway/amusing-gateway</module>
         <module>business/order/amusing-order-server</module>
         <module>business/order/amusing-order-client</module>
@@ -32,6 +31,8 @@
         <module>business/search/amusing-search-client</module>
         <module>business/statistics/amusing-statistics-client</module>
         <module>business/auth/amusing-auth-client</module>
+        <module>business/pay/amusing-pay-server</module>
+        <module>core/cache-core</module>
     </modules>
 
     <packaging>pom</packaging>

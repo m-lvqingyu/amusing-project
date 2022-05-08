@@ -1,6 +1,8 @@
 package com.amusing.start.controller;
 
+import com.amusing.start.code.CommCode;
 import com.amusing.start.constant.CommonConstant;
+import com.amusing.start.exception.UnauthorizedException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -23,8 +25,10 @@ public class BaseController {
      *
      * @return 用户唯一ID
      */
-    public String getUserId() {
-        return Optional.ofNullable(request).map((i) -> i.getHeader(CommonConstant.USER_UID)).orElseGet(() -> "");
+    public String getUserId() throws UnauthorizedException {
+        return Optional.ofNullable(request)
+                .map((i) -> i.getHeader(CommonConstant.USER_UID))
+                .orElseThrow(() -> new UnauthorizedException(CommCode.UNAUTHORIZED));
     }
 
     /**

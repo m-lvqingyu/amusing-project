@@ -43,7 +43,7 @@ public interface UserClient {
      * @return true:成功 false:失败
      */
     @PostMapping("/user/inward/v1/main/settlement")
-    boolean userMainSettlement(@RequestBody UserSettlementInput input);
+    Boolean mainSettlement(@RequestBody UserSettlementInput input);
 
     /**
      * 副账户结算
@@ -52,6 +52,6 @@ public interface UserClient {
      * @return true:成功 false:失败
      */
     @PostMapping("/user/inward/v1/give/settlement")
-    boolean userGiveSettlement(@RequestBody UserSettlementInput input);
+    Boolean giveSettlement(@RequestBody UserSettlementInput input);
 
 }

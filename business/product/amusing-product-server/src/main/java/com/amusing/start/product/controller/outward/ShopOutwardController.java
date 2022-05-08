@@ -2,6 +2,7 @@ package com.amusing.start.product.controller.outward;
 
 import com.amusing.start.code.CommCode;
 import com.amusing.start.controller.BaseController;
+import com.amusing.start.exception.UnauthorizedException;
 import com.amusing.start.product.dto.create.ShopCreateDto;
 import com.amusing.start.product.enums.ProductCode;
 import com.amusing.start.product.exception.ProductException;
@@ -22,7 +23,7 @@ import java.util.Optional;
  * @date 2021/12/24
  */
 @RestController
-@RequestMapping("shop/outward")
+@RequestMapping("outward")
 public class ShopOutwardController extends BaseController {
 
     private final IShopService shopService;
@@ -40,18 +41,11 @@ public class ShopOutwardController extends BaseController {
      * @return
      * @throws ProductException
      */
-    @PostMapping("v1/create")
-    public ApiResult<String> v1Create(@Valid @RequestBody ShopCreateFrom from) throws ProductException {
-        String userId = getUserId();
-        Optional.ofNullable(userId).filter(StringUtils::isNotEmpty)
-                .orElseThrow(() -> new ProductException(CommCode.UNAUTHORIZED));
-
+    @PostMapping("v1/shop/create")
+    public ApiResult<String> v1Create(@Valid @RequestBody ShopCreateFrom from) throws ProductException, UnauthorizedException {
         ShopCreateDto createDto = ShopCreateDto.builder().shopName(from.getName()).grade(from.getGrade()).build();
-        String shopId = shopService.create(userId, createDto);
-        Optional.ofNullable(shopId).filter(StringUtils::isNotEmpty)
-                .orElseThrow(() -> new ProductException(ProductCode.SHOP_CREATE_ERR));
-
-        return ApiResult.ok(shopId);
+        String shopId = shopService.create(getUserId(), createDto);
+        return StringUtils.isNotEmpty(shopId) ? ApiResult.ok(shopId) : ApiResult.result(ProductCode.SHOP_CREATE_ERR);
     }
 
     /**
@@ -61,16 +55,10 @@ public class ShopOutwardController extends BaseController {
      * @return
      * @throws ProductException
      */
-    @PutMapping("v1/close/{id}")
-    public ApiResult<String> v1Close(@PathVariable("id") String id) throws ProductException {
-        Optional.ofNullable(id).filter(StringUtils::isNotEmpty)
-                .orElseThrow(() -> new ProductException(CommCode.PARAMETER_EXCEPTION));
-
-        String userId = getUserId();
-        Optional.ofNullable(userId).filter(StringUtils::isNotEmpty)
-                .orElseThrow(() -> new ProductException(CommCode.UNAUTHORIZED));
-
-        shopService.close(userId, id);
+    @PutMapping("v1/shop/close/{id}")
+    public ApiResult<String> v1Close(@PathVariable("id") String id) throws ProductException, UnauthorizedException {
+        Optional.ofNullable(id).filter(StringUtils::isNotEmpty).orElseThrow(() -> new ProductException(CommCode.PARAMETER_EXCEPTION));
+        shopService.close(getUserId(), id);
         return ApiResult.ok();
     }
 }

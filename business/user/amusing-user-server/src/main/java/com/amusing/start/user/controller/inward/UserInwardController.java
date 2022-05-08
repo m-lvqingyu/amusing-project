@@ -5,9 +5,7 @@ import com.amusing.start.client.input.UserSettlementInput;
 import com.amusing.start.client.output.UserAccountOutput;
 import com.amusing.start.result.ApiResult;
 import com.amusing.start.user.constant.UserConstant;
-import com.amusing.start.user.exception.UserException;
-import com.amusing.start.user.service.IUserAccountInfoService;
-import com.google.common.base.Throwables;
+import com.amusing.start.user.service.IAccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,56 +22,42 @@ import java.util.Optional;
 @RestController
 public class UserInwardController implements UserClient {
 
-    private final IUserAccountInfoService userAccountInfoService;
+    private final IAccountService accountService;
 
     @Autowired
-    public UserInwardController(IUserAccountInfoService userAccountInfoService) {
-        this.userAccountInfoService = userAccountInfoService;
+    public UserInwardController(IAccountService accountService) {
+        this.accountService = accountService;
     }
 
     @Override
     public ApiResult<Boolean> init(String userId) {
-        try {
-            boolean result = userAccountInfoService.init(userId);
-            return ApiResult.ok(result);
-        } catch (UserException e) {
-            return ApiResult.result(e.getResultCode());
-        }
+        Boolean result = accountService.init(userId);
+        return ApiResult.ok(result);
     }
 
     @Override
     public UserAccountOutput account(String userId) {
-        return userAccountInfoService.account(userId);
+        return accountService.account(userId);
     }
 
     @Override
-    public boolean userMainSettlement(UserSettlementInput input) {
+    public Boolean mainSettlement(UserSettlementInput input) {
         Optional<UserSettlementInput> optional = checkoutParams(input);
         if (!optional.isPresent()) {
             log.warn("[user]-MainSettlement param err! param:{}", input);
             return UserConstant.FALSE;
         }
-        try {
-            return userAccountInfoService.userMainSettlement(input.getUserId(), input.getAmount());
-        } catch (UserException e) {
-            log.error("[user]-MainSettlement err! param:{}, msg:{}", input, Throwables.getStackTraceAsString(e));
-            return UserConstant.FALSE;
-        }
+        return accountService.mainSettlement(input.getUserId(), input.getAmount());
     }
 
     @Override
-    public boolean userGiveSettlement(UserSettlementInput input) {
+    public Boolean giveSettlement(UserSettlementInput input) {
         Optional<UserSettlementInput> optional = checkoutParams(input);
         if (!optional.isPresent()) {
             log.warn("[user]-GiveSettlement param err! param:{}", input);
             return UserConstant.FALSE;
         }
-        try {
-            return userAccountInfoService.userGiveSettlement(input.getUserId(), input.getAmount());
-        } catch (UserException e) {
-            log.error("[user]-GiveSettlement err! param:{}, msg:{}", input, Throwables.getStackTraceAsString(e));
-            return UserConstant.FALSE;
-        }
+        return accountService.giveSettlement(input.getUserId(), input.getAmount());
     }
 
     /**

@@ -1,10 +1,9 @@
 package com.amusing.start.product.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.IdUtil;
-import com.amusing.start.client.input.ShopProductIdInput;
 import com.amusing.start.client.input.StockDeductionInput;
 import com.amusing.start.client.output.ProductOutput;
-import com.amusing.start.code.CommCode;
 import com.amusing.start.product.constant.ProductConstant;
 import com.amusing.start.product.dto.create.ProductCreateDto;
 import com.amusing.start.product.enums.ProductCode;
@@ -18,19 +17,21 @@ import com.amusing.start.product.pojo.ProductInfo;
 import com.amusing.start.product.pojo.ProductPriceInfo;
 import com.amusing.start.product.service.IProductService;
 import com.google.common.base.Throwables;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
-import org.apache.shardingsphere.transaction.core.TransactionType;
+import org.redisson.api.RLock;
+import org.redisson.api.RMap;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Create By 2021/10/23
@@ -44,12 +45,21 @@ public class ProductServiceImpl implements IProductService {
     private final ProductInfoMapper productInfoMapper;
     private final ShopInfoMapper shopInfoMapper;
     private final ProductPriceInfoMapper productPriceInfoMapper;
+    private final RedissonClient redissonClient;
+
+    private final static String PRODUCT_STOCK_CACHE = "product:stock";
+
+    private final static String PRODUCT_STOCK_LOCK_PREFIX = "product:stock:lock:";
 
     @Autowired
-    public ProductServiceImpl(ProductInfoMapper productInfoMapper, ShopInfoMapper shopInfoMapper, ProductPriceInfoMapper productPriceInfoMapper) {
+    public ProductServiceImpl(ProductInfoMapper productInfoMapper,
+                              ShopInfoMapper shopInfoMapper,
+                              ProductPriceInfoMapper productPriceInfoMapper,
+                              RedissonClient redissonClient) {
         this.productInfoMapper = productInfoMapper;
         this.shopInfoMapper = shopInfoMapper;
         this.productPriceInfoMapper = productPriceInfoMapper;
+        this.redissonClient = redissonClient;
     }
 
     @Value("${product.worker}")
@@ -58,20 +68,42 @@ public class ProductServiceImpl implements IProductService {
     @Value("${product.dataCenter}")
     private Long productDataCenter;
 
+    @PostConstruct
+    public void init() {
+        List<ProductInfo> infoList = productInfoMapper.getAll();
+        if (CollectionUtil.isEmpty(infoList)) {
+            return;
+        }
+        Map<String, Long> stockMap = new HashMap<>(infoList.size());
+        infoList.forEach(i -> {
+            String productId = i.getProductId();
+            long stock = i.getProductStock().longValue();
+            stockMap.put(productId, stock);
+        });
+        RMap<String, Long> clientMap = redissonClient.getMap(PRODUCT_STOCK_CACHE);
+        clientMap.putAll(stockMap);
+    }
+
+    @GlobalTransactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean deductionStock(List<StockDeductionInput> inputs) throws ProductException {
+    public Boolean deductionStock(List<StockDeductionInput> inputs) throws ProductException {
         Integer result = null;
         try {
             result = productInfoMapper.batchDeductionStock(inputs);
         } catch (Exception e) {
-            log.error("[product]-batchDeductionStock err! param:{}, msg:{}", inputs, Throwables.getStackTraceAsString(e));
+            log.error("[product]-batchDeductionStock err! param:{}, msg:{}",
+                    inputs,
+                    Throwables.getStackTraceAsString(e));
         }
-        Optional.ofNullable(result).filter(i -> i > ProductConstant.ZERO).orElseThrow(() -> new ProductException(CommCode.FAIL));
-        return true;
+        if (result == null || result != inputs.size()) {
+            throw new ProductException(ProductCode.PRODUCT_DEDUCTION_STOCK);
+        }
+
+        return ProductConstant.TRUE;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @ShardingTransactionType(TransactionType.LOCAL)
     @Override
     public String create(String executor, ProductCreateDto createDto) throws ProductException {
         // 校验商品价格是否合法
@@ -99,15 +131,58 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public List<ProductOutput> getProductDetails(List<ShopProductIdInput> ids) {
+    public List<ProductOutput> productDetails(Set<String> productIds) {
         List<ProductOutput> result = new ArrayList<>();
-        ids.forEach(i -> {
-            ProductOutput output = productInfoMapper.getDetailsById(i.getShopId(), i.getProductId());
+        productIds.forEach(i -> {
+            ProductOutput output = productInfoMapper.getDetailsById(i);
             if (output != null) {
                 result.add(output);
             }
         });
         return result;
+    }
+
+    @Override
+    public Map<String, Long> productStock(Set<String> productIds) {
+        RMap<String, Long> clientMap = redissonClient.getMap(PRODUCT_STOCK_CACHE);
+        Map<String, Long> stockMap = clientMap.getAll(productIds);
+        for (String productId : productIds) {
+            if (stockMap.containsKey(productId)) {
+                continue;
+            }
+            RLock rLock = redissonClient.getLock(PRODUCT_STOCK_LOCK_PREFIX + productId);
+            try {
+                if (rLock.tryLock(ProductConstant.ONE, TimeUnit.SECONDS)) {
+                    Long currentStock = clientMap.get(productId);
+                    if (currentStock != null) {
+                        stockMap.put(productId, currentStock);
+                        continue;
+                    }
+                    ProductInfo productInfo = productInfoMapper.getById(productId);
+                    if (productInfo == null) {
+                        continue;
+                    }
+                    long stock = productInfo.getProductStock().longValue();
+                    clientMap.put(productId, stock);
+                    stockMap.put(productId, stock);
+                }
+            } catch (Exception e) {
+                log.error("[Product]-productStock err! msg:{}", Throwables.getStackTraceAsString(e));
+            } finally {
+                rLock.unlock();
+            }
+        }
+        return stockMap;
+    }
+
+    @Override
+    public Boolean updateStockCache(Set<String> productIds) {
+        RMap<String, Long> clientMap = redissonClient.getMap(PRODUCT_STOCK_CACHE);
+        productIds.forEach(i -> {
+            ProductInfo productInfo = productInfoMapper.getById(i);
+            clientMap.put(i, productInfo.getProductStock().longValue());
+        });
+        return ProductConstant.TRUE;
     }
 
 

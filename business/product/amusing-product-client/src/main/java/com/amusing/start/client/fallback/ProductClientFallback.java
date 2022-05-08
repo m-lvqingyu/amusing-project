@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Create By 2021/10/23
@@ -23,14 +25,20 @@ public class ProductClientFallback implements FallbackFactory<ProductClient> {
         return new ProductClient() {
 
             @Override
-            public boolean deductionStock(List<StockDeductionInput> inputs) {
-                log.error("[product]-deductionStock fallback! param:{}", inputs);
+            public Boolean deductionStock(List<StockDeductionInput> inputs) {
+                log.error("[Product]-deductionStock fallback! param:{}", inputs);
                 return false;
             }
 
             @Override
-            public List<ProductOutput> getProductDetails(List<ShopProductIdInput> ids) {
-                log.error("[product]-getProductDetails fallback! param:{}", ids);
+            public List<ProductOutput> productDetails(Set<String> productIds) {
+                log.error("[Product]-productDetails fallback! param:{}", productIds);
+                return null;
+            }
+
+            @Override
+            public Map<String, Long> productStock(Set<String> productIds) {
+                log.error("[Product]-productStock fallback! param:{}", productIds);
                 return null;
             }
         };

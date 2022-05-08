@@ -13,8 +13,6 @@ import com.amusing.start.product.mapper.ShopInfoMapper;
 import com.amusing.start.product.pojo.ShopInfo;
 import com.amusing.start.product.service.IShopService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
-import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -46,11 +44,10 @@ public class ShopServiceImpl implements IShopService {
     private Long productDataCenter;
 
     @Transactional(rollbackFor = Exception.class)
-    @ShardingTransactionType(TransactionType.LOCAL)
     @Override
     public String create(String executor, ShopCreateDto createDto) throws ProductException {
         String queryShopId = shopInfoMapper.checkExistByName(createDto.getShopName());
-        if(StringUtils.isNotEmpty(queryShopId)){
+        if (StringUtils.isNotEmpty(queryShopId)) {
             throw new ProductException(ProductCode.SHOP_NAME_EXIST);
         }
 
@@ -75,7 +72,6 @@ public class ShopServiceImpl implements IShopService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @ShardingTransactionType(TransactionType.LOCAL)
     @Override
     public void close(String executor, String shopId) throws ProductException {
         Integer status = shopInfoMapper.selectStatusById(shopId);

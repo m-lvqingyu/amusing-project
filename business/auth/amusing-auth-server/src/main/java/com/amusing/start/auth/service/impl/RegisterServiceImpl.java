@@ -16,8 +16,6 @@ import com.amusing.start.result.ApiResult;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
-import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,7 +51,6 @@ public class RegisterServiceImpl implements IRegisterService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @ShardingTransactionType(value = TransactionType.BASE)
     @Override
     public String userRegister(UserRegisterDto registerDto) throws AuthException {
         // 校验用户名或手机号是否已经存在

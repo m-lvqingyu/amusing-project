@@ -26,7 +26,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        shop_id, product_id, product_name, product_stock, `status`, is_del,
+        shop_id
+        , product_id, product_name, product_stock, `status`, is_del,
         `describe`, create_by, create_time, update_by, update_time
     </sql>
 
@@ -144,33 +145,57 @@
     <update id="batchDeductionStock">
         <foreach collection="inputList" separator=";" item="item" index="index">
             update product_info set product_stock = product_stock - #{item.productNum} where product_id =
-            #{item.productId} and product_stock >= 0 and status = 1 and is_del = 1
+            #{item.productId} and product_stock > 0 and status = 1 and is_del = 1
         </foreach>
     </update>
 
     <select id="checkExistByShopIdAndName" resultType="java.lang.String">
-        select product_id from product_info where shop_id = #{shopId} and product_name = #{productName} and status = 1
-        and is_del = 1
+        select product_id
+        from product_info
+        where shop_id = #{shopId}
+          and product_name = #{productName}
+          and status = 1
+          and is_del = 1
     </select>
 
     <update id="updateStatusByShopId">
-        update product_info set status = #{status} where shop_id = #{shopId} and status = 1 and is_del = 1
+        update product_info
+        set status = #{status}
+        where shop_id = #{shopId}
+          and status = 1
+          and is_del = 1
     </update>
 
     <select id="getDetailsById" resultMap="ShopProductMap">
+        SELECT pif.shop_id,
+               sif.shop_name,
+               pif.product_id,
+               pif.product_name,
+               pif.product_stock,
+               ppi.price_id,
+               ppi.price,
+               ppi.version
+        FROM product_info AS pif
+                 LEFT JOIN shop_info AS sif ON pif.shop_id = sif.shop_id
+                 LEFT JOIN product_price_info AS ppi ON pif.product_id = ppi.product_id
+        WHERE pif.product_id = #{productId}
+          AND pif.status = 1
+          AND pif.is_del = 1
+        ORDER BY VERSION DESC LIMIT 1;
+    </select>
+
+    <select id="getAll" resultMap="BaseResultMap">
         SELECT
-        pif.shop_id,
-        sif.shop_name,
-        pif.product_id,
-        pif.product_name,
-        pif.product_stock,
-        ppi.price_id,
-        ppi.price,
-        ppi.version
-        FROM product_info AS pif LEFT JOIN shop_info AS sif ON pif.shop_id = sif.shop_id
-        LEFT JOIN product_price_info AS ppi ON pif.product_id = ppi.product_id
-        WHERE pif.shop_id = #{shopId} AND pif.product_id = #{productId} AND pif.status = 1 AND pif.is_del = 1 ORDER BY
-        VERSION DESC LIMIT 1;
+        <include refid="Base_Column_List"/>
+        FROM product_info
+        WHERE status = 1 AND is_del = 1 ORDER BY create_time desc;
+    </select>
+
+    <select id="getById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM product_info
+        WHERE product_id = #{productId} AND status = 1 AND is_del = 1 ORDER BY create_time desc;
     </select>
 
 </mapper>

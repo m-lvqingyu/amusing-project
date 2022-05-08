@@ -2,6 +2,7 @@ package com.amusing.start.order.exception.handle;
 
 import com.amusing.start.code.CommCode;
 import com.amusing.start.code.ResultCode;
+import com.amusing.start.exception.UnauthorizedException;
 import com.amusing.start.order.exception.OrderException;
 import com.amusing.start.result.ApiResult;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public class OrderExceptionHandle {
      */
     @ResponseBody
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public ApiResult paramExceptionHandler(MethodArgumentNotValidException exception) {
+    public ApiResult<?> paramExceptionHandler(MethodArgumentNotValidException exception) {
         List<ObjectError> errorList = exception.getBindingResult().getAllErrors();
         for (ObjectError error : errorList) {
             log.error("[order-service]-[params]-msg:{}", error.getDefaultMessage());
@@ -47,9 +48,14 @@ public class OrderExceptionHandle {
      */
     @ResponseBody
     @ExceptionHandler(value = OrderException.class)
-    public ApiResult orderExceptionHandler(OrderException exception) {
-        ResultCode resultCode = exception.getResultCode();
-        return ApiResult.result(resultCode);
+    public ApiResult<?> orderExceptionHandler(OrderException exception) {
+        return ApiResult.result(exception.getResultCode());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = UnauthorizedException.class)
+    public ApiResult<?> unauthorizedExceptionHandler(UnauthorizedException exception) {
+        return ApiResult.result(exception.getResultCode());
     }
 
 }
