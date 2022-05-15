@@ -18,7 +18,7 @@ import java.util.Map;
  * @date ：2022/4/9 17:17
  */
 @RestController
-@RequestMapping("outward/shop/car")
+@RequestMapping("/order/outward/shop/car")
 public class ShopCarController extends BaseController {
 
     private final IShopCarService shopCarService;

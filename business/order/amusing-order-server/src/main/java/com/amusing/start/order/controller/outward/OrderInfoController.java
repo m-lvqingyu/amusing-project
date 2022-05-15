@@ -27,7 +27,7 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
-@RequestMapping("outward")
+@RequestMapping("/order/outward")
 public class OrderInfoController extends BaseController {
 
     @Autowired

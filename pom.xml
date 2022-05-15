@@ -14,7 +14,6 @@
     <artifactId>amusing-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>admin/amusing-admin</module>
         <module>core/common-core</module>
         <module>gateway/amusing-gateway</module>
         <module>business/order/amusing-order-server</module>

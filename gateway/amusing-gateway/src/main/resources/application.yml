@@ -3,30 +3,26 @@ spring:
     gateway:
       routes:
         - id: amusing-order-server
-          uri: lb://amusing-order-server
+          uri: lb:http://amusing-order-server
           predicates:
             - Path=/order/outward/**
         - id: amusing-auth-server
-          uri: lb://amusing-auth-server
+          uri: lb:http://amusing-auth-server
           predicates:
             - Path=/auth/outward/**
         - id: amusing-product-server
-          uri: lb://amusing-product-server
+          uri: lb:http://amusing-product-server
           predicates:
             - Path=/product/outward/**
         - id: amusing-search-server
-          uri: lb://amusing-search-server
+          uri: lb:http://amusing-search-server
           predicates:
             - Path=/search/outward/**
         - id: amusing-user-server
-          uri: lb://amusing-user-server
+          uri: lb:http://amusing-user-server
           predicates:
             - Path=/user/outward/**
         - id: amusing-map-server
-          uri: lb://amusing-map-server
+          uri: lb:http://amusing-map-server
           predicates:
             - Path=/map/outward/**
-        - id: amusing-admin-server
-          uri: lb://amusing-admin-server
-          predicates:
-            - Path=/admin/**

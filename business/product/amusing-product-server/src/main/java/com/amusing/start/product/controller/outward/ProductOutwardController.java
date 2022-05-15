@@ -24,7 +24,7 @@ import javax.validation.Valid;
  * @date 2021/12/24
  */
 @RestController
-@RequestMapping("outward")
+@RequestMapping("/product/outward")
 public class ProductOutwardController extends BaseController {
 
     @Autowired

@@ -55,7 +55,7 @@ public class AccountServiceImpl implements IAccountService {
             return UserConstant.FALSE;
         }
         BigDecimal mainAmount = info.getMainAmount();
-        if (mainAmount == null || amount.compareTo(mainAmount) < UserConstant.ZERO) {
+        if (mainAmount == null || amount.compareTo(mainAmount) > UserConstant.ZERO) {
             return UserConstant.FALSE;
         }
         // 更新用户主账户余额，更新失败抛出异常

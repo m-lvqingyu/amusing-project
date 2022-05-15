@@ -23,7 +23,7 @@ import java.util.Optional;
  * @date 2021/12/24
  */
 @RestController
-@RequestMapping("outward")
+@RequestMapping("/product/outward")
 public class ShopOutwardController extends BaseController {
 
     private final IShopService shopService;

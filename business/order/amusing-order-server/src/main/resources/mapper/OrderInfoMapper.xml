@@ -20,10 +20,11 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, order_no, reserve_id, consignee_id, total_amount, freight_amount, coupon_amount,
+    id, order_no, reserve_id, consignee_id, total_amount, freight_amount, coupon_amount, 
     activity_amount, `status`, is_freight, is_evaluate, create_by, update_by, create_time, 
     update_time
   </sql>
+
 
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.amusing.start.order.pojo.OrderInfo" useGeneratedKeys="true">
     insert into order_info

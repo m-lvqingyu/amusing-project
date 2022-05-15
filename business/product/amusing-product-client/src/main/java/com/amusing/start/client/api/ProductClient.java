@@ -31,7 +31,7 @@ public interface ProductClient {
     Boolean deductionStock(@RequestBody List<StockDeductionInput> inputs);
 
     @GetMapping("product/inward/v1/details")
-    List<ProductOutput> productDetails(@RequestBody Set<String> productIds);
+    List<ProductOutput> productDetails(@RequestParam("productIds") Set<String> productIds);
 
     @GetMapping("product/inward/v1/stock")
     Map<String, Long> productStock(@RequestParam("productIds") Set<String> productIds);

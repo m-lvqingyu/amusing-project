@@ -76,7 +76,7 @@ public class CreateServiceImpl implements ICreateService {
         }
         // 2.判断库存是否足够
         Map<String, Long> productStock = inwardManager.productStock(productMap.keySet());
-        if (productMap.size() != productStock.size()) {
+        if (productStock == null || productMap.size() != productStock.size()) {
             throw new OrderException(OrderCode.PRODUCT_NOT_FOUND);
         }
         Iterator<Map.Entry<String, Long>> iterator = productStock.entrySet().iterator();
