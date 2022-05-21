@@ -19,6 +19,7 @@ import com.amusing.start.order.service.ICreateService;
 import com.amusing.start.order.service.IShopCarService;
 import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -71,27 +72,14 @@ public class CreateServiceImpl implements ICreateService {
     public String create(CreateDto createDto) throws OrderException {
         // 1.获取购物车信息
         Map<String, Integer> productMap = shopCarService.get(createDto.getReserveId());
-        if (productMap == null || productMap.isEmpty()) {
-            throw new OrderException(OrderCode.PRODUCT_NOT_FOUND);
-        }
+        checkShopCar(productMap);
         // 2.判断库存是否足够
-        Map<String, Long> productStock = inwardManager.productStock(productMap.keySet());
-        if (productStock == null || productMap.size() != productStock.size()) {
-            throw new OrderException(OrderCode.PRODUCT_NOT_FOUND);
-        }
-        Iterator<Map.Entry<String, Long>> iterator = productStock.entrySet().iterator();
-        if (iterator.hasNext()) {
-            Map.Entry<String, Long> next = iterator.next();
-            Long value = next.getValue();
-            if (value == null || value <= OrderConstant.ZERO) {
-                throw new OrderException(OrderCode.PRODUCT_NOT_FOUND);
-            }
-        }
+        Set<String> productIdSet = productMap.keySet();
+        Map<String, Long> productStock = inwardManager.productStock(productIdSet);
+        checkProductStock(productMap, productStock);
         // 3.获取预定人账户信息
         UserAccountOutput userAccount = inwardManager.accountDetail(createDto.getReserveId());
-        Optional.ofNullable(userAccount).orElseThrow(() -> new OrderException(OrderCode.USER_NOT_FOUND));
         // 4.获取商品信息及单价
-        Set<String> productIdSet = productMap.keySet();
         List<ProductOutput> productsDetails = inwardManager.productDetails(productIdSet);
         // 5.保存订单相关信息
         return doSaveOrder(createDto, userAccount, productMap, productsDetails);
@@ -172,6 +160,56 @@ public class CreateServiceImpl implements ICreateService {
             throw new OrderException(OrderCode.UNABLE_PROVIDE_SERVICE);
         }
         return orderNo;
+    }
+
+    /**
+     * 购物车商品数量校验
+     *
+     * @param productMap 购物车-商品信息
+     * @throws OrderException
+     */
+    private void checkShopCar(Map<String, Integer> productMap) throws OrderException {
+        if (productMap == null || productMap.isEmpty()) {
+            throw new OrderException(OrderCode.SHOP_CAR_ERROR);
+        }
+        Iterator<Map.Entry<String, Integer>> iterator = productMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Integer> next = iterator.next();
+            String productId = next.getKey();
+            if (StringUtils.isEmpty(productId)) {
+                throw new OrderException(OrderCode.SHOP_CAR_ERROR);
+            }
+            Integer productNum = next.getValue();
+            if (productNum == null || productNum <= OrderConstant.ZERO) {
+                throw new OrderException(OrderCode.SHOP_CAR_ERROR);
+            }
+        }
+    }
+
+    /**
+     * 商品库存信息校验
+     *
+     * @param productMap   购物车-商品信息
+     * @param productStock 商品库存信息
+     * @throws OrderException
+     */
+    private void checkProductStock(Map<String, Integer> productMap, Map<String, Long> productStock) throws OrderException {
+        Iterator<Map.Entry<String, Integer>> iterator = productMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Integer> next = iterator.next();
+            String productId = next.getKey();
+            if (!productStock.containsKey(productId)) {
+                throw new OrderException(OrderCode.PRODUCT_NUM_ERROR);
+            }
+            Long currProductStock = productStock.get(productId);
+            if (currProductStock == null) {
+                throw new OrderException(OrderCode.PRODUCT_NUM_ERROR);
+            }
+            long productNum = next.getValue();
+            if (productNum > currProductStock) {
+                throw new OrderException(OrderCode.PRODUCT_NUM_ERROR);
+            }
+        }
     }
 
 }

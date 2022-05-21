@@ -3,6 +3,7 @@ package com.amusing.start.client.api;
 import com.amusing.start.client.fallback.ProductClientFallback;
 import com.amusing.start.client.input.StockDeductionInput;
 import com.amusing.start.client.output.ProductOutput;
+import com.amusing.start.result.ApiResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,13 +29,24 @@ public interface ProductClient {
      * @return true: 成功 false: 失败
      */
     @PostMapping("product/inward/v1/stock/deduction")
-    Boolean deductionStock(@RequestBody List<StockDeductionInput> inputs);
+    ApiResult<Boolean> deductionStock(@RequestBody List<StockDeductionInput> inputs);
 
+    /**
+     * 获取商品信息详情
+     *
+     * @param productIds 商品ID集合
+     * @return 商品详情集合
+     */
     @GetMapping("product/inward/v1/details")
-    List<ProductOutput> productDetails(@RequestParam("productIds") Set<String> productIds);
+    ApiResult<List<ProductOutput>> productDetails(@RequestParam("productIds") Set<String> productIds);
 
+    /**
+     * 获取商品库存信息
+     *
+     * @param productIds 商品ID集合
+     * @return 商品库存信息
+     */
     @GetMapping("product/inward/v1/stock")
-    Map<String, Long> productStock(@RequestParam("productIds") Set<String> productIds);
-
+    ApiResult<Map<String, Long>> productStock(@RequestParam("productIds") Set<String> productIds);
 
 }

@@ -45,4 +45,8 @@ public class ApiResult<T> implements Serializable {
         return result(CommCode.SUCCESS, data);
     }
 
+    public boolean isSuccess(){
+        return this.code == CommCode.SUCCESS.key();
+    }
+
 }

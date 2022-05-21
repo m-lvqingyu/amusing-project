@@ -3,8 +3,9 @@ package com.amusing.start.user.controller.inward;
 import com.amusing.start.client.api.UserClient;
 import com.amusing.start.client.input.UserSettlementInput;
 import com.amusing.start.client.output.UserAccountOutput;
+import com.amusing.start.code.CommCode;
 import com.amusing.start.result.ApiResult;
-import com.amusing.start.user.constant.UserConstant;
+import com.amusing.start.user.enums.UserCode;
 import com.amusing.start.user.service.IAccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -36,28 +37,26 @@ public class UserInwardController implements UserClient {
     }
 
     @Override
-    public UserAccountOutput account(String userId) {
-        return accountService.account(userId);
+    public ApiResult<UserAccountOutput> account(String userId) {
+        if (StringUtils.isEmpty(userId)) {
+            return ApiResult.result(CommCode.PARAMETER_EXCEPTION);
+        }
+        UserAccountOutput output = accountService.account(userId);
+        if (output == null) {
+            return ApiResult.result(UserCode.USER_INFORMATION_NOT_EXIST);
+        }
+        return ApiResult.ok(output);
     }
 
     @Override
-    public Boolean mainSettlement(UserSettlementInput input) {
+    public ApiResult<Boolean> mainSettlement(UserSettlementInput input) {
         Optional<UserSettlementInput> optional = checkoutParams(input);
         if (!optional.isPresent()) {
             log.warn("[user]-MainSettlement param err! param:{}", input);
-            return UserConstant.FALSE;
+            return ApiResult.result(CommCode.PARAMETER_EXCEPTION);
         }
-        return accountService.mainSettlement(input.getUserId(), input.getAmount());
-    }
-
-    @Override
-    public Boolean giveSettlement(UserSettlementInput input) {
-        Optional<UserSettlementInput> optional = checkoutParams(input);
-        if (!optional.isPresent()) {
-            log.warn("[user]-GiveSettlement param err! param:{}", input);
-            return UserConstant.FALSE;
-        }
-        return accountService.giveSettlement(input.getUserId(), input.getAmount());
+        Boolean settlement = accountService.mainSettlement(input.getUserId(), input.getAmount());
+        return ApiResult.ok(settlement);
     }
 
     /**

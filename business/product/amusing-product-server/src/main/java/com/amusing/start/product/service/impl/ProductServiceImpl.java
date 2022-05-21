@@ -17,7 +17,6 @@ import com.amusing.start.product.pojo.ProductInfo;
 import com.amusing.start.product.pojo.ProductPriceInfo;
 import com.amusing.start.product.service.IProductService;
 import com.google.common.base.Throwables;
-import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
@@ -84,22 +83,12 @@ public class ProductServiceImpl implements IProductService {
         clientMap.putAll(stockMap);
     }
 
-    @GlobalTransactional
-    @Transactional(rollbackFor = Exception.class)
     @Override
-    public Boolean deductionStock(List<StockDeductionInput> inputs) throws ProductException {
-        Integer result = null;
-        try {
-            result = productInfoMapper.batchDeductionStock(inputs);
-        } catch (Exception e) {
-            log.error("[product]-batchDeductionStock err! param:{}, msg:{}",
-                    inputs,
-                    Throwables.getStackTraceAsString(e));
-        }
+    public Boolean deductionStock(List<StockDeductionInput> inputs) {
+        Integer result = productInfoMapper.batchDeductionStock(inputs);
         if (result == null || result != inputs.size()) {
-            throw new ProductException(ProductCode.PRODUCT_DEDUCTION_STOCK);
+            return ProductConstant.FALSE;
         }
-
         return ProductConstant.TRUE;
     }
 
@@ -152,14 +141,17 @@ public class ProductServiceImpl implements IProductService {
             }
             RLock rLock = redissonClient.getLock(PRODUCT_STOCK_LOCK_PREFIX + productId);
             try {
-                if (rLock.tryLock(ProductConstant.ONE, TimeUnit.SECONDS)) {
+                boolean lock = rLock.tryLock(ProductConstant.ONE, TimeUnit.SECONDS);
+                if (lock) {
                     Long currentStock = clientMap.get(productId);
                     if (currentStock != null) {
+                        clientMap.put(productId, currentStock);
                         stockMap.put(productId, currentStock);
                         continue;
                     }
                     ProductInfo productInfo = productInfoMapper.getById(productId);
                     if (productInfo == null) {
+                        log.warn("[Product]-productStock product not fount! productId:{}", productId);
                         continue;
                     }
                     long stock = productInfo.getProductStock().longValue();

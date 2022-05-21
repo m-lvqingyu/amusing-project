@@ -28,23 +28,16 @@ public class UserClientFallback implements FallbackFactory<UserClient> {
             }
 
             @Override
-            public UserAccountOutput account(String userId) {
+            public ApiResult<UserAccountOutput> account(String userId) {
                 log.error("[user]-getAccount fallback! userId:{}", userId);
-                return null;
+                return ApiResult.result(CommCode.DEGRADE_ERROR);
             }
 
             @Override
-            public Boolean mainSettlement(UserSettlementInput input) {
+            public ApiResult<Boolean> mainSettlement(UserSettlementInput input) {
                 log.error("[user]-mainSettlement fallback! param:{}", input);
-                return false;
+                return ApiResult.result(CommCode.DEGRADE_ERROR);
             }
-
-            @Override
-            public Boolean giveSettlement(UserSettlementInput input) {
-                log.error("[user]-giveSettlement fallback! param:{}", input);
-                return false;
-            }
-
         };
     }
 }

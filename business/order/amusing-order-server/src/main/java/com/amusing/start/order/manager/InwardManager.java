@@ -6,8 +6,9 @@ import com.amusing.start.client.input.StockDeductionInput;
 import com.amusing.start.client.input.UserSettlementInput;
 import com.amusing.start.client.output.ProductOutput;
 import com.amusing.start.client.output.UserAccountOutput;
+import com.amusing.start.order.enums.OrderCode;
 import com.amusing.start.order.exception.OrderException;
-import com.google.common.base.Throwables;
+import com.amusing.start.result.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -35,44 +36,57 @@ public class InwardManager {
      * 获取用户账户信息
      *
      * @param reserveId 预定人ID
-     * @return
+     * @return 用户信息
      * @throws OrderException
      */
-    public UserAccountOutput accountDetail(String reserveId) {
-        UserAccountOutput userAccountOutput = null;
-        try {
-            userAccountOutput = userClient.account(reserveId);
-        } catch (Exception e) {
-            log.error("[order]-create getUserAccountDetails err! reserveUserId:{}, msg:{}", reserveId, Throwables.getStackTraceAsString(e));
+    public UserAccountOutput accountDetail(String reserveId) throws OrderException {
+        ApiResult<UserAccountOutput> result = userClient.account(reserveId);
+        if (!result.isSuccess()) {
+            throw new OrderException(OrderCode.USER_NOT_FOUND);
         }
-        log.info("[order]-create reserveUserId:{}, userAccount:{}", reserveId, userAccountOutput);
-        return userAccountOutput;
+        return result.getData();
+    }
+
+    /**
+     * 主账户结算
+     *
+     * @param userId 用户ID
+     * @param amount 结算金额
+     * @return true:成功 false:失败
+     */
+    public Boolean mainSettlement(String userId, BigDecimal amount) throws OrderException {
+        UserSettlementInput input = new UserSettlementInput();
+        input.setUserId(userId);
+        input.setAmount(amount);
+        ApiResult<Boolean> result = userClient.mainSettlement(input);
+        if (!result.isSuccess()) {
+            throw new OrderException(OrderCode.UNABLE_PROVIDE_SERVICE);
+        }
+        return result.getData();
     }
 
     /**
      * 获取商品信息
      *
      * @param productIds 商品ID集合
-     * @return
+     * @return 商品信息集合
      */
-    public List<ProductOutput> productDetails(Set<String> productIds) {
-        List<ProductOutput> result = null;
-        try {
-            result = productClient.productDetails(productIds);
-        } catch (Exception e) {
-            log.error("[order]-create getProductDetails err! param:{}, msg:{}", productIds, Throwables.getStackTraceAsString(e));
+    public List<ProductOutput> productDetails(Set<String> productIds) throws OrderException {
+        ApiResult<List<ProductOutput>> result = productClient.productDetails(productIds);
+        if (!result.isSuccess()) {
+            throw new OrderException(OrderCode.PRODUCT_NOT_FOUND);
         }
-        return result;
+        return result.getData();
     }
 
-    public Boolean mainSettlement(String userId, BigDecimal amount) {
-        UserSettlementInput input = new UserSettlementInput();
-        input.setUserId(userId);
-        input.setAmount(amount);
-        return userClient.mainSettlement(input);
-    }
-
-    public Boolean deductionStock(Map<String, Integer> productMap) {
+    /**
+     * 扣减库存
+     *
+     * @param productMap 购物车信息
+     * @return true:成功 false:失败
+     * @throws OrderException
+     */
+    public Boolean deductionStock(Map<String, Integer> productMap) throws OrderException {
         List<StockDeductionInput> inputs = new ArrayList<>();
         Iterator<Map.Entry<String, Integer>> iterator = productMap.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -80,11 +94,26 @@ public class InwardManager {
             StockDeductionInput input = StockDeductionInput.builder().productId(next.getKey()).productNum(next.getValue()).build();
             inputs.add(input);
         }
-        return productClient.deductionStock(inputs);
+        ApiResult<Boolean> result = productClient.deductionStock(inputs);
+        if (!result.isSuccess()) {
+            throw new OrderException(OrderCode.UNABLE_PROVIDE_SERVICE);
+        }
+        return result.getData();
     }
 
-    public Map<String, Long> productStock(Set<String> productIds){
-        return productClient.productStock(productIds);
+    /**
+     * 获取商品库存信息
+     *
+     * @param productIds 商品ID集合
+     * @return 库存信息集合
+     * @throws OrderException
+     */
+    public Map<String, Long> productStock(Set<String> productIds) throws OrderException {
+        ApiResult<Map<String, Long>> result = productClient.productStock(productIds);
+        if (!result.isSuccess()) {
+            throw new OrderException(OrderCode.PRODUCT_NOT_FOUND);
+        }
+        return result.getData();
     }
 
 }

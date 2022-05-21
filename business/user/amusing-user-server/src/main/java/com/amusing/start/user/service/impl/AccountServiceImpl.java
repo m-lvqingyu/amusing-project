@@ -12,10 +12,8 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 /**
  * Create By 2021/9/21
@@ -38,15 +36,15 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public UserAccountOutput account(String userId) {
-        UserAccountOutput output = new UserAccountOutput();
         UserAccountInfo info = userAccountInfoMapper.selectByUserId(userId);
-        Optional.ofNullable(info).ifPresent(i -> {
-            BeanUtils.copyProperties(info, output);
-        });
+        if (info == null) {
+            return null;
+        }
+        UserAccountOutput output = new UserAccountOutput();
+        BeanUtils.copyProperties(info, output);
         return output;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean mainSettlement(String userId, BigDecimal amount) {
         // 根据用户ID,获取其主账户余额，获取不到则抛出异常
@@ -64,27 +62,6 @@ public class AccountServiceImpl implements IAccountService {
             result = userAccountInfoMapper.updateMainAccount(userId, mainAmount, amount);
         } catch (Exception e) {
             log.error("[user]-updateMainAccount err! userId:{}, amount:{}, msg:{}", userId, amount, Throwables.getStackTraceAsString(e));
-        }
-        return result == null ? UserConstant.FALSE : UserConstant.TRUE;
-    }
-
-    @Override
-    public Boolean giveSettlement(String userId, BigDecimal amount) {
-        // 根据用户ID,获取其副账户余额，获取不到则抛出异常
-        UserAccountInfo info = userAccountInfoMapper.selectByUserId(userId);
-        if (info == null) {
-            return UserConstant.FALSE;
-        }
-        BigDecimal giveAmount = info.getGiveAmount();
-        if (giveAmount == null || amount.compareTo(giveAmount) < UserConstant.ZERO) {
-            return UserConstant.FALSE;
-        }
-        // 更新用户副账户余额，更新失败抛出异常
-        Integer result = null;
-        try {
-            result = userAccountInfoMapper.updateGiveAccount(userId, giveAmount, amount);
-        } catch (Exception e) {
-            log.error("[user]-updateGiveAccount err! userId:{}, amount:{}, msg:{}", userId, amount, Throwables.getStackTraceAsString(e));
         }
         return result == null ? UserConstant.FALSE : UserConstant.TRUE;
     }

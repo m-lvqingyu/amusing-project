@@ -20,7 +20,11 @@ public enum OrderCode implements ResultCode<OrderCode> {
 
     INSUFFICIENT_BALANCE(104, "账户余额不足"),
 
-    UNABLE_PROVIDE_SERVICE(105, "服务开小差了，请稍后再试~~~");
+    UNABLE_PROVIDE_SERVICE(105, "服务开小差了，请稍后再试~~~"),
+
+    PRODUCT_NUM_ERROR(200, "商品库存不足"),
+
+    SHOP_CAR_ERROR(201, "请选择需要购买的商品");
 
     private final int code;
     private final String msg;

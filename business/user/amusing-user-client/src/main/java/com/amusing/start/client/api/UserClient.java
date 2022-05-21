@@ -34,7 +34,7 @@ public interface UserClient {
      * @return 账户信息
      */
     @GetMapping("/user/inward/v1/account/{id}")
-    UserAccountOutput account(@PathVariable("id") String userId);
+    ApiResult<UserAccountOutput> account(@PathVariable("id") String userId);
 
     /**
      * 主账户结算
@@ -43,15 +43,6 @@ public interface UserClient {
      * @return true:成功 false:失败
      */
     @PostMapping("/user/inward/v1/main/settlement")
-    Boolean mainSettlement(@RequestBody UserSettlementInput input);
-
-    /**
-     * 副账户结算
-     *
-     * @param input 支付信息
-     * @return true:成功 false:失败
-     */
-    @PostMapping("/user/inward/v1/give/settlement")
-    Boolean giveSettlement(@RequestBody UserSettlementInput input);
+    ApiResult<Boolean> mainSettlement(@RequestBody UserSettlementInput input);
 
 }

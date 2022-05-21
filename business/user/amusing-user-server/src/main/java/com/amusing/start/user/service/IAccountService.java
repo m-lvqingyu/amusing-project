@@ -31,16 +31,6 @@ public interface IAccountService {
     Boolean mainSettlement(String userId, BigDecimal amount);
 
     /**
-     * 更新副账户余额
-     *
-     * @param userId 用户ID
-     * @param amount 支付金额
-     * @return
-     * @throws UserException
-     */
-    Boolean giveSettlement(String userId, BigDecimal amount);
-
-    /**
      * 初始化账户
      *
      * @param userId 用户ID
