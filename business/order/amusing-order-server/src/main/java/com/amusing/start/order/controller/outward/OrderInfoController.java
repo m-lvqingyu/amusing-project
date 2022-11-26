@@ -1,21 +1,17 @@
 package com.amusing.start.order.controller.outward;
 
 import com.amusing.start.controller.BaseController;
-import com.amusing.start.exception.UnauthorizedException;
-import com.amusing.start.order.dto.create.CreateDto;
-import com.amusing.start.order.enums.OrderCode;
-import com.amusing.start.order.exception.OrderException;
-import com.amusing.start.order.from.create.CreateFrom;
-import com.amusing.start.order.service.ICreateService;
+import com.amusing.start.exception.CustomException;
+import com.amusing.start.order.entity.dto.CreateDto;
+import com.amusing.start.order.entity.vo.OrderDetailVo;
+import com.amusing.start.order.service.IOrderService;
 import com.amusing.start.result.ApiResult;
-import com.google.common.base.Throwables;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -28,41 +24,28 @@ import javax.validation.Valid;
 @Slf4j
 @RestController
 @RequestMapping("/order/outward")
+@Api(tags = "订单")
 public class OrderInfoController extends BaseController {
 
+    private final IOrderService orderService;
+
     @Autowired
-    public OrderInfoController(HttpServletRequest request, ICreateService orderCreateService) {
+    public OrderInfoController(HttpServletRequest request, IOrderService orderService) {
         super(request);
-        this.orderCreateService = orderCreateService;
+        this.orderService = orderService;
     }
 
-    private final ICreateService orderCreateService;
-
-    /**
-     * 订单创建
-     *
-     * @param from  订单信息
-     * @return
-     */
-    @PostMapping("create/v1")
-    public ApiResult<String> create(@Valid @RequestBody CreateFrom from) throws OrderException, UnauthorizedException {
-        CreateDto createDto = fromToDto(from);
-        String orderId = "";
-        try {
-            orderId = orderCreateService.create(createDto);
-        } catch (Exception e) {
-            log.error("[Order]-[create]-msg:{}", Throwables.getStackTraceAsString(e));
-        }
-        return StringUtils.isEmpty(orderId) ? ApiResult.result(OrderCode.ORDER_SAVE_FAIL) : ApiResult.ok(orderId);
+    @ApiOperation("创建订单")
+    @PostMapping("v1/create")
+    public ApiResult<String> create(@Valid @RequestBody CreateDto dto) throws CustomException {
+        return ApiResult.ok(orderService.create(getUserId(), dto));
     }
 
-    private CreateDto fromToDto(CreateFrom from) throws UnauthorizedException {
-        return CreateDto.builder()
-                .reserveId(getUserId())
-                .consigneeId(from.getConsigneeId())
-                .addressId(from.getAddressId())
-                .build();
+    @ApiOperation("订单详情")
+    @ApiImplicitParam(name = "no", value = "订单编号", required = true)
+    @GetMapping("v1/{no}")
+    public ApiResult<OrderDetailVo> get(@PathVariable("no") String orderNo) throws CustomException {
+        return ApiResult.ok(orderService.getOrderDetail(getUserId(), orderNo));
     }
-
 
 }

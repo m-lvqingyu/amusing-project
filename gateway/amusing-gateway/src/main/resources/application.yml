@@ -1,15 +1,14 @@
 spring:
   cloud:
     gateway:
+      httpclient:
+        connect-timeout: 500
+        response-timeout: 1s
       routes:
         - id: amusing-order-server
           uri: lb:http://amusing-order-server
           predicates:
             - Path=/order/outward/**
-        - id: amusing-auth-server
-          uri: lb:http://amusing-auth-server
-          predicates:
-            - Path=/auth/outward/**
         - id: amusing-product-server
           uri: lb:http://amusing-product-server
           predicates:
@@ -22,7 +21,3 @@ spring:
           uri: lb:http://amusing-user-server
           predicates:
             - Path=/user/outward/**
-        - id: amusing-map-server
-          uri: lb:http://amusing-map-server
-          predicates:
-            - Path=/map/outward/**

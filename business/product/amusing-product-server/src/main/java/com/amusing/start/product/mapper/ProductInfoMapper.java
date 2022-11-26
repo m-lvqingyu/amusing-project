@@ -1,8 +1,7 @@
 package com.amusing.start.product.mapper;
 
 import com.amusing.start.client.input.StockDeductionInput;
-import com.amusing.start.client.output.ProductOutput;
-import com.amusing.start.product.pojo.ProductInfo;
+import com.amusing.start.product.entity.pojo.ProductInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,7 +19,7 @@ public interface ProductInfoMapper {
      * @param record
      * @return
      */
-    Integer insertSelective(ProductInfo record);
+    Integer insert(ProductInfo record);
 
     /**
      * 更新商品信息
@@ -28,7 +27,7 @@ public interface ProductInfoMapper {
      * @param record
      * @return
      */
-    Integer updateByPrimaryKeySelective(ProductInfo record);
+    Integer update(ProductInfo record);
 
     /**
      * 批量扣减商品库存 (一次不能超过20条)
@@ -41,11 +40,11 @@ public interface ProductInfoMapper {
     /**
      * 根据商铺ID和商品名称，判断名称是否已存在
      *
-     * @param shopId      商铺ID
-     * @param productName 商品名称
+     * @param shopId 商铺ID
+     * @param name   商品名称
      * @return
      */
-    String checkExistByShopIdAndName(@Param("shopId") String shopId, @Param("productName") String productName);
+    ProductInfo selectByName(@Param("shopId") String shopId, @Param("name") String name);
 
     /**
      * 根据商铺ID，更新商品状态
@@ -55,16 +54,6 @@ public interface ProductInfoMapper {
      * @return
      */
     Integer updateStatusByShopId(@Param("shopId") String shopId, @Param("status") Integer status);
-
-    /**
-     * 根据商品ID，获取商品信息
-     *
-     * @param productId 商品ID
-     * @return
-     */
-    ProductOutput getDetailsById(@Param("productId") String productId);
-
-    List<ProductInfo> getAll();
 
     ProductInfo getById(@Param("productId") String productId);
 

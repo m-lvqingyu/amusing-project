@@ -7,7 +7,7 @@ import com.alibaba.csp.sentinel.slots.block.degrade.DegradeException;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowException;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException;
 import com.alibaba.csp.sentinel.slots.system.SystemBlockException;
-import com.amusing.start.code.CommCode;
+import com.amusing.start.code.ErrorCode;
 import com.amusing.start.result.ApiResult;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
@@ -59,30 +59,31 @@ public class GatewayBlockExceptionHandler extends SentinelGatewayBlockExceptionH
 
         // 限流
         if (throwable instanceof FlowException) {
-            log.error("[gateway-sentinel]-request is flow, path:{}", path);
-            return responseWrite(response, ApiResult.result(CommCode.FLOW_ERROR));
+            log.error("[gateway]-request is flow, path:{}", path);
+            return responseWrite(response, ApiResult.result(ErrorCode.FLOW_ERR));
         }
         // 熔断
         if (throwable instanceof DegradeException) {
-            log.error("[gateway-sentinel]-request is degrade, path:{}", path);
-            return responseWrite(response, ApiResult.result(CommCode.DEGRADE_ERROR));
+            log.error("[gateway]-request is degrade, path:{}", path);
+            return responseWrite(response, ApiResult.result(ErrorCode.DEGRADE_ERR));
         }
         // 热点参数限流
         if (throwable instanceof ParamFlowException) {
-            log.error("[gateway-sentinel]-request is paramFlow, path:{}", path);
-            return responseWrite(response, ApiResult.result(CommCode.PARAM_FLOW_ERROR));
+            log.error("[gateway]-request is paramFlow, path:{}", path);
+            return responseWrite(response, ApiResult.result(ErrorCode.PARAM_FLOW_ERR));
         }
         // 系统保护规则
         if (throwable instanceof SystemBlockException) {
-            log.error("[gateway-sentinel]-request is systemBlock, path:{}", path);
-            return responseWrite(response, ApiResult.result(CommCode.SYSTEM_BLOCK_ERROR));
+            log.error("[gateway]-request is systemBlock, path:{}", path);
+            return responseWrite(response, ApiResult.result(ErrorCode.SYSTEM_BLOCK_ERR));
         }
         // 授权规则
         if (throwable instanceof AuthorityException) {
-            log.error("[gateway-sentinel]-request is authority, path:{}", path);
-            return responseWrite(response, ApiResult.result(CommCode.AUTHORITY_ERROR));
+            log.error("[gateway]-request is authority, path:{}", path);
+            return responseWrite(response, ApiResult.result(ErrorCode.AUTHORITY_ERR));
         }
-        return responseWrite(response, ApiResult.result(CommCode.FREQUENT_OPERATION_EXCEPTION));
+        log.error("[gateway]-request err msg:{}", Throwables.getStackTraceAsString(throwable));
+        return responseWrite(response, ApiResult.result(ErrorCode.OPERATION_ERR));
     }
 
     private void setProps(ServerHttpResponse response) {

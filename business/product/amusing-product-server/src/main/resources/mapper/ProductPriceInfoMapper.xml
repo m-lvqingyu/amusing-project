@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.amusing.start.product.mapper.ProductPriceInfoMapper">
-    <resultMap id="BaseResultMap" type="com.amusing.start.product.pojo.ProductPriceInfo">
+    <resultMap id="BaseResultMap" type="com.amusing.start.product.entity.pojo.ProductPriceInfo">
         <result column="price_id" jdbcType="VARCHAR" property="priceId"/>
         <result column="product_id" jdbcType="VARCHAR" property="productId"/>
         <result column="version" jdbcType="INTEGER" property="version"/>
@@ -15,7 +15,7 @@
         price_id, product_id, version, price, create_by, create_time, update_by, update_time
     </sql>
 
-    <insert id="insertSelective" parameterType="com.amusing.start.product.pojo.ProductPriceInfo">
+    <insert id="insert" parameterType="com.amusing.start.product.entity.pojo.ProductPriceInfo">
         insert into product_price_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="priceId != null">
@@ -71,7 +71,7 @@
         </trim>
     </insert>
 
-    <update id="updateByPrimaryKeySelective" parameterType="com.amusing.start.product.pojo.ProductPriceInfo">
+    <update id="update" parameterType="com.amusing.start.product.entity.pojo.ProductPriceInfo">
         update product_price_info
         <set>
             <if test="productId != null">
@@ -99,13 +99,7 @@
         where price_id = #{priceId,jdbcType=VARCHAR}
     </update>
 
-    <select id="selectByProductAndPriceId" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from product_price_info where product_id = #{productId} and price_id = #{priceId}
-    </select>
-
-    <select id="selectLastRecordByProductId" resultMap="BaseResultMap">
+    <select id="getLastPrice" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from product_price_info where product_id = #{productId} order BY version desc limit 1;

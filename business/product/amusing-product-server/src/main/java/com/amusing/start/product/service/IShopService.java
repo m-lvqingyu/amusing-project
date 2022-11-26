@@ -1,7 +1,7 @@
 package com.amusing.start.product.service;
 
-import com.amusing.start.product.dto.create.ShopCreateDto;
-import com.amusing.start.product.exception.ProductException;
+import com.amusing.start.exception.CustomException;
+import com.amusing.start.product.entity.dto.ShopCreateDto;
 
 /**
  * @author lv.qingyu
@@ -16,17 +16,9 @@ public interface IShopService {
      * @param executor  执行人
      * @param createDto 商铺信息
      * @return
-     * @throws ProductException
+     * @throws CustomException
      */
-    String create(String executor, ShopCreateDto createDto) throws ProductException;
+    String create(String executor, ShopCreateDto createDto) throws CustomException;
 
-    /**
-     * 关闭商铺
-     *
-     * @param executor 执行人
-     * @param shopId   商铺ID
-     * @throws ProductException
-     */
-    void close(String executor, String shopId) throws ProductException;
 
 }

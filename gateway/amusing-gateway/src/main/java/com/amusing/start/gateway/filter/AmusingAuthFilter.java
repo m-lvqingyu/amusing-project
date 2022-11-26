@@ -2,8 +2,8 @@ package com.amusing.start.gateway.filter;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONUtil;
-import com.amusing.start.code.CommCode;
-import com.amusing.start.constant.CommonConstant;
+import com.amusing.start.code.ErrorCode;
+import com.amusing.start.constant.AuthConstant;
 import com.amusing.start.gateway.config.IgnoreAuthPathConfig;
 import com.amusing.start.result.ApiResult;
 import com.amusing.start.utils.TokenUtils;
@@ -67,18 +67,22 @@ public class AmusingAuthFilter implements GlobalFilter {
         }
         // 用户身份信息认证
         HttpHeaders headers = request.getHeaders();
-        String authToken = headers.getFirst(CommonConstant.AUTHORIZATION);
-        if (StringUtils.isEmpty(authToken) || !authToken.startsWith(CommonConstant.BEARER)) {
+        String authToken = headers.getFirst(AuthConstant.AUTHORIZATION);
+        if (StringUtils.isEmpty(authToken) || !authToken.startsWith(AuthConstant.BEARER)) {
             return authorizationFail(exchange);
         }
         // 根据Token信息，获取用户ID
-        authToken = authToken.substring(CommonConstant.BEARER.length());
+        authToken = authToken.substring(AuthConstant.BEARER.length());
         String userId = TokenUtils.getUserId(authToken);
         if (StringUtils.isEmpty(userId)) {
             return authorizationFail(exchange);
         }
         // 将用户ID封装在请求头中，方便后续服务获取
-        ServerHttpRequest newRequest = exchange.getRequest().mutate().header(CommonConstant.USER_UID, userId).build();
+        ServerHttpRequest newRequest = exchange
+                .getRequest()
+                .mutate()
+                .header(AuthConstant.USER_UID, userId)
+                .build();
         return chain.filter(exchange.mutate().request(newRequest).build());
     }
 
@@ -113,7 +117,7 @@ public class AmusingAuthFilter implements GlobalFilter {
         response.getHeaders().set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         response.getHeaders().set(ACCESS_CONTROL_ALLOW_ORIGIN, ASTERISK);
         response.getHeaders().set(CACHE_CONTROL, NO_CACHE);
-        String body = JSONUtil.toJsonStr(ApiResult.result(CommCode.UNAUTHORIZED));
+        String body = JSONUtil.toJsonStr(ApiResult.result(ErrorCode.UNAUTHORIZED));
         DataBuffer buffer = response.bufferFactory().wrap(body.getBytes(StandardCharsets.UTF_8));
         return response.writeWith(Mono.just(buffer));
     }

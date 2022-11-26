@@ -1,6 +1,6 @@
 package com.amusing.start.log;
 
-import com.amusing.start.constant.CommonConstant;
+import com.amusing.start.constant.AuthConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -34,7 +34,7 @@ public class RequestLogAspect {
         if (servletRequest == null) {
             return joinPoint.proceed();
         }
-        String userId = servletRequest.getHeader(CommonConstant.USER_UID);
+        String userId = servletRequest.getHeader(AuthConstant.USER_UID);
         String uri = servletRequest.getRequestURI();
         String address = RequestUtils.getIp(servletRequest);
         String objArgs = findParams(joinPoint.getArgs());

@@ -11,26 +11,26 @@ public enum OrderStatus {
 
     REDUCE_STOCK(20, "扣减库存"),
 
-    IN_PAYMENT(30, "支付中"),
+    PAYMENT(30, "支付中"),
 
-    ALREADY_PAID(40, "已支付"),
+    PAY(40, "已支付"),
 
-    CANCEL(100, "已取消"),
-    ;
+    CANCEL(100, "已取消");
 
     private int key;
-    private String value;
 
-    OrderStatus(int key, String value) {
+    private String desc;
+
+    OrderStatus(int key, String desc) {
         this.key = key;
-        this.value = value;
+        this.desc = desc;
     }
 
     public int getKey() {
         return key;
     }
 
-    public String getValue() {
-        return value;
+    public String getDesc() {
+        return desc;
     }
 }

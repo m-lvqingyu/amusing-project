@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.amusing.start.user.mapper.UserInfoMapper">
+    <resultMap id="BaseResultMap" type="com.amusing.start.user.entity.pojo.UserInfo">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="secret" jdbcType="VARCHAR" property="secret"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="sources" jdbcType="BIT" property="sources"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+        <result column="is_del" jdbcType="BIT" property="isDel"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="update_time" jdbcType="BIGINT" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id
+        , user_name, `password`, secret, phone, sources,
+        `status`, is_del, create_by, create_time, update_by, update_time
+    </sql>
+
+    <select id="getByName" resultType="com.amusing.start.user.entity.pojo.UserInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info where user_name = #{name} and status = 1 and is_del = 1 limit 1
+    </select>
+
+    <select id="getByPhone" resultType="com.amusing.start.user.entity.pojo.UserInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info where phone = #{phone} and status = 1 and is_del = 1 limit 1
+    </select>
+
+    <insert id="insert" parameterType="com.amusing.start.user.entity.pojo.UserInfo">
+        insert into user_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="password != null">
+                `password`,
+            </if>
+            <if test="secret != null">
+                secret,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="sources != null">
+                sources,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="isDel != null">
+                is_del,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="secret != null">
+                #{secret,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="sources != null">
+                #{sources,jdbcType=BIT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=BIT},
+            </if>
+            <if test="isDel != null">
+                #{isDel,jdbcType=BIT},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getById" resultType="com.amusing.start.user.entity.pojo.UserInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info where id = #{userId} and status = 1 and is_del = 1 limit 1
+    </select>
+
+
+</mapper>

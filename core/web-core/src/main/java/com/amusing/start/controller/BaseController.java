@@ -1,8 +1,8 @@
 package com.amusing.start.controller;
 
-import com.amusing.start.code.CommCode;
-import com.amusing.start.constant.CommonConstant;
-import com.amusing.start.exception.UnauthorizedException;
+import com.amusing.start.code.ErrorCode;
+import com.amusing.start.constant.AuthConstant;
+import com.amusing.start.exception.CustomException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -25,10 +25,8 @@ public class BaseController {
      *
      * @return 用户唯一ID
      */
-    public String getUserId() throws UnauthorizedException {
-        return Optional.ofNullable(request)
-                .map((i) -> i.getHeader(CommonConstant.USER_UID))
-                .orElseThrow(() -> new UnauthorizedException(CommCode.UNAUTHORIZED));
+    public String getUserId() throws CustomException {
+        return Optional.ofNullable(request).map((i) -> i.getHeader(AuthConstant.USER_UID)).orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
     }
 
     /**
@@ -37,7 +35,7 @@ public class BaseController {
      * @return 设备号
      */
     public String getImei() {
-        return Optional.ofNullable(request).map((i) -> i.getHeader(CommonConstant.IMEI)).orElseGet(() -> "");
+        return Optional.ofNullable(request).map((i) -> i.getHeader(AuthConstant.IMEI)).orElseGet(() -> "");
     }
 
 }

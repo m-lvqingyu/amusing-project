@@ -1,6 +1,6 @@
 package com.amusing.start.product.mapper;
 
-import com.amusing.start.product.pojo.ShopInfo;
+import com.amusing.start.product.entity.pojo.ShopInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -35,15 +35,8 @@ public interface ShopInfoMapper {
      * @param shopId 商铺ID
      * @return
      */
-    ShopInfo selectByShopId(@Param("shopId") String shopId);
+    ShopInfo selectById(@Param("shopId") String shopId);
 
-    /**
-     * 根据商铺ID，判断是否存在商铺
-     *
-     * @param shopId 商铺ID
-     * @return 商铺ID
-     */
-    String checkExistById(@Param("shopId") String shopId);
 
     /**
      * 根据商铺名称，判断名称是否已经存在

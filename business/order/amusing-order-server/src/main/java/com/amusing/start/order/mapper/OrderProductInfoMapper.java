@@ -1,7 +1,9 @@
 package com.amusing.start.order.mapper;
 
-import com.amusing.start.order.pojo.OrderProductInfo;
+import com.amusing.start.order.entity.pojo.OrderProductInfo;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 @Mapper
 public interface OrderProductInfoMapper {
@@ -21,6 +23,8 @@ public interface OrderProductInfoMapper {
      * @return
      */
     int update(OrderProductInfo record);
+
+    List<OrderProductInfo> getByNo(String orderNo);
 
 
 }

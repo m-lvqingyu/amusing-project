@@ -1,118 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.amusing.start.order.mapper.OrderProductInfoMapper">
-  <resultMap id="BaseResultMap" type="com.amusing.start.order.pojo.OrderProductInfo">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
-    <result column="shop_id" jdbcType="VARCHAR" property="shopId" />
-    <result column="shop_name" jdbcType="VARCHAR" property="shopName" />
-    <result column="product_id" jdbcType="VARCHAR" property="productId" />
-    <result column="product_name" jdbcType="VARCHAR" property="productName" />
-    <result column="price_id" jdbcType="VARCHAR" property="priceId" />
-    <result column="price" jdbcType="DECIMAL" property="price" />
-    <result column="num" jdbcType="INTEGER" property="num" />
-    <result column="amount" jdbcType="DECIMAL" property="amount" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.amusing.start.order.entity.pojo.OrderProductInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="shop_id" jdbcType="VARCHAR" property="shopId"/>
+        <result column="shop_name" jdbcType="VARCHAR" property="shopName"/>
+        <result column="product_id" jdbcType="VARCHAR" property="productId"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="price_id" jdbcType="VARCHAR" property="priceId"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="num" jdbcType="INTEGER" property="num"/>
+        <result column="amount" jdbcType="DECIMAL" property="amount"/>
+    </resultMap>
 
-  <sql id="Base_Column_List">
-    id, order_no, shop_id, shop_name, product_id, product_name, price_id, price, num, 
+    <sql id="Base_Column_List">
+        id
+        , order_no, shop_id, shop_name, product_id, product_name, price_id, price, num,
     amount
-  </sql>
+    </sql>
 
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.amusing.start.order.pojo.OrderProductInfo" useGeneratedKeys="true">
-    insert into order_product_info
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="orderNo != null">
-        order_no,
-      </if>
-      <if test="shopId != null">
-        shop_id,
-      </if>
-      <if test="shopName != null">
-        shop_name,
-      </if>
-      <if test="productId != null">
-        product_id,
-      </if>
-      <if test="productName != null">
-        product_name,
-      </if>
-      <if test="priceId != null">
-        price_id,
-      </if>
-      <if test="price != null">
-        price,
-      </if>
-      <if test="num != null">
-        num,
-      </if>
-      <if test="amount != null">
-        amount,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="orderNo != null">
-        #{orderNo,jdbcType=VARCHAR},
-      </if>
-      <if test="shopId != null">
-        #{shopId,jdbcType=VARCHAR},
-      </if>
-      <if test="shopName != null">
-        #{shopName,jdbcType=VARCHAR},
-      </if>
-      <if test="productId != null">
-        #{productId,jdbcType=VARCHAR},
-      </if>
-      <if test="productName != null">
-        #{productName,jdbcType=VARCHAR},
-      </if>
-      <if test="priceId != null">
-        #{priceId,jdbcType=VARCHAR},
-      </if>
-      <if test="price != null">
-        #{price,jdbcType=DECIMAL},
-      </if>
-      <if test="num != null">
-        #{num,jdbcType=INTEGER},
-      </if>
-      <if test="amount != null">
-        #{amount,jdbcType=DECIMAL},
-      </if>
-    </trim>
-  </insert>
+    <insert id="insert" keyColumn="id" keyProperty="id"
+            parameterType="com.amusing.start.order.entity.pojo.OrderProductInfo" useGeneratedKeys="true">
+        insert into order_product_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">
+                order_no,
+            </if>
+            <if test="shopId != null">
+                shop_id,
+            </if>
+            <if test="shopName != null">
+                shop_name,
+            </if>
+            <if test="productId != null">
+                product_id,
+            </if>
+            <if test="productName != null">
+                product_name,
+            </if>
+            <if test="priceId != null">
+                price_id,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="num != null">
+                num,
+            </if>
+            <if test="amount != null">
+                amount,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">
+                #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="shopId != null">
+                #{shopId,jdbcType=VARCHAR},
+            </if>
+            <if test="shopName != null">
+                #{shopName,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null">
+                #{productId,jdbcType=VARCHAR},
+            </if>
+            <if test="productName != null">
+                #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="priceId != null">
+                #{priceId,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="num != null">
+                #{num,jdbcType=INTEGER},
+            </if>
+            <if test="amount != null">
+                #{amount,jdbcType=DECIMAL},
+            </if>
+        </trim>
+    </insert>
 
-  <update id="update" parameterType="com.amusing.start.order.pojo.OrderProductInfo">
-    update order_product_info
-    <set>
-      <if test="orderNo != null">
-        order_no = #{orderNo,jdbcType=VARCHAR},
-      </if>
-      <if test="shopId != null">
-        shop_id = #{shopId,jdbcType=VARCHAR},
-      </if>
-      <if test="shopName != null">
-        shop_name = #{shopName,jdbcType=VARCHAR},
-      </if>
-      <if test="productId != null">
-        product_id = #{productId,jdbcType=VARCHAR},
-      </if>
-      <if test="productName != null">
-        product_name = #{productName,jdbcType=VARCHAR},
-      </if>
-      <if test="priceId != null">
-        price_id = #{priceId,jdbcType=VARCHAR},
-      </if>
-      <if test="price != null">
-        price = #{price,jdbcType=DECIMAL},
-      </if>
-      <if test="num != null">
-        num = #{num,jdbcType=INTEGER},
-      </if>
-      <if test="amount != null">
-        amount = #{amount,jdbcType=DECIMAL},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+    <update id="update" parameterType="com.amusing.start.order.entity.pojo.OrderProductInfo">
+        update order_product_info
+        <set>
+            <if test="orderNo != null">
+                order_no = #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="shopId != null">
+                shop_id = #{shopId,jdbcType=VARCHAR},
+            </if>
+            <if test="shopName != null">
+                shop_name = #{shopName,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null">
+                product_id = #{productId,jdbcType=VARCHAR},
+            </if>
+            <if test="productName != null">
+                product_name = #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="priceId != null">
+                price_id = #{priceId,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="num != null">
+                num = #{num,jdbcType=INTEGER},
+            </if>
+            <if test="amount != null">
+                amount = #{amount,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="getByNo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from order_product_info where order_no = #{orderNo}
+    </select>
 
 </mapper>

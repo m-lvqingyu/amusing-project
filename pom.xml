@@ -18,20 +18,13 @@
         <module>gateway/amusing-gateway</module>
         <module>business/order/amusing-order-server</module>
         <module>business/order/amusing-order-client</module>
-        <module>business/auth/amusing-auth-server</module>
         <module>business/user/amusing-user-server</module>
         <module>business/user/amusing-user-client</module>
         <module>core/web-core</module>
         <module>business/product/amusing-product-server</module>
         <module>business/product/amusing-product-client</module>
-        <module>business/map/amusing-map-server</module>
-        <module>business/map/amusing-map-client</module>
         <module>business/search/amusing-search-server</module>
         <module>business/search/amusing-search-client</module>
-        <module>business/statistics/amusing-statistics-client</module>
-        <module>business/auth/amusing-auth-client</module>
-        <module>business/pay/amusing-pay-server</module>
-        <module>core/cache-core</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -54,9 +47,9 @@
         <mysql.version>8.0.26</mysql.version>
         <mybatis.version>3.4.3.2</mybatis.version>
         <sentinel.nacos.version>1.8.1</sentinel.nacos.version>
-        <rocketmq.version>2.2.1</rocketmq.version>
         <sharding.version>4.1.1</sharding.version>
         <redisson.version>3.16.7</redisson.version>
+        <swagger3.version>3.0.0</swagger3.version>
     </properties>
 
     <dependencyManagement>
@@ -139,12 +132,6 @@
             </dependency>
 
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version>${spring.druid.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
@@ -160,12 +147,6 @@
                 <groupId>com.alibaba.csp</groupId>
                 <artifactId>sentinel-datasource-nacos</artifactId>
                 <version>${sentinel.nacos.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.rocketmq</groupId>
-                <artifactId>rocketmq-spring-boot-starter</artifactId>
-                <version>${rocketmq.version}</version>
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/sharding-jdbc-spring-boot-starter -->
@@ -187,6 +168,12 @@
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>${redisson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>${swagger3.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

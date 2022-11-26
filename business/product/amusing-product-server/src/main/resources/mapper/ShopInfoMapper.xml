@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.amusing.start.product.mapper.ShopInfoMapper">
-    <resultMap id="BaseResultMap" type="com.amusing.start.product.pojo.ShopInfo">
+    <resultMap id="BaseResultMap" type="com.amusing.start.product.entity.pojo.ShopInfo">
         <result column="shop_id" jdbcType="VARCHAR" property="shopId"/>
         <result column="shop_name" jdbcType="VARCHAR" property="shopName"/>
         <result column="grade" jdbcType="BIT" property="grade"/>
@@ -16,7 +16,7 @@
         shop_id, shop_name, grade, `status`, is_del, create_by, create_time, update_by, update_time
     </sql>
 
-    <insert id="insertSelective" parameterType="com.amusing.start.product.pojo.ShopInfo">
+    <insert id="insertSelective" parameterType="com.amusing.start.product.entity.pojo.ShopInfo">
         insert into shop_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="shopId != null">
@@ -78,7 +78,7 @@
         </trim>
     </insert>
 
-    <update id="updateByPrimaryKeySelective" parameterType="com.amusing.start.product.pojo.ShopInfo">
+    <update id="updateByPrimaryKeySelective" parameterType="com.amusing.start.product.entity.pojo.ShopInfo">
         update shop_info
         <set>
             <if test="shopName != null">
@@ -109,14 +109,10 @@
         where shop_id = #{shopId,jdbcType=VARCHAR}
     </update>
 
-    <select id="selectByShopId" resultMap="BaseResultMap">
+    <select id="selectById" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from shop_info where shop_id = #{shopId} and status = 1 and is_del = 1
-    </select>
-
-    <select id="checkExistById" resultType="java.lang.String">
-        select shop_id from shop_info where shop_id = #{shopId} and status = 1 and is_del = 1 limit 1
+        from shop_info where shop_id = #{shopId} and status = 1 and is_del = 1 limit 1
     </select>
 
     <select id="checkExistByName" resultType="java.lang.String">

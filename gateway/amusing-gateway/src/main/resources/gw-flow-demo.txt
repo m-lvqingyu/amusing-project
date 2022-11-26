@@ -9,7 +9,7 @@
 
 [
     {
-        "resource":"amusing-auth-server",
+        "resource":"amusing-user-server",
         "count":2,
         "grade":1,
         "limitApp":"default",

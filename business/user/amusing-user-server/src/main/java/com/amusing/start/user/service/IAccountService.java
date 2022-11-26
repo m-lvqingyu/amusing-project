@@ -1,7 +1,7 @@
 package com.amusing.start.user.service;
 
-import com.amusing.start.client.output.UserAccountOutput;
-import com.amusing.start.user.exception.UserException;
+import com.amusing.start.client.output.AccountOutput;
+import com.amusing.start.exception.CustomException;
 
 import java.math.BigDecimal;
 
@@ -18,7 +18,7 @@ public interface IAccountService {
      * @param userId
      * @return
      */
-    UserAccountOutput account(String userId);
+    AccountOutput account(String userId) throws CustomException;
 
     /**
      * 更新主账户余额
@@ -26,17 +26,8 @@ public interface IAccountService {
      * @param userId 用户ID
      * @param amount 支付金额
      * @return
-     * @throws UserException
+     * @throws CustomException
      */
-    Boolean mainSettlement(String userId, BigDecimal amount);
-
-    /**
-     * 初始化账户
-     *
-     * @param userId 用户ID
-     * @return true:成功  false:失败
-     * @throws UserException
-     */
-    Boolean init(String userId);
+    Boolean pay(String userId, BigDecimal amount) throws CustomException;
 
 }

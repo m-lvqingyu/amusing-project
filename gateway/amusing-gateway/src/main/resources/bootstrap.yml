@@ -1,11 +1,11 @@
 server:
   port: 8001
-  ssl:
-    enabled: true
-    key-store: classpath:scg-keystore.p12
-    key-alias: amusing
-    key-store-password: 123456
-    key-store-type: PKCS12
+#  ssl:
+#    enabled: true
+#    key-store: classpath:scg-keystore.p12
+#    key-alias: amusing
+#    key-store-password: 123456
+#    key-store-type: PKCS12
 spring:
   application:
     name: amusing-gateway-server
@@ -43,7 +43,6 @@ spring:
 ignore:
   auth:
     paths:
-      - /auth/outward/v1/login
-      - /auth/outward/v1/refresh/**
-      - /auth/outward/v1/user/register
-      - /admin/**
+      - /user/outward/v1/register**
+      - /user/outward/v1/login
+      - /user/outward/v1/refresh**

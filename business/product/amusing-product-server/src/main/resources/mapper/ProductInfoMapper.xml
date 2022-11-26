@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.amusing.start.product.mapper.ProductInfoMapper">
-    <resultMap id="BaseResultMap" type="com.amusing.start.product.pojo.ProductInfo">
+    <resultMap id="BaseResultMap" type="com.amusing.start.product.entity.pojo.ProductInfo">
         <result column="shop_id" jdbcType="VARCHAR" property="shopId"/>
-        <result column="product_id" jdbcType="VARCHAR" property="productId"/>
-        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
-        <result column="product_stock" jdbcType="DECIMAL" property="productStock"/>
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="stock" jdbcType="DECIMAL" property="stock"/>
         <result column="status" jdbcType="BIT" property="status"/>
         <result column="is_del" jdbcType="BIT" property="isDel"/>
         <result column="describe" jdbcType="VARCHAR" property="describe"/>
@@ -15,36 +15,26 @@
         <result column="update_time" jdbcType="BIGINT" property="updateTime"/>
     </resultMap>
 
-    <resultMap id="ShopProductMap" type="com.amusing.start.client.output.ProductOutput">
-        <result column="shop_id" jdbcType="VARCHAR" property="shopId"/>
-        <result column="shop_name" jdbcType="VARCHAR" property="shopName"/>
-        <result column="product_id" jdbcType="VARCHAR" property="productId"/>
-        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
-        <result column="product_stock" jdbcType="DECIMAL" property="productStock"/>
-        <result column="price_id" jdbcType="VARCHAR" property="priceId"/>
-        <result column="price" jdbcType="DECIMAL" property="price"/>
-    </resultMap>
-
     <sql id="Base_Column_List">
         shop_id
-        , product_id, product_name, product_stock, `status`, is_del,
+        , id, name, stock, `status`, is_del,
         `describe`, create_by, create_time, update_by, update_time
     </sql>
 
-    <insert id="insertSelective" parameterType="com.amusing.start.product.pojo.ProductInfo">
+    <insert id="insert" parameterType="com.amusing.start.product.entity.pojo.ProductInfo">
         insert into product_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="shopId != null">
                 shop_id,
             </if>
-            <if test="productId != null">
-                product_id,
+            <if test="id != null">
+                id,
             </if>
-            <if test="productName != null">
-                product_name,
+            <if test="name != null">
+                name,
             </if>
-            <if test="productStock != null">
-                product_stock,
+            <if test="stock != null">
+                stock,
             </if>
             <if test="status != null">
                 `status`,
@@ -72,14 +62,14 @@
             <if test="shopId != null">
                 #{shopId,jdbcType=VARCHAR},
             </if>
-            <if test="productId != null">
-                #{productId,jdbcType=VARCHAR},
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
             </if>
-            <if test="productName != null">
-                #{productName,jdbcType=VARCHAR},
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
             </if>
-            <if test="productStock != null">
-                #{productStock,jdbcType=DECIMAL},
+            <if test="stock != null">
+                #{stock,jdbcType=DECIMAL},
             </if>
             <if test="status != null">
                 #{status,jdbcType=BIT},
@@ -105,17 +95,14 @@
         </trim>
     </insert>
 
-    <update id="updateByPrimaryKeySelective" parameterType="com.amusing.start.product.pojo.ProductInfo">
+    <update id="update" parameterType="com.amusing.start.product.entity.pojo.ProductInfo">
         update product_info
         <set>
-            <if test="productId != null">
-                product_id = #{productId,jdbcType=VARCHAR},
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
             </if>
-            <if test="productName != null">
-                product_name = #{productName,jdbcType=VARCHAR},
-            </if>
-            <if test="productStock != null">
-                product_stock = #{productStock,jdbcType=DECIMAL},
+            <if test="stock != null">
+                stock = #{stock,jdbcType=DECIMAL},
             </if>
             <if test="status != null">
                 `status` = #{status,jdbcType=BIT},
@@ -139,23 +126,24 @@
                 update_time = #{updateTime,jdbcType=BIGINT},
             </if>
         </set>
-        where shop_id = #{shopId,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=VARCHAR}
     </update>
 
     <update id="batchDeductionStock">
         <foreach collection="inputList" separator=";" item="item" index="index">
-            update product_info set product_stock = product_stock - #{item.productNum} where product_id =
-            #{item.productId} and product_stock > 0 and status = 1 and is_del = 1
+            update product_info set stock = stock - #{item.productNum} where id =
+            #{item.productId} and stock > 0 and status = 1 and is_del = 1
         </foreach>
     </update>
 
-    <select id="checkExistByShopIdAndName" resultType="java.lang.String">
-        select product_id
+    <select id="selectByName" resultType="com.amusing.start.product.entity.pojo.ProductInfo">
+        select
+        <include refid="Base_Column_List"/>
         from product_info
         where shop_id = #{shopId}
-          and product_name = #{productName}
-          and status = 1
-          and is_del = 1
+        and name = #{name}
+        and status = 1
+        and is_del = 1
     </select>
 
     <update id="updateStatusByShopId">
@@ -166,36 +154,11 @@
           and is_del = 1
     </update>
 
-    <select id="getDetailsById" resultMap="ShopProductMap">
-        SELECT pif.shop_id,
-               sif.shop_name,
-               pif.product_id,
-               pif.product_name,
-               pif.product_stock,
-               ppi.price_id,
-               ppi.price,
-               ppi.version
-        FROM product_info AS pif
-                 LEFT JOIN shop_info AS sif ON pif.shop_id = sif.shop_id
-                 LEFT JOIN product_price_info AS ppi ON pif.product_id = ppi.product_id
-        WHERE pif.product_id = #{productId}
-          AND pif.status = 1
-          AND pif.is_del = 1
-        ORDER BY VERSION DESC LIMIT 1;
-    </select>
-
-    <select id="getAll" resultMap="BaseResultMap">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM product_info
-        WHERE status = 1 AND is_del = 1 ORDER BY create_time desc;
-    </select>
-
     <select id="getById" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM product_info
-        WHERE product_id = #{productId} AND status = 1 AND is_del = 1 ORDER BY create_time desc;
+        WHERE id = #{productId} AND status = 1 AND is_del = 1 ORDER BY create_time desc;
     </select>
 
 </mapper>
