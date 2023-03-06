@@ -119,8 +119,8 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public List<ShopCarOutput> shopCar(String userId) throws CustomException {
-        String name = CacheKey.SHOP_CAR_PREFIX + userId;
-        RBucket<List<ShopCarDto>> bucket = redissonClient.getBucket(name);
+        String cacheKey = CacheKey.getShopCar(userId);
+        RBucket<List<ShopCarDto>> bucket = redissonClient.getBucket(cacheKey);
         List<ShopCarDto> shopCarDtoList = bucket.get();
         if (CollectionUtil.isEmpty(shopCarDtoList)) {
             throw new CustomException(ErrorCode.SHOP_CAR_ERROR);

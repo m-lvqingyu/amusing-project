@@ -14,7 +14,9 @@ import org.springframework.context.annotation.Configuration;
 import java.io.IOException;
 
 /**
- * Created by lvqingyu on 2022/10/5.
+ * Created by 2022/10/5.
+ *
+ * @author lvqingyu
  */
 @Configuration
 public class RedissonConfig {

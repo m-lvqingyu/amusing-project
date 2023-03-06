@@ -13,9 +13,9 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 /**
+ * Create By 2021/9/4
+ *
  * @author ：lv.qingyu
- * @date ：2022/5/14 19:57
- * 跨域设置
  */
 @Component
 public class CorsWebFilter implements WebFilter {

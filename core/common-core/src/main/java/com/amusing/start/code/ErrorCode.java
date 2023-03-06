@@ -15,6 +15,8 @@ public enum ErrorCode {
     UNAUTHORIZED(401, "非法访问！"),
     FAIL(500, "系统异常"),
 
+    PERMISSION_DENIED(1000, "权限不足"),
+
     USER_NOT_FOUND(2000, "用户信息不存在"),
     USER_UPDATE_ERR(2001, "用户信息更新失败"),
     ACCOUNT_INSUFFICIENT(2002, "用户账户金额不足"),

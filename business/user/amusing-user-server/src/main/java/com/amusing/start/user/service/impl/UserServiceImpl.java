@@ -11,7 +11,6 @@ import com.amusing.start.user.entity.dto.RegisterDto;
 import com.amusing.start.user.entity.pojo.AccountInfo;
 import com.amusing.start.user.entity.pojo.UserInfo;
 import com.amusing.start.user.entity.vo.TokenVo;
-import com.amusing.start.user.enums.RegisterPreType;
 import com.amusing.start.user.enums.UserStatus;
 import com.amusing.start.user.enums.YesOrNo;
 import com.amusing.start.user.mapper.AccountInfoMapper;
@@ -31,7 +30,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * Created by lvqingyu on 2022/10/2.
+ * Created by 2022/10/2.
+ *
+ * @author lvqingyu
  */
 @Slf4j
 @Service
@@ -57,11 +58,14 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public Boolean registerPre(Integer type, String param) {
-        if (RegisterPreType.NAME.getKey().equals(type)) {
-            return userInfoMapper.getByName(param) != null;
+    public Boolean registerCheck(String name, String phone) throws CustomException {
+        if (StringUtils.isNotBlank(name)) {
+            return userInfoMapper.getByName(name) != null;
         }
-        return userInfoMapper.getByPhone(param) != null;
+        if (StringUtils.isNotBlank(phone)) {
+            return userInfoMapper.getByPhone(phone) != null;
+        }
+        throw new CustomException(ErrorCode.PARAMETER_ERR);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -151,10 +155,7 @@ public class UserServiceImpl implements IUserService {
             DateTime refreshTokenExpiresTime = DateUtil.offsetSecond(currentTime, UserConstant.REFRESH_TOKEN_EXPIRES_TIME);
             refreshToken = TokenUtils.generateToken(id, secret, refreshTokenExpiresTime);
         }
-        return TokenVo.builder()
-                .token(token)
-                .refreshToken(refreshToken)
-                .build();
+        return TokenVo.builder().token(token).refreshToken(refreshToken).build();
     }
 
 }

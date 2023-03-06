@@ -6,18 +6,20 @@ import com.amusing.start.user.entity.dto.RegisterDto;
 import com.amusing.start.user.entity.vo.TokenVo;
 
 /**
- * Created by lvqingyu on 2022/10/2.
+ * Created by 2022/10/2.
+ *
+ * @author lvqingyu
  */
 public interface IUserService {
 
     /**
      * 注册校验
      *
-     * @param type  {@link com.amusing.start.user.enums.RegisterPreType}
-     * @param param 用户名或者手机号
+     * @param name  用户名
+     * @param phone 手机号
      * @return true:通过 false:失败
      */
-    Boolean registerPre(Integer type, String param);
+    Boolean registerCheck(String name, String phone) throws CustomException;
 
     /**
      * 注册

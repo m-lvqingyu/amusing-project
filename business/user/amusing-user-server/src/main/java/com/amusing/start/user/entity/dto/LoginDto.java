@@ -7,13 +7,15 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotEmpty;
 
 /**
- * Created by lvqingyu on 2022/10/3.
+ * Created by 2022/10/3.
+ *
+ * @author lvqingyu
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginDto {
-    
+
     @NotEmpty(message = "用户名不能为空")
     private String userName;
 

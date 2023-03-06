@@ -1,9 +1,9 @@
 package com.amusing.start.user.constant;
 
 /**
- * @author lv.qingyu
- * @version 1.0
- * @date 2021/12/15 22:15
+ * Created by 2021/12/15.
+ *
+ * @author lvqingyu
  */
 public class UserConstant {
 

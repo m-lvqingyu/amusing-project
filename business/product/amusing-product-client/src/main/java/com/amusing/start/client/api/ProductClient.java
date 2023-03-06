@@ -4,7 +4,6 @@ import com.amusing.start.client.fallback.ProductClientFallback;
 import com.amusing.start.client.input.StockDeductionInput;
 import com.amusing.start.client.output.ShopCarOutput;
 import com.amusing.start.exception.CustomException;
-import com.amusing.start.result.ApiResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +24,7 @@ public interface ProductClient {
      * @return 商品详情集合
      */
     @GetMapping("product/inward/v1/shop/car/{userId}")
-    ApiResult<List<ShopCarOutput>> shopCar(@PathVariable("userId") String userId) throws CustomException;
+    List<ShopCarOutput> shopCar(@PathVariable("userId") String userId) throws CustomException;
 
 
     /**
@@ -35,7 +34,7 @@ public interface ProductClient {
      * @return true: 成功 false: 失败
      */
     @PostMapping("product/inward/v1/stock/deduction")
-    ApiResult<Boolean> deductionStock(@RequestBody List<StockDeductionInput> inputs) throws CustomException;
+    Boolean deductionStock(@RequestBody List<StockDeductionInput> inputs) throws CustomException;
 
 
 }

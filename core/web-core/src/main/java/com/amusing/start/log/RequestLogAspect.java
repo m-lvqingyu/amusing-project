@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class RequestLogAspect {
 
-    @Pointcut(value = "@within(org.springframework.web.bind.annotation.RestController)")
+    @Pointcut("@annotation(com.amusing.start.log.LogOutput)")
     public void pointCut() {
     }
 

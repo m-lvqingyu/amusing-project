@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 /**
- * @author 用户账户表
+ * Created by 2023/2/9.
+ *
+ * @author lvqingyu
  */
 @Data
 @Builder

@@ -1,14 +1,34 @@
 package com.amusing.start.user.constant;
 
 /**
- * Created by lvqingyu on 2022/10/2.
- * Email: qingyu.lv@plusx.cn
- * Copyright(c) 2014 承影互联(科技)有限公司 版权所有
+ * Created by 2022/10/2.
+ *
+ * @author lvqingyu
  */
 public class CacheKey {
 
-    public static String requestLimitKey(String className, String method, String ip) {
-        return "LIMIT:" + className + ":" + method + ":" + ip;
+    public static final int MENU_ROOT_ID = 0;
+
+    public static final int SEVEN = 7;
+
+    public static final int ONE = 1;
+
+    public static final int TWENTY_FOUR = 24;
+
+    public static String requestLimitKey(String ip, String uri) {
+        return "request_limit:" + ip + ":" + uri;
+    }
+
+    public static String roleMenuMapping() {
+        return "role_menu_path";
+    }
+
+    public static String menuKey() {
+        return "menu";
+    }
+
+    public static String userRoleKey(String userId) {
+        return "user_role:" + userId;
     }
 
 }

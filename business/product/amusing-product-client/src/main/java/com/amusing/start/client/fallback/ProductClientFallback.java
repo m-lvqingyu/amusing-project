@@ -4,14 +4,12 @@ import com.amusing.start.client.api.ProductClient;
 import com.amusing.start.client.input.StockDeductionInput;
 import com.amusing.start.client.output.ShopCarOutput;
 import com.amusing.start.code.ErrorCode;
-import com.amusing.start.result.ApiResult;
+import com.amusing.start.exception.CustomException;
 import feign.hystrix.FallbackFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Create By 2021/10/23
@@ -21,18 +19,21 @@ import java.util.Set;
 @Slf4j
 @Component
 public class ProductClientFallback implements FallbackFactory<ProductClient> {
+
     @Override
     public ProductClient create(Throwable throwable) {
+
         return new ProductClient() {
             @Override
-            public ApiResult<List<ShopCarOutput>> shopCar(String userId) {
-                return ApiResult.result(ErrorCode.DEGRADE_ERR);
+            public List<ShopCarOutput> shopCar(String userId) throws CustomException {
+                throw new CustomException(ErrorCode.DEGRADE_ERR);
             }
 
             @Override
-            public ApiResult<Boolean> deductionStock(List<StockDeductionInput> inputs) {
-                return ApiResult.result(ErrorCode.DEGRADE_ERR);
+            public Boolean deductionStock(List<StockDeductionInput> inputs) throws CustomException {
+                throw new CustomException(ErrorCode.DEGRADE_ERR);
             }
         };
     }
+
 }

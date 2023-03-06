@@ -9,7 +9,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
- * Created by lvqingyu on 2022/10/2.
+ * Created by 2022/10/2.
+ *
+ * @author lvqingyu
  */
 @Data
 @AllArgsConstructor

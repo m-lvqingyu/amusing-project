@@ -4,10 +4,12 @@ import com.amusing.start.client.api.UserClient;
 import com.amusing.start.client.input.PayInput;
 import com.amusing.start.client.output.AccountOutput;
 import com.amusing.start.code.ErrorCode;
-import com.amusing.start.result.ApiResult;
+import com.amusing.start.exception.CustomException;
 import feign.hystrix.FallbackFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Create By 2021/9/21
@@ -22,13 +24,18 @@ public class UserClientFallback implements FallbackFactory<UserClient> {
 
         return new UserClient() {
             @Override
-            public ApiResult<AccountOutput> account(String userId) {
-                return ApiResult.result(ErrorCode.DEGRADE_ERR);
+            public AccountOutput account(String userId) throws CustomException {
+                throw new CustomException(ErrorCode.DEGRADE_ERR);
             }
 
             @Override
-            public ApiResult<Boolean> pay(PayInput input) {
-                return ApiResult.result(ErrorCode.DEGRADE_ERR);
+            public Boolean payment(PayInput input) throws CustomException {
+                throw new CustomException(ErrorCode.DEGRADE_ERR);
+            }
+
+            @Override
+            public Boolean matchPath(String userId, String path) throws CustomException {
+                throw new CustomException(ErrorCode.DEGRADE_ERR);
             }
         };
     }

@@ -1,15 +1,15 @@
 package com.amusing.start.user.mapper;
 
 import com.amusing.start.user.entity.pojo.AccountInfo;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 
 /**
- * @author lv.qingyu
+ * Created by 2023/2/15.
+ *
+ * @author lvqingyu
  */
-@Mapper
 public interface AccountInfoMapper {
 
     Integer insert(AccountInfo record);

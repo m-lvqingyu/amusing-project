@@ -1,4 +1,4 @@
-package com.amusing.start.search;
+package com.amusing.start;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

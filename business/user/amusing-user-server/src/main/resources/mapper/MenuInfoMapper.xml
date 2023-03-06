@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.amusing.start.user.mapper.MenuInfoMapper">
+    <resultMap id="BaseResultMap" type="com.amusing.start.user.entity.pojo.MenuInfo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="name_code" jdbcType="VARCHAR" property="nameCode"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="component" jdbcType="VARCHAR" property="component"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="priority" jdbcType="INTEGER" property="priority"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+        <result column="is_del" jdbcType="BIT" property="isDel"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="update_time" jdbcType="BIGINT" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, `name`, name_code, `type`, component, `path`, priority, icon, description, parent_id, `level`, status,
+        is_del, create_by, create_time, update_by, update_time
+    </sql>
+
+    <select id="getAll" resultType="com.amusing.start.user.entity.pojo.MenuInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from menu_info where status = 1 and is_del = 1
+    </select>
+
+
+</mapper>

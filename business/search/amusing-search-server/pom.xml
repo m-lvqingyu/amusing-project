@@ -47,7 +47,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.amusing.start.search.SearchApplication</mainClass>
+                    <mainClass>com.amusing.start.SearchApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

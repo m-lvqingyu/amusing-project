@@ -22,7 +22,6 @@ import com.amusing.start.order.mapper.OrderProductInfoMapper;
 import com.amusing.start.order.entity.pojo.OrderInfo;
 import com.amusing.start.order.entity.pojo.OrderProductInfo;
 import com.amusing.start.order.service.IOrderService;
-import com.amusing.start.result.ApiResult;
 import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,22 +69,8 @@ public class OrderServiceImpl implements IOrderService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public String create(String userId, CreateDto createDto) throws CustomException {
-        ApiResult<AccountOutput> accountResult = userClient.account(userId);
-        if (!accountResult.isSuccess()) {
-            throw new CustomException(ErrorCode.UNABLE_PROVIDE_SERVICE);
-        }
-
-        AccountOutput userAccount = accountResult.getData();
-        if (userAccount == null) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
-
-        ApiResult<List<ShopCarOutput>> shopCarResult = productClient.shopCar(userId);
-        if (!shopCarResult.isSuccess()) {
-            throw new CustomException(ErrorCode.UNABLE_PROVIDE_SERVICE);
-        }
-
-        List<ShopCarOutput> shopCarList = shopCarResult.getData();
+        AccountOutput userAccount = userClient.account(userId);
+        List<ShopCarOutput> shopCarList = productClient.shopCar(userId);
         if (CollectionUtil.isEmpty(shopCarList)) {
             throw new CustomException(ErrorCode.SHOP_CAR_ERROR);
         }
@@ -192,12 +177,12 @@ public class OrderServiceImpl implements IOrderService {
         for (OrderProductInfo orderProductInfo : infoList) {
             orderProductInfoMapper.insert(orderProductInfo);
         }
-        ApiResult<Boolean> pay = userClient.pay(PayInput.builder().userId(account.getUserId()).amount(totalAmount).build());
-        if (!pay.isSuccess() || !pay.getData()) {
+        Boolean payment = userClient.payment(PayInput.builder().userId(account.getUserId()).amount(totalAmount).build());
+        if (payment == null || !payment) {
             throw new CustomException(ErrorCode.UNABLE_PROVIDE_SERVICE);
         }
-        ApiResult<Boolean> deductionStock = productClient.deductionStock(stockDeductionInputs);
-        if (!deductionStock.isSuccess() || !deductionStock.getData()) {
+        Boolean deductionStock = productClient.deductionStock(stockDeductionInputs);
+        if (deductionStock == null || !deductionStock) {
             throw new CustomException(ErrorCode.UNABLE_PROVIDE_SERVICE);
         }
         return orderNo;

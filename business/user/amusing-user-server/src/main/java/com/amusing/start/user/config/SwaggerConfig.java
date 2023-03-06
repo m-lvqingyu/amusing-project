@@ -9,7 +9,9 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
 /**
- * Created by lv.QingYu on 2022/10/5.
+ * Created by 2022/10/5.
+ *
+ * @author lvqingyu
  */
 @Configuration
 public class SwaggerConfig {

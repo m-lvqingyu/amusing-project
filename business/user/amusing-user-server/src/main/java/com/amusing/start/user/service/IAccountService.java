@@ -28,6 +28,6 @@ public interface IAccountService {
      * @return
      * @throws CustomException
      */
-    Boolean pay(String userId, BigDecimal amount) throws CustomException;
+    Boolean payment(String userId, BigDecimal amount) throws CustomException;
 
 }

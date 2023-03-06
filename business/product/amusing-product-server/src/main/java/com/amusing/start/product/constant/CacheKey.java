@@ -5,5 +5,10 @@ package com.amusing.start.product.constant;
  */
 public class CacheKey {
 
-    public static final String SHOP_CAR_PREFIX = "shop_car:";
+    private static final String SHOP_CAR_PREFIX = "shop_car:";
+
+    public static String getShopCar(String userId) {
+        return SHOP_CAR_PREFIX + userId;
+    }
+
 }

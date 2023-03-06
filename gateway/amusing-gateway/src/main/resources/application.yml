@@ -2,8 +2,8 @@ spring:
   cloud:
     gateway:
       httpclient:
-        connect-timeout: 500
-        response-timeout: 1s
+        connect-timeout: 1000
+        response-timeout: 3s
       routes:
         - id: amusing-order-server
           uri: lb:http://amusing-order-server
@@ -21,3 +21,9 @@ spring:
           uri: lb:http://amusing-user-server
           predicates:
             - Path=/user/outward/**
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 300
+        readTimeout: 600

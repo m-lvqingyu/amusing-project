@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.amusing.start.user.mapper.RoleMenuInfoMapper">
+    <resultMap id="BaseResultMap" type="com.amusing.start.user.entity.pojo.RoleMenuInfo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="role_id" jdbcType="INTEGER" property="roleId"/>
+        <result column="menu_id" jdbcType="INTEGER" property="menuId"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+        <result column="is_del" jdbcType="BIT" property="isDel"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="update_time" jdbcType="BIGINT" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, role_id, menu_id, status, is_del, create_by, create_time, update_by, update_time
+    </sql>
+
+    <select id="getRoleMenuList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from role_menu_info where status = 1 and is_del = 1 and role_id in
+        <foreach collection="roleIds" item="roleId" index="index" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </select>
+
+
+</mapper>
