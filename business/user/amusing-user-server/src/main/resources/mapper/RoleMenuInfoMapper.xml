@@ -17,6 +17,12 @@
         id, role_id, menu_id, status, is_del, create_by, create_time, update_by, update_time
     </sql>
 
+    <select id="getAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from role_menu_info where status = 1 and is_del = 1
+    </select>
+
     <select id="getRoleMenuList" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -25,6 +31,103 @@
             #{roleId}
         </foreach>
     </select>
+
+    <select id="getAllMenuId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from role_menu_info where role_id = #{roleId} and is_del = 1
+    </select>
+
+    <update id="invalidByRoleId">
+        update role_menu_info
+        set status = 3
+        where role_id = #{roleId}
+          and is_del = 1
+    </update>
+
+    <select id="getRoleMenu" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from role_menu_info where role_id = #{roleId} and menu_id = #{menuId} and is_del = 1
+    </select>
+
+    <update id="update" parameterType="com.amusing.start.user.entity.pojo.RoleMenuInfo">
+        update role_menu_info
+        <set>
+            <if test="roleId != null">
+                role_id = #{roleId,jdbcType=INTEGER},
+            </if>
+            <if test="menuId != null">
+                menu_id = #{menuId,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=BIT},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <insert id="insert" parameterType="com.amusing.start.user.entity.pojo.RoleMenuInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into role_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">
+                role_id,
+            </if>
+            <if test="menuId != null">
+                menu_id,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="isDel != null">
+                is_del,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">
+                #{roleId,jdbcType=INTEGER},
+            </if>
+            <if test="menuId != null">
+                #{menuId,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=BIT},
+            </if>
+            <if test="isDel != null">
+                #{isDel,jdbcType=BIT},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=BIGINT},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
 
 
 </mapper>

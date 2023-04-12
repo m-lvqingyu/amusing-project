@@ -13,18 +13,8 @@ public class CacheKey {
 
     public static final int ONE = 1;
 
-    public static final int TWENTY_FOUR = 24;
-
     public static String requestLimitKey(String ip, String uri) {
         return "request_limit:" + ip + ":" + uri;
-    }
-
-    public static String roleMenuMapping() {
-        return "role_menu_path";
-    }
-
-    public static String menuKey() {
-        return "menu";
     }
 
     public static String userRoleKey(String userId) {

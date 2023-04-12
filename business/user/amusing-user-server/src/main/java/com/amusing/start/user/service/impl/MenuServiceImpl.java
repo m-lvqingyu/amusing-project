@@ -1,7 +1,6 @@
 package com.amusing.start.user.service.impl;
 
-import com.amusing.start.code.ErrorCode;
-import com.amusing.start.exception.CustomException;
+import com.amusing.start.constant.CommCacheKey;
 import com.amusing.start.user.constant.CacheKey;
 import com.amusing.start.user.entity.pojo.MenuInfo;
 import com.amusing.start.user.entity.pojo.RoleMenuInfo;
@@ -20,7 +19,6 @@ import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.AntPathMatcher;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -48,12 +46,10 @@ public class MenuServiceImpl implements IMenuService {
 
     private final RedissonClient redissonClient;
 
-    private final AntPathMatcher antPathMatcher;
 
     @Autowired
-    MenuServiceImpl(RedissonClient redissonClient, AntPathMatcher antPathMatcher) {
+    MenuServiceImpl(RedissonClient redissonClient) {
         this.redissonClient = redissonClient;
-        this.antPathMatcher = antPathMatcher;
     }
 
     @PostConstruct
@@ -70,7 +66,7 @@ public class MenuServiceImpl implements IMenuService {
         }
         Map<Integer, List<RoleMenuInfo>> roleMenuMap = roleMenuList.stream().collect(Collectors.groupingBy(RoleMenuInfo::getRoleId));
         Iterator<Map.Entry<Integer, List<RoleMenuInfo>>> iterator = roleMenuMap.entrySet().iterator();
-        String cacheKey = CacheKey.roleMenuMapping();
+        String cacheKey = CommCacheKey.roleMenuMapping();
         RMap<Integer, List<String>> rMap = redissonClient.getMap(cacheKey);
         while (iterator.hasNext()) {
             Map.Entry<Integer, List<RoleMenuInfo>> next = iterator.next();
@@ -94,25 +90,20 @@ public class MenuServiceImpl implements IMenuService {
     }
 
     @Override
-    public Boolean matchPath(String userId, String path) throws CustomException {
-        List<Integer> userRoleIds = getUserRoleIds(userId);
-        if (CollectionUtils.isEmpty(userRoleIds)) {
-            throw new CustomException(ErrorCode.PERMISSION_DENIED);
+    public List<Integer> getRoleIds(String userId) {
+        String cacheKey = CacheKey.userRoleKey(userId);
+        RBucket<List<Integer>> bucket = redissonClient.getBucket(cacheKey);
+        List<Integer> roleIds = bucket.get();
+        if (CollectionUtils.isNotEmpty(roleIds)) {
+            return roleIds;
         }
-        String cacheKey = CacheKey.roleMenuMapping();
-        RMap<Integer, List<String>> rMap = redissonClient.getMap(cacheKey);
-        for (Integer roleId : userRoleIds) {
-            List<String> pathList = rMap.get(roleId);
-            if (CollectionUtils.isEmpty(pathList)) {
-                continue;
-            }
-            for (String uri : pathList) {
-                if (antPathMatcher.match(path, uri)) {
-                    return true;
-                }
-            }
+        List<UserRoleInfo> userRoleList = userRoleInfoMapper.getUserRoleList(userId, UserStatus.VALID.getKey());
+        if (CollectionUtils.isEmpty(userRoleList)) {
+            return new ArrayList<>();
         }
-        throw new CustomException(ErrorCode.PERMISSION_DENIED);
+        roleIds = userRoleList.stream().map(UserRoleInfo::getRoleId).collect(Collectors.toList());
+        bucket.set(roleIds, CacheKey.ONE, TimeUnit.HOURS);
+        return roleIds;
     }
 
     @Override
@@ -123,7 +114,7 @@ public class MenuServiceImpl implements IMenuService {
             return new ArrayList<>();
         }
         // 当前用户关联的菜单ID集合
-        List<Integer> roleIds = getUserRoleIds(userId);
+        List<Integer> roleIds = getRoleIds(userId);
         if (CollectionUtils.isEmpty(roleIds)) {
             return new ArrayList<>();
         }
@@ -158,7 +149,7 @@ public class MenuServiceImpl implements IMenuService {
     }
 
     private List<MenuInfo> getMenuAll() {
-        RBucket<List<MenuInfo>> bucket = redissonClient.getBucket(CacheKey.menuKey());
+        RBucket<List<MenuInfo>> bucket = redissonClient.getBucket(CommCacheKey.menuKey());
         List<MenuInfo> infoList = bucket.get();
         if (CollectionUtils.isNotEmpty(infoList)) {
             return infoList;
@@ -170,21 +161,6 @@ public class MenuServiceImpl implements IMenuService {
         return infoList;
     }
 
-    private List<Integer> getUserRoleIds(String userId) {
-        String cacheKey = CacheKey.userRoleKey(userId);
-        RBucket<List<Integer>> bucket = redissonClient.getBucket(cacheKey);
-        List<Integer> roleIds = bucket.get();
-        if (CollectionUtils.isNotEmpty(roleIds)) {
-            return roleIds;
-        }
-        List<UserRoleInfo> userRoleList = userRoleInfoMapper.getUserRoleList(userId, UserStatus.VALID.getKey());
-        if (CollectionUtils.isEmpty(userRoleList)) {
-            return new ArrayList<>();
-        }
-        roleIds = userRoleList.stream().map(UserRoleInfo::getRoleId).collect(Collectors.toList());
-        bucket.set(roleIds, CacheKey.ONE, TimeUnit.HOURS);
-        return roleIds;
-    }
 
     private static List<MenuVo> buildMenuTree(List<MenuVo> menuVoList) {
         return menuVoList.stream()

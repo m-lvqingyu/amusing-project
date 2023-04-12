@@ -1,5 +1,6 @@
 package com.amusing.start.user.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
@@ -15,8 +16,10 @@ import com.amusing.start.user.enums.UserStatus;
 import com.amusing.start.user.enums.YesOrNo;
 import com.amusing.start.user.mapper.AccountInfoMapper;
 import com.amusing.start.user.mapper.UserInfoMapper;
+import com.amusing.start.user.service.IMenuService;
 import com.amusing.start.user.service.IUserService;
 import com.amusing.start.utils.TokenUtils;
+import com.auth0.jwt.interfaces.Claim;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Created by 2022/10/2.
@@ -52,9 +55,12 @@ public class UserServiceImpl implements IUserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final IMenuService menuService;
+
     @Autowired
-    public UserServiceImpl(PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, IMenuService menuService) {
         this.passwordEncoder = passwordEncoder;
+        this.menuService = menuService;
     }
 
     @Override
@@ -134,7 +140,11 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public TokenVo refresh(String token) throws CustomException {
-        String userId = TokenUtils.getUserId(token);
+        Map<String, Claim> claimMap = TokenUtils.getClaims(token);
+        if (CollectionUtil.isEmpty(claimMap)) {
+            throw new CustomException(ErrorCode.TOKEN_ERR);
+        }
+        String userId = TokenUtils.getUserId(claimMap);
         if (StringUtils.isBlank(userId)) {
             throw new CustomException(ErrorCode.TOKEN_ERR);
         }
@@ -150,10 +160,17 @@ public class UserServiceImpl implements IUserService {
         String id = userInfo.getId();
         String secret = userInfo.getSecret();
         DateTime tokenExpiresTime = DateUtil.offsetSecond(currentTime, UserConstant.TOKEN_EXPIRES_TIME);
-        String token = TokenUtils.generateToken(id, secret, tokenExpiresTime);
+        List<Integer> roleIdList = menuService.getRoleIds(userInfo.getId());
+        Integer[] roleIds;
+        if (CollectionUtil.isEmpty(roleIdList)) {
+            roleIds = new Integer[0];
+        } else {
+            roleIds = roleIdList.toArray(new Integer[0]);
+        }
+        String token = TokenUtils.generateToken(id, roleIds, secret, tokenExpiresTime);
         if (StringUtils.isBlank(refreshToken)) {
-            DateTime refreshTokenExpiresTime = DateUtil.offsetSecond(currentTime, UserConstant.REFRESH_TOKEN_EXPIRES_TIME);
-            refreshToken = TokenUtils.generateToken(id, secret, refreshTokenExpiresTime);
+            tokenExpiresTime = DateUtil.offsetSecond(currentTime, UserConstant.REFRESH_TOKEN_EXPIRES_TIME);
+            refreshToken = TokenUtils.generateToken(id, new Integer[0], secret, tokenExpiresTime);
         }
         return TokenVo.builder().token(token).refreshToken(refreshToken).build();
     }

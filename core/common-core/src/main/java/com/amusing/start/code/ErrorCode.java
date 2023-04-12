@@ -16,6 +16,8 @@ public enum ErrorCode {
     FAIL(500, "系统异常"),
 
     PERMISSION_DENIED(1000, "权限不足"),
+    OPERATE_FAIL(1001, "新增或修改操作失败"),
+
 
     USER_NOT_FOUND(2000, "用户信息不存在"),
     USER_UPDATE_ERR(2001, "用户信息更新失败"),
@@ -57,6 +59,15 @@ public enum ErrorCode {
     AUTHORITY_ERR(5011, "请求触发系统保护规则"),
     RESULT_NOT_FOUND(5012, "查询结果不存在"),
     REQUEST_LIMIT(5013, "操作频率过快，请稍后再试"),
+
+    ROLE_NOT_FUND(6001, "角色不存在或已被删除"),
+    ROLE_NAME_EXIST(6002, "角色名称已存在"),
+    ROLE_CODE_EXIST(6003, "角色编码已存在"),
+    ROLE_UPDATE_FAIL(6004, "角色新增或修改失败"),
+
+    MENU_NOT_FOUND(7001, "菜单不存在或已被删除"),
+
+
     ;
 
     private final int code;

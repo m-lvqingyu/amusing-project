@@ -3,10 +3,11 @@ package com.amusing.start.utils;
 import cn.hutool.core.collection.CollectionUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Create By 2021/8/21
@@ -15,19 +16,22 @@ import java.util.List;
  */
 public class TokenUtils {
 
+    public static final String ROLE_LIST_KEY = "r_id";
+
+    public static final String USER_ID_KEY = "u_id";
+
     /**
      * 生成Token
      *
      * @param userUid     用户唯一ID
+     * @param roleIds     角色集合
      * @param secret      用户密钥
      * @param expiresTime 过期时间
      * @return
      */
-    public static String generateToken(String userUid, String secret, Date expiresTime) {
-        return JWT.create()
-                .withAudience(userUid)
-                .withExpiresAt(expiresTime)
-                .sign(Algorithm.HMAC256(secret));
+    public static String generateToken(String userUid, Integer[] roleIds, String secret, Date expiresTime) {
+        return JWT.create().withClaim(USER_ID_KEY, userUid).withArrayClaim(ROLE_LIST_KEY, roleIds)
+                .withExpiresAt(expiresTime).sign(Algorithm.HMAC256(secret));
     }
 
     /**
@@ -36,19 +40,33 @@ public class TokenUtils {
      * @param token token
      * @return
      */
-    public static String getUserId(String token) {
+    public static Map<String, Claim> getClaims(String token) {
         DecodedJWT decode = JWT.decode(token);
         // Token过期时间校验
         long expiresTime = decode.getExpiresAt().getTime();
         if (expiresTime <= System.currentTimeMillis()) {
             return null;
         }
-        // 获取用户唯一Id
-        List<String> audience = JWT.decode(token).getAudience();
-        if (CollectionUtil.isEmpty(audience)) {
+        return JWT.decode(token).getClaims();
+    }
+
+    public static String getUserId(Map<String, Claim> claimMap) {
+        if (CollectionUtil.isEmpty(claimMap)) {
             return null;
         }
-        return audience.get(0);
+        Claim claim = claimMap.get(TokenUtils.USER_ID_KEY);
+        if (claim == null) {
+            return null;
+        }
+        return claim.asString();
+    }
+
+    public static Integer[] getRoleIds(Map<String, Claim> claimMap) {
+        if (CollectionUtil.isEmpty(claimMap)) {
+            return null;
+        }
+        Claim claim = claimMap.get(TokenUtils.ROLE_LIST_KEY);
+        return claim.asArray(Integer.class);
     }
 
 }

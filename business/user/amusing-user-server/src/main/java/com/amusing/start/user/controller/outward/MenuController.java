@@ -20,7 +20,7 @@ import java.util.List;
  * @author lvqingyu
  */
 @RestController
-@RequestMapping("user/outward")
+@RequestMapping("user/outward/menu")
 public class MenuController extends BaseController {
 
     private final IMenuService menuService;
@@ -31,7 +31,7 @@ public class MenuController extends BaseController {
         this.menuService = menuService;
     }
 
-    @GetMapping("v1/menu/tree")
+    @GetMapping("tree")
     public ApiResult<List<MenuVo>> tree() throws CustomException {
         return ApiResult.ok(menuService.getMenuTree(getUserId()));
     }

@@ -1,6 +1,5 @@
 package com.amusing.start.user.service;
 
-import com.amusing.start.exception.CustomException;
 import com.amusing.start.user.entity.vo.MenuVo;
 
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
  */
 public interface IMenuService {
 
-    Boolean matchPath(String userId, String path) throws CustomException;
+    List<Integer> getRoleIds(String userId);
 
     List<MenuVo> getMenuTree(String userId);
 

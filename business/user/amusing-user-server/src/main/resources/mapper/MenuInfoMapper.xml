@@ -32,5 +32,14 @@
         from menu_info where status = 1 and is_del = 1
     </select>
 
+    <select id="getByIds" resultType="com.amusing.start.user.entity.pojo.MenuInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from menu_info where id in
+        <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and status = 1 and is_del = 1
+    </select>
 
 </mapper>

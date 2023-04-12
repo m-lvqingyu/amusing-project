@@ -9,8 +9,6 @@ import feign.hystrix.FallbackFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 /**
  * Create By 2021/9/21
  *
@@ -30,11 +28,6 @@ public class UserClientFallback implements FallbackFactory<UserClient> {
 
             @Override
             public Boolean payment(PayInput input) throws CustomException {
-                throw new CustomException(ErrorCode.DEGRADE_ERR);
-            }
-
-            @Override
-            public Boolean matchPath(String userId, String path) throws CustomException {
                 throw new CustomException(ErrorCode.DEGRADE_ERR);
             }
         };

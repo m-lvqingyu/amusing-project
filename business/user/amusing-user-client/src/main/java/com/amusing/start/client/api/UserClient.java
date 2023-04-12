@@ -33,12 +33,4 @@ public interface UserClient {
     @PostMapping("/user/inward/v1/pay")
     Boolean payment(@RequestBody PayInput input) throws CustomException;
 
-    /**
-     * @param userId 用户ID
-     * @return 角色码集合
-     * @throws CustomException
-     */
-    @GetMapping("/user/inward/v1/match/path")
-    Boolean matchPath(@RequestParam("userId") String userId, @RequestParam("path") String path) throws CustomException;
-
 }

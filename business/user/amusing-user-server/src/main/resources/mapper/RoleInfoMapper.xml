@@ -6,7 +6,7 @@
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="name_code" jdbcType="VARCHAR" property="nameCode"/>
         <result column="description" jdbcType="VARCHAR" property="description"/>
-        <result column="is_admin" jdbcType="INTEGER" property="isAdmin"/>
+        <result column="is_admin" jdbcType="BIT" property="isAdmin"/>
         <result column="status" jdbcType="BIT" property="status"/>
         <result column="is_del" jdbcType="BIT" property="isDel"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
@@ -19,6 +19,122 @@
         id, `name`, name_code, description, is_admin, status, is_del, create_by, create_time, update_by, update_time
     </sql>
 
+    <select id="getRoleAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from role_info where is_del = 1;
+    </select>
+
+    <select id="getById" resultType="com.amusing.start.user.entity.pojo.RoleInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from role_info where id = #{id} and is_del = 1 limit 1;
+    </select>
+
+    <select id="getByName" resultType="com.amusing.start.user.entity.pojo.RoleInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from role_info where name = #{name} and is_del = 1 limit 1;
+    </select>
+
+    <select id="getByCode" resultType="com.amusing.start.user.entity.pojo.RoleInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from role_info where name_code = #{code} and is_del = 1 limit 1;
+    </select>
+
+    <update id="update" parameterType="com.amusing.start.user.entity.pojo.RoleInfo">
+        update role_info
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="nameCode != null">
+                name_code = #{nameCode,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=BIT},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <insert id="insert" parameterType="com.amusing.start.user.entity.pojo.RoleInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into role_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="nameCode != null">
+                name_code,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="isAdmin != null">
+                is_admin,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="isDel != null">
+                is_del,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="nameCode != null">
+                #{nameCode,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="isAdmin != null">
+                #{isAdmin,jdbcType=BIT},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=BIT},
+            </if>
+            <if test="isDel != null">
+                #{isDel,jdbcType=BIT},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=BIGINT},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
 
 
 </mapper>
