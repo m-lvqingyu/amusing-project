@@ -18,6 +18,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class AccountInfo {
 
+    private Long id;
+
     /**
      * 用户唯一ID
      */

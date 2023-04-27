@@ -21,4 +21,8 @@ public class CacheKey {
         return "user_role:" + userId;
     }
 
+    public static String adminRoleKey() {
+        return "admin_role_id";
+    }
+
 }

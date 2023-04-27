@@ -31,6 +31,7 @@ public enum ErrorCode {
     ACCOUNT_FROZEN_ERR(2009, "该账户已被冻结"),
     TOKEN_ERR(2010, "Token已失效，请重新登陆"),
     PAY_ERR(2011, "支付失败"),
+    ADMIN_OPERATE_FAIL(2012, "管理员账户不能操作"),
 
     ORDER_SAVE_FAIL(3001, "订单创建失败"),
     ORDER_NOT_FOUND(3002, "订单信息不存在"),

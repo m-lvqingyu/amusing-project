@@ -3,7 +3,6 @@ package com.amusing.start.user.controller.outward;
 import com.amusing.start.controller.BaseController;
 import com.amusing.start.exception.CustomException;
 import com.amusing.start.result.ApiResult;
-import com.amusing.start.user.entity.pojo.MenuInfo;
 import com.amusing.start.user.entity.vo.MenuVo;
 import com.amusing.start.user.service.IMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +20,12 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("user/outward/menu")
-public class MenuController extends BaseController {
+public class MenuOutwardController extends BaseController {
 
     private final IMenuService menuService;
 
     @Autowired
-    public MenuController(HttpServletRequest request, IMenuService menuService) {
+    public MenuOutwardController(HttpServletRequest request, IMenuService menuService) {
         super(request);
         this.menuService = menuService;
     }

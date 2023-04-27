@@ -1,5 +1,6 @@
 package com.amusing.start.user.entity.dto;
 
+import com.amusing.start.user.entity.pojo.RoleInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

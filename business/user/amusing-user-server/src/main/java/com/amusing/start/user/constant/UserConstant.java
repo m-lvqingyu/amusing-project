@@ -16,7 +16,7 @@ public class UserConstant {
     /**
      * token 有效期(十分钟)
      */
-    public final static int TOKEN_EXPIRES_TIME = 180;
+    public final static int TOKEN_EXPIRES_TIME = 7200;
 
     /**
      * 刷新Token 有效期(七天)

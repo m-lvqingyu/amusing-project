@@ -40,10 +40,13 @@ spring:
           enabled: true
       # 是否开启网关。默认：true
       enabled: true
+  redisson:
+    group: DEFAULT_GROUP
+    dataId: redisson.properties
 
 ignore:
   auth:
     paths:
-      - /user/outward/v1/register**
-      - /user/outward/v1/login
-      - /user/outward/v1/refresh**
+      - /user/outward/info/register**
+      - /user/outward/info/login
+      - /user/outward/info/refresh**

@@ -1,9 +1,9 @@
 package com.amusing.start.user.service;
 
 import com.amusing.start.exception.CustomException;
-import com.amusing.start.user.entity.dto.LoginDto;
-import com.amusing.start.user.entity.dto.RegisterDto;
-import com.amusing.start.user.entity.vo.TokenVo;
+import com.amusing.start.user.entity.vo.user.UserDetailVo;
+import com.amusing.start.user.entity.vo.user.UserListVo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * Created by 2022/10/2.
@@ -13,37 +13,33 @@ import com.amusing.start.user.entity.vo.TokenVo;
 public interface IUserService {
 
     /**
-     * 注册校验
+     * 用户-分页列表
      *
      * @param name  用户名
      * @param phone 手机号
-     * @return true:通过 false:失败
+     * @param page  页码
+     * @param size  分页展示条目
+     * @return 用户列表
      */
-    Boolean registerCheck(String name, String phone) throws CustomException;
+    IPage<UserListVo> list(String name, String phone, Integer page, Integer size);
 
     /**
-     * 注册
+     * 用户详情
      *
-     * @param dto 用户信息
+     * @param userId 用户ID
+     * @return 用户信息
+     * @throws CustomException 自定义异常信息
+     */
+    UserDetailVo detail(String userId) throws CustomException;
+
+    /**
+     * 删除用户
+     *
+     * @param userId   用户ID
+     * @param updateBy 执行人ID
      * @return true:成功 false:失败
-     * @throws CustomException
+     * @throws CustomException 自定义异常信息
      */
-    Boolean register(RegisterDto dto) throws CustomException;
-
-    /**
-     * 登陆
-     *
-     * @param dto 用户信息
-     * @return token
-     */
-    TokenVo login(LoginDto dto) throws CustomException;
-
-    /**
-     * token刷新
-     *
-     * @param token token
-     * @return
-     */
-    TokenVo refresh(String token) throws CustomException;
+    Boolean del(String userId, String updateBy) throws CustomException;
 
 }

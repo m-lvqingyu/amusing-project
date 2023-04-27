@@ -117,7 +117,7 @@ public class AmusingAuthFilter implements GlobalFilter {
         List<String> paths = ignoreAuthPathConfig.getPaths();
         if (CollectionUtil.isNotEmpty(paths)) {
             for (String path : paths) {
-                if (antPathMatcher.match(uri, path)) {
+                if (antPathMatcher.match(path, uri)) {
                     return chain.filter(exchange);
                 }
             }
@@ -135,9 +135,15 @@ public class AmusingAuthFilter implements GlobalFilter {
         if (StringUtils.isEmpty(userId)) {
             return GatewayUtils.failMono(exchange, ErrorCode.UNAUTHORIZED);
         }
+        Boolean admin = TokenUtils.getAdmin(claimMap);
+        if (admin != null && admin) {
+            return buildSuccessMono(exchange, chain, userId);
+        }
+
         Integer[] roleIds = TokenUtils.getRoleIds(claimMap);
         if (roleIds == null || roleIds.length <= 0) {
             return GatewayUtils.failMono(exchange, ErrorCode.UNAUTHORIZED);
+
         }
         boolean flag = false;
         for (Integer roleId : roleIds) {
@@ -161,11 +167,15 @@ public class AmusingAuthFilter implements GlobalFilter {
         }
 
         if (flag) {
-            // 将用户ID封装在请求头中，方便后续服务获取
-            ServerHttpRequest newRequest = exchange.getRequest().mutate().header(AuthConstant.USER_UID, userId).build();
-            return chain.filter(exchange.mutate().request(newRequest).build());
+            return buildSuccessMono(exchange, chain, userId);
         }
         return GatewayUtils.failMono(exchange, ErrorCode.UNAUTHORIZED);
+    }
+
+    private Mono<Void> buildSuccessMono(ServerWebExchange exchange, GatewayFilterChain chain, String userId) {
+        // 将用户ID封装在请求头中，方便后续服务获取
+        ServerHttpRequest newRequest = exchange.getRequest().mutate().header(AuthConstant.USER_UID, userId).build();
+        return chain.filter(exchange.mutate().request(newRequest).build());
     }
 
 }

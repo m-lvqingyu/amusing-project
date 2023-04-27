@@ -59,7 +59,7 @@ public class MenuServiceImpl implements IMenuService {
             log.warn("[initRoleMenuMapping]-not found menus, init fail");
             return;
         }
-        List<RoleMenuInfo> roleMenuList = roleMenuInfoMapper.getAll();
+        List<RoleMenuInfo> roleMenuList = roleMenuInfoMapper.selectValidAll();
         if (CollectionUtils.isEmpty(roleMenuList)) {
             log.warn("[initRoleMenuMapping]-not found role menu mapping, init fail");
             return;
@@ -97,7 +97,7 @@ public class MenuServiceImpl implements IMenuService {
         if (CollectionUtils.isNotEmpty(roleIds)) {
             return roleIds;
         }
-        List<UserRoleInfo> userRoleList = userRoleInfoMapper.getUserRoleList(userId, UserStatus.VALID.getKey());
+        List<UserRoleInfo> userRoleList = userRoleInfoMapper.selectUserRoles(userId, UserStatus.VALID.getKey());
         if (CollectionUtils.isEmpty(userRoleList)) {
             return new ArrayList<>();
         }
@@ -118,7 +118,7 @@ public class MenuServiceImpl implements IMenuService {
         if (CollectionUtils.isEmpty(roleIds)) {
             return new ArrayList<>();
         }
-        List<RoleMenuInfo> roleMenuList = roleMenuInfoMapper.getRoleMenuList(roleIds);
+        List<RoleMenuInfo> roleMenuList = roleMenuInfoMapper.selectByRoleIds(roleIds);
         if (CollectionUtils.isEmpty(roleMenuList)) {
             return new ArrayList<>();
         }
@@ -133,7 +133,7 @@ public class MenuServiceImpl implements IMenuService {
             MenuVo menuVo = MenuVo.builder()
                     .id(menuInfo.getId())
                     .name(menuInfo.getName())
-                    .nameCode(menuInfo.getNameCode())
+                    .code(menuInfo.getCode())
                     .type(menuInfo.getType())
                     .component(menuInfo.getComponent())
                     .path(menuInfo.getPath())
@@ -149,16 +149,7 @@ public class MenuServiceImpl implements IMenuService {
     }
 
     private List<MenuInfo> getMenuAll() {
-        RBucket<List<MenuInfo>> bucket = redissonClient.getBucket(CommCacheKey.menuKey());
-        List<MenuInfo> infoList = bucket.get();
-        if (CollectionUtils.isNotEmpty(infoList)) {
-            return infoList;
-        }
-        infoList = menuInfoMapper.getAll();
-        if (CollectionUtils.isNotEmpty(infoList)) {
-            bucket.set(infoList);
-        }
-        return infoList;
+        return menuInfoMapper.selectValidAll();
     }
 
 

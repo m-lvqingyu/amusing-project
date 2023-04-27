@@ -4,11 +4,11 @@
     <resultMap id="BaseResultMap" type="com.amusing.start.user.entity.pojo.RoleInfo">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
-        <result column="name_code" jdbcType="VARCHAR" property="nameCode"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
         <result column="description" jdbcType="VARCHAR" property="description"/>
-        <result column="is_admin" jdbcType="BIT" property="isAdmin"/>
-        <result column="status" jdbcType="BIT" property="status"/>
-        <result column="is_del" jdbcType="BIT" property="isDel"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_del" jdbcType="TINYINT" property="isDel"/>
+        <result column="is_admin" jdbcType="TINYINT" property="isAdmin"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="create_time" jdbcType="BIGINT" property="createTime"/>
         <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
@@ -16,78 +16,81 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, `name`, name_code, description, is_admin, status, is_del, create_by, create_time, update_by, update_time
+        id
+        , `name`, code, description, `status`, is_del, is_admin, create_by, create_time, update_by, update_time
     </sql>
 
-    <select id="getRoleAll" resultMap="BaseResultMap">
+    <select id="selectAll">
         select
         <include refid="Base_Column_List"/>
-        from role_info where is_del = 1;
+        from role_info where is_del = 1
     </select>
 
-    <select id="getById" resultType="com.amusing.start.user.entity.pojo.RoleInfo">
+    <select id="selectValidAll" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from role_info where id = #{id} and is_del = 1 limit 1;
+        from role_info where status = 1 and is_del = 1
     </select>
 
-    <select id="getByName" resultType="com.amusing.start.user.entity.pojo.RoleInfo">
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from role_info where name = #{name} and is_del = 1 limit 1;
+        from role_info where id = #{id,jdbcType=INTEGER} and status = 1 and is_del = 1 limit 1
     </select>
 
-    <select id="getByCode" resultType="com.amusing.start.user.entity.pojo.RoleInfo">
+    <select id="selectByName" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from role_info where name_code = #{code} and is_del = 1 limit 1;
+        from role_info where name = #{name} and status = 1 and is_del = 1 limit 1
     </select>
 
-    <update id="update" parameterType="com.amusing.start.user.entity.pojo.RoleInfo">
-        update role_info
-        <set>
-            <if test="name != null">
-                name = #{name,jdbcType=VARCHAR},
-            </if>
-            <if test="nameCode != null">
-                name_code = #{nameCode,jdbcType=VARCHAR},
-            </if>
-            <if test="description != null">
-                description = #{description,jdbcType=VARCHAR},
-            </if>
-            <if test="status != null">
-                status = #{status,jdbcType=BIT},
-            </if>
-            <if test="updateBy != null">
-                update_by = #{updateBy,jdbcType=VARCHAR},
-            </if>
-            <if test="updateTime != null">
-                update_time = #{updateTime,jdbcType=BIGINT},
-            </if>
-        </set>
-        where id = #{id,jdbcType=INTEGER}
-    </update>
+    <select id="selectByCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from role_info where code = #{code} and status = 1 and is_del = 1 limit 1
+    </select>
 
-    <insert id="insert" parameterType="com.amusing.start.user.entity.pojo.RoleInfo" useGeneratedKeys="true" keyProperty="id">
+    <select id="selectByNameOrCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from role_info where status = 1 and is_del = 1
+        <if test="name != null and name != ''">
+            and name like concat('%', #{name}, '%')
+        </if>
+        <if test="code != null and code != ''">
+            and code like concat('%',#{code}, '%')
+        </if>
+    </select>
+
+    <select id="getAdminRoleId" resultType="java.lang.Integer">
+        select id
+        from role_info
+        where status = 1
+          and is_admin = 1
+          and is_del = 1
+    </select>
+
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.amusing.start.user.entity.pojo.RoleInfo"
+            useGeneratedKeys="true">
         insert into role_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="name != null">
                 `name`,
             </if>
-            <if test="nameCode != null">
-                name_code,
+            <if test="code != null">
+                code,
             </if>
             <if test="description != null">
                 description,
             </if>
-            <if test="isAdmin != null">
-                is_admin,
-            </if>
             <if test="status != null">
-                status,
+                `status`,
             </if>
             <if test="isDel != null">
                 is_del,
+            </if>
+            <if test="isAdmin != null">
+                is_admin,
             </if>
             <if test="createBy != null">
                 create_by,
@@ -106,20 +109,20 @@
             <if test="name != null">
                 #{name,jdbcType=VARCHAR},
             </if>
-            <if test="nameCode != null">
-                #{nameCode,jdbcType=VARCHAR},
+            <if test="code != null">
+                #{code,jdbcType=VARCHAR},
             </if>
             <if test="description != null">
                 #{description,jdbcType=VARCHAR},
             </if>
-            <if test="isAdmin != null">
-                #{isAdmin,jdbcType=BIT},
-            </if>
             <if test="status != null">
-                #{status,jdbcType=BIT},
+                #{status,jdbcType=TINYINT},
             </if>
             <if test="isDel != null">
-                #{isDel,jdbcType=BIT},
+                #{isDel,jdbcType=TINYINT},
+            </if>
+            <if test="isAdmin != null">
+                #{isAdmin,jdbcType=TINYINT},
             </if>
             <if test="createBy != null">
                 #{createBy,jdbcType=VARCHAR},
@@ -136,5 +139,40 @@
         </trim>
     </insert>
 
-
+    <update id="update" parameterType="com.amusing.start.user.entity.pojo.RoleInfo">
+        update role_info
+        <set>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="isDel != null">
+                is_del = #{isDel,jdbcType=TINYINT},
+            </if>
+            <if test="isAdmin != null">
+                is_admin = #{isAdmin,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=BIGINT},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
 </mapper>

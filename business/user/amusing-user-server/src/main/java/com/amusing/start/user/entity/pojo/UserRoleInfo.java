@@ -1,19 +1,11 @@
 package com.amusing.start.user.entity.pojo;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
- * Created by 2023/2/9.
- *
- * @author lvqingyu
+ * @author 用户角色关联表
  */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class UserRoleInfo {
 
     /**
@@ -42,7 +34,7 @@ public class UserRoleInfo {
     private Integer isDel;
 
     /**
-     * 创建人
+     * 创建人ID
      */
     private String createBy;
 
@@ -52,7 +44,7 @@ public class UserRoleInfo {
     private Long createTime;
 
     /**
-     * 更新人
+     * 更新人ID
      */
     private String updateBy;
 

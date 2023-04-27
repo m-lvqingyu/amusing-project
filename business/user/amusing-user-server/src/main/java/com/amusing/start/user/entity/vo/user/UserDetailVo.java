@@ -1,23 +1,23 @@
-package com.amusing.start.user.entity.pojo;
+package com.amusing.start.user.entity.vo.user;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
- * @author 用户基础信息
+ * Created by 2023/04/12.
+ *
+ * @author lvqingyu
  */
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfo {
-
-    /**
-     * 主键
-     */
-    private Long id;
+@Builder
+public class UserDetailVo {
 
     /**
      * 用户唯一ID
@@ -28,16 +28,6 @@ public class UserInfo {
      * 用户名
      */
     private String name;
-
-    /**
-     * 密码
-     */
-    private String password;
-
-    /**
-     * 密钥
-     */
-    private String secret;
 
     /**
      * 手机号码
@@ -55,28 +45,23 @@ public class UserInfo {
     private Integer status;
 
     /**
-     * 是否删除(1:未删除 2:已删除)
+     * 主账户金额
      */
-    private Integer isDel;
+    private BigDecimal mainAmount;
 
     /**
-     * 创建人
+     * 副账户金额
      */
-    private String createBy;
+    private BigDecimal giveAmount;
 
     /**
-     * 创建时间
+     * 冻结金额
      */
-    private Long createTime;
+    private BigDecimal frozenAmount;
 
     /**
-     * 更新人
+     * 会员等级
      */
-    private String updateBy;
-
-    /**
-     * 更新时间
-     */
-    private Long updateTime;
+    private Integer vipLevel;
 
 }

@@ -1,4 +1,4 @@
-package com.amusing.start.user.entity.pojo;
+package com.amusing.start.user.entity.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,13 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @author 角色表
+ * Created by 2023/04/20.
+ *
+ * @author lvqingyu
  */
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class RoleInfo {
+@AllArgsConstructor
+public class RoleInfoVo {
 
     /**
      * 主键
@@ -25,24 +27,19 @@ public class RoleInfo {
     private String name;
 
     /**
-     * 角色编码
+     * 名称码
      */
     private String code;
 
     /**
-     * 描述
+     * 描述信息
      */
     private String description;
 
     /**
-     * 状态(1:有效 3:无效)
+     * 状态(1:有效 2:冻结 3:无效)
      */
     private Integer status;
-
-    /**
-     * 是否删除(1:未删除 2:已删除)
-     */
-    private Integer isDel;
 
     /**
      * 管理员: 1:是 0:否
@@ -50,23 +47,18 @@ public class RoleInfo {
     private Integer isAdmin;
 
     /**
-     * 创建人ID
+     * 创建人
      */
     private String createBy;
+
+    /**
+     * 创建人姓名
+     */
+    private String createName;
 
     /**
      * 创建时间
      */
     private Long createTime;
-
-    /**
-     * 更新人ID
-     */
-    private String updateBy;
-
-    /**
-     * 更新时间
-     */
-    private Long updateTime;
 
 }

@@ -6,14 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Created by 2023/2/9.
- *
- * @author lvqingyu
+ * @author 角色菜单关联表
  */
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class RoleMenuInfo {
 
     /**
@@ -42,7 +40,7 @@ public class RoleMenuInfo {
     private Integer isDel;
 
     /**
-     * 创建人
+     * 创建人ID
      */
     private String createBy;
 
@@ -52,7 +50,7 @@ public class RoleMenuInfo {
     private Long createTime;
 
     /**
-     * 更新人
+     * 更新人ID
      */
     private String updateBy;
 

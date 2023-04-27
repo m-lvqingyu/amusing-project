@@ -12,5 +12,10 @@ import java.util.List;
  */
 public interface UserRoleInfoMapper {
 
-    List<UserRoleInfo> getUserRoleList(@Param("userId") String userId, @Param("status") Integer status);
+    List<UserRoleInfo> selectUserRoles(@Param("userId") String userId, @Param("status") Integer status);
+
+    Integer insert(UserRoleInfo userRoleInfo);
+
+    Integer update(UserRoleInfo userRoleInfo);
+    
 }

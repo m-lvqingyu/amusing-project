@@ -1,23 +1,21 @@
 package com.amusing.start.user.enums;
 
 /**
- * Create By 2021/9/21
+ * Created by 2023/04/20.
  *
  * @author lvqingyu
  */
-public enum AmountType {
+public enum RoleStatus {
 
-    MAIN(1, "主账户"),
-
-    GIVE(2, "副账户"),
-
-    MIX(3, "混合");
+    VALID(1, "有效"),
+    
+    INVALID(3, "无效");
 
     private int key;
 
     private String value;
 
-    AmountType(int key, String value) {
+    RoleStatus(int key, String value) {
         this.key = key;
         this.value = value;
     }

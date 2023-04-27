@@ -6,9 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Created by 2023/2/9.
- *
- * @author lvqingyu
+ * @author 菜单表
  */
 @Data
 @Builder
@@ -22,17 +20,17 @@ public class MenuInfo {
     private Integer id;
 
     /**
-     * 名称
+     * 菜单名称
      */
     private String name;
 
     /**
-     * 名称码
+     * 菜单编码
      */
-    private String nameCode;
+    private String code;
 
     /**
-     * 类型：1:菜单 2:按钮
+     * 类型(1:菜单 2:按钮)
      */
     private Integer type;
 
@@ -62,7 +60,7 @@ public class MenuInfo {
     private String description;
 
     /**
-     * 父级ID
+     * 父级菜单ID
      */
     private Integer parentId;
 
@@ -72,7 +70,7 @@ public class MenuInfo {
     private Integer level;
 
     /**
-     * 状态(1:有效 2:冻结 3:无效)
+     * 状态(1:有效 3:无效)
      */
     private Integer status;
 
@@ -82,7 +80,7 @@ public class MenuInfo {
     private Integer isDel;
 
     /**
-     * 创建人
+     * 创建人ID
      */
     private String createBy;
 
@@ -92,7 +90,7 @@ public class MenuInfo {
     private Long createTime;
 
     /**
-     * 更新人
+     * 更新人ID
      */
     private String updateBy;
 

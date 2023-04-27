@@ -31,7 +31,7 @@ public class MenuVo {
     /**
      * 名称码
      */
-    private String nameCode;
+    private String code;
 
     /**
      * 类型：1:菜单 2:按钮

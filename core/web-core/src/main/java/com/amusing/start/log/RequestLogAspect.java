@@ -1,5 +1,6 @@
 package com.amusing.start.log;
 
+import cn.hutool.json.JSONUtil;
 import com.amusing.start.constant.AuthConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -13,6 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author lv.qingyu
@@ -37,27 +41,16 @@ public class RequestLogAspect {
         String userId = servletRequest.getHeader(AuthConstant.USER_UID);
         String uri = servletRequest.getRequestURI();
         String address = RequestUtils.getIp(servletRequest);
-        String objArgs = findParams(joinPoint.getArgs());
+        String objArgs = JSONUtil.toJsonStr(filterArgs(joinPoint.getArgs()));
         log.info("[amusing-request]-start userId:{}, uri:{}, address:{}, param:{}", userId, uri, address, objArgs);
         Object result = joinPoint.proceed();
         log.info("[amusing-request]-end userId:{}, result:{}, timeConsuming:{}ms", userId, result, System.currentTimeMillis() - statTime);
         return result;
     }
 
-    private String findParams(Object[] objArgs) {
-        StringBuilder sb = new StringBuilder();
-        if (objArgs == null || objArgs.length <= 0) {
-            return sb.toString();
-        }
-        for (Object obj : objArgs) {
-            if (obj instanceof MultipartFile ||
-                    obj instanceof HttpServletRequest ||
-                    obj instanceof HttpServletResponse) {
-                continue;
-            }
-            sb.append(obj.toString());
-        }
-        return sb.toString();
+    private List<Object> filterArgs(Object[] objects) {
+        return Arrays.stream(objects).filter(obj -> !(obj instanceof MultipartFile)
+                && !(obj instanceof HttpServletResponse)
+                && !(obj instanceof HttpServletRequest)).collect(Collectors.toList());
     }
-
 }

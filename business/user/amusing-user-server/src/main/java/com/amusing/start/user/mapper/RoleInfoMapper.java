@@ -12,17 +12,23 @@ import java.util.List;
  */
 public interface RoleInfoMapper {
 
-    List<RoleInfo> getRoleAll();
+    List<RoleInfo> selectAll();
 
-    RoleInfo getById(@Param("id") Integer id);
+    List<RoleInfo> selectValidAll();
 
-    RoleInfo getByName(@Param("name") String name);
+    RoleInfo selectById(@Param("id") Integer id);
 
-    RoleInfo getByCode(@Param("code") String code);
+    RoleInfo selectByName(@Param("name") String name);
+
+    RoleInfo selectByCode(@Param("code") String code);
+
+    List<RoleInfo> selectByNameOrCode(@Param("name") String name, @Param("code") String code);
 
     Integer update(RoleInfo roleInfo);
     
     Integer insert(RoleInfo roleInfo);
+
+    Integer getAdminRoleId();
 
 
 }

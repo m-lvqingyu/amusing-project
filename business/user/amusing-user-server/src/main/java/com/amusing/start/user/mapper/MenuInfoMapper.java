@@ -12,8 +12,16 @@ import java.util.List;
  */
 public interface MenuInfoMapper {
 
-    List<MenuInfo> getAll();
+    List<MenuInfo> selectAll();
 
-    List<MenuInfo> getByIds(@Param("ids") List<Integer> ids);
+    List<MenuInfo> selectValidAll();
+
+    MenuInfo selectById(@Param("id") Integer id);
+
+    List<MenuInfo> selectByIds(@Param("ids") List<Integer> ids);
+
+    Integer insert(MenuInfo menuInfo);
+
+    Integer update(MenuInfo menuInfo);
 
 }

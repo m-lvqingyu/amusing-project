@@ -4,8 +4,8 @@
     <resultMap id="BaseResultMap" type="com.amusing.start.user.entity.pojo.MenuInfo">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
-        <result column="name_code" jdbcType="VARCHAR" property="nameCode"/>
-        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
         <result column="component" jdbcType="VARCHAR" property="component"/>
         <result column="path" jdbcType="VARCHAR" property="path"/>
         <result column="priority" jdbcType="INTEGER" property="priority"/>
@@ -13,8 +13,8 @@
         <result column="description" jdbcType="VARCHAR" property="description"/>
         <result column="parent_id" jdbcType="INTEGER" property="parentId"/>
         <result column="level" jdbcType="INTEGER" property="level"/>
-        <result column="status" jdbcType="BIT" property="status"/>
-        <result column="is_del" jdbcType="BIT" property="isDel"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_del" jdbcType="TINYINT" property="isDel"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="create_time" jdbcType="BIGINT" property="createTime"/>
         <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
@@ -22,24 +22,197 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, `name`, name_code, `type`, component, `path`, priority, icon, description, parent_id, `level`, status,
-        is_del, create_by, create_time, update_by, update_time
+        id
+        , `name`, code, `type`, component, `path`, priority, icon, description, parent_id,
+        `level`, `status`, is_del, create_by, create_time, update_by, update_time
     </sql>
 
-    <select id="getAll" resultType="com.amusing.start.user.entity.pojo.MenuInfo">
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from menu_info where is_del = 1
+    </select>
+
+    <select id="selectValidAll" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from menu_info where status = 1 and is_del = 1
     </select>
 
-    <select id="getByIds" resultType="com.amusing.start.user.entity.pojo.MenuInfo">
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from menu_info where id = #{id,jdbcType=INTEGER} and status = 1 and is_del = 1 limit 1
+    </select>
+
+    <select id="selectByIds" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from menu_info where id in
-        <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+        <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
             #{id}
         </foreach>
         and status = 1 and is_del = 1
     </select>
+
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.amusing.start.user.entity.pojo.MenuInfo"
+            useGeneratedKeys="true">
+        insert into menu_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="code != null">
+                code,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+            <if test="component != null">
+                component,
+            </if>
+            <if test="path != null">
+                `path`,
+            </if>
+            <if test="priority != null">
+                priority,
+            </if>
+            <if test="icon != null">
+                icon,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="level != null">
+                `level`,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="isDel != null">
+                is_del,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null">
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+            <if test="component != null">
+                #{component,jdbcType=VARCHAR},
+            </if>
+            <if test="path != null">
+                #{path,jdbcType=VARCHAR},
+            </if>
+            <if test="priority != null">
+                #{priority,jdbcType=INTEGER},
+            </if>
+            <if test="icon != null">
+                #{icon,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=INTEGER},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="isDel != null">
+                #{isDel,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=BIGINT},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.amusing.start.user.entity.pojo.MenuInfo">
+        update menu_info
+        <set>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                `type` = #{type,jdbcType=TINYINT},
+            </if>
+            <if test="component != null">
+                component = #{component,jdbcType=VARCHAR},
+            </if>
+            <if test="path != null">
+                `path` = #{path,jdbcType=VARCHAR},
+            </if>
+            <if test="priority != null">
+                priority = #{priority,jdbcType=INTEGER},
+            </if>
+            <if test="icon != null">
+                icon = #{icon,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId,jdbcType=INTEGER},
+            </if>
+            <if test="level != null">
+                `level` = #{level,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="isDel != null">
+                is_del = #{isDel,jdbcType=TINYINT},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=BIGINT},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
 
 </mapper>

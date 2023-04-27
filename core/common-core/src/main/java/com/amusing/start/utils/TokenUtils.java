@@ -20,6 +20,8 @@ public class TokenUtils {
 
     public static final String USER_ID_KEY = "u_id";
 
+    public static final String IS_ADMIN = "admin";
+
     /**
      * 生成Token
      *
@@ -29,8 +31,9 @@ public class TokenUtils {
      * @param expiresTime 过期时间
      * @return
      */
-    public static String generateToken(String userUid, Integer[] roleIds, String secret, Date expiresTime) {
+    public static String generateToken(String userUid, Integer[] roleIds, Boolean isAdmin, String secret, Date expiresTime) {
         return JWT.create().withClaim(USER_ID_KEY, userUid).withArrayClaim(ROLE_LIST_KEY, roleIds)
+                .withClaim(IS_ADMIN, isAdmin)
                 .withExpiresAt(expiresTime).sign(Algorithm.HMAC256(secret));
     }
 
@@ -67,6 +70,14 @@ public class TokenUtils {
         }
         Claim claim = claimMap.get(TokenUtils.ROLE_LIST_KEY);
         return claim.asArray(Integer.class);
+    }
+
+    public static Boolean getAdmin(Map<String, Claim> claimMap) {
+        if (CollectionUtil.isEmpty(claimMap)) {
+            return null;
+        }
+        Claim claim = claimMap.get(TokenUtils.IS_ADMIN);
+        return claim.asBoolean();
     }
 
 }

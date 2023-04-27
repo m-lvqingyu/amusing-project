@@ -12,15 +12,17 @@ import java.util.List;
  */
 public interface RoleMenuInfoMapper {
 
-    List<RoleMenuInfo> getAll();
+    List<RoleMenuInfo> selectAll();
 
-    List<RoleMenuInfo> getRoleMenuList(@Param("roleIds") List<Integer> roleIds);
+    List<RoleMenuInfo> selectValidAll();
 
-    List<RoleMenuInfo> getAllMenuId(@Param("roleId") Integer roleId);
+    List<RoleMenuInfo> selectByRoleIds(@Param("roleIds") List<Integer> roleIds);
+
+    List<RoleMenuInfo> selectByRoleId(@Param("roleId") Integer roleId);
 
     Integer invalidByRoleId(@Param("roleId") Integer roleId);
 
-    RoleMenuInfo getRoleMenu(@Param("roleId") Integer roleId, @Param("menuId") Integer menuId);
+    RoleMenuInfo selectByRIdAndMId(@Param("roleId") Integer roleId, @Param("menuId") Integer menuId);
 
     Integer update(RoleMenuInfo info);
 
