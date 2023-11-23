@@ -1,66 +1,46 @@
 package com.amusing.start.order.entity.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
+import lombok.experimental.Accessors;
 
 /**
- * Create By 2021/10/10
- *
- * @author lvqingyu
+ * @author Lv.QingYu
+ * @description: 订单-商品信息
+ * @since 2021/10/10
  */
 @Data
-@Builder
+@Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@ApiModel(description = "订单-商品信息")
 public class OrderProductVo {
 
-    /**
-     * 订单编号
-     */
+    @ApiModelProperty(value = "订单编号")
     private String orderNo;
 
-    /**
-     * 商铺ID
-     */
+    @ApiModelProperty(value = "商铺ID")
     private String shopId;
 
-    /**
-     * 商铺名称
-     */
-    private String shopName;
-
-    /**
-     * 商品ID
-     */
+    @ApiModelProperty(value = "商品ID")
     private String productId;
 
-    /**
-     * 商品名称
-     */
+    @ApiModelProperty(value = "商品名称")
     private String productName;
 
-    /**
-     * 单价ID
-     */
+    @ApiModelProperty(value = "单价ID")
     private String priceId;
+    
+    @ApiModelProperty(value = "单价")
+    private Integer price;
 
-    /**
-     * 单价
-     */
-    private BigDecimal price;
-
-    /**
-     * 商品数量
-     */
+    @ApiModelProperty(value = "商品数量")
     private Integer num;
 
-    /**
-     * 订单金额
-     */
-    private BigDecimal amount;
+    @ApiModelProperty(value = "订单金额")
+    private Integer amount;
 
 }

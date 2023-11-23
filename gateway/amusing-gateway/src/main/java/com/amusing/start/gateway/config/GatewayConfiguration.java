@@ -17,36 +17,46 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Create By 2021/9/4
- *
- * @author lvqingyu
+ * @author Lv.QingYu
+ * @description: Gateway网关配置
+ * @since 2021/09/04
  */
 @Configuration
 public class GatewayConfiguration {
 
     private final List<ViewResolver> viewResolvers;
+
     private final ServerCodecConfigurer serverCodecConfigurer;
 
-    public GatewayConfiguration(ObjectProvider<List<ViewResolver>> viewResolversProvider,
-                                ServerCodecConfigurer serverCodecConfigurer) {
+    public GatewayConfiguration(ObjectProvider<List<ViewResolver>> viewResolversProvider, ServerCodecConfigurer serverCodecConfigurer) {
         this.viewResolvers = viewResolversProvider.getIfAvailable(Collections::emptyList);
         this.serverCodecConfigurer = serverCodecConfigurer;
     }
 
+    /**
+     * @return Sentinel异常处理器
+     */
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SentinelGatewayBlockExceptionHandler sentinelGatewayBlockExceptionHandler() {
         return new GatewayBlockExceptionHandler(viewResolvers, serverCodecConfigurer);
     }
 
+    /**
+     * @return SentinelGatewayFilter
+     */
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public GlobalFilter sentinelGatewayFilter() {
         return new SentinelGatewayFilter();
     }
 
+    /**
+     * @return 路径匹配规则
+     */
     @Bean
     public AntPathMatcher antPathMatcher() {
         return new AntPathMatcher();
     }
+
 }

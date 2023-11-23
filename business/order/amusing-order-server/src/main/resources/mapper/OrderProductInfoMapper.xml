@@ -5,19 +5,16 @@
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
         <result column="shop_id" jdbcType="VARCHAR" property="shopId"/>
-        <result column="shop_name" jdbcType="VARCHAR" property="shopName"/>
         <result column="product_id" jdbcType="VARCHAR" property="productId"/>
         <result column="product_name" jdbcType="VARCHAR" property="productName"/>
         <result column="price_id" jdbcType="VARCHAR" property="priceId"/>
-        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="price" jdbcType="INTEGER" property="price"/>
         <result column="num" jdbcType="INTEGER" property="num"/>
-        <result column="amount" jdbcType="DECIMAL" property="amount"/>
+        <result column="amount" jdbcType="INTEGER" property="amount"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id
-        , order_no, shop_id, shop_name, product_id, product_name, price_id, price, num,
-    amount
+        id, order_no, shop_id, product_id, product_name, price_id, price, num, amount
     </sql>
 
     <insert id="insert" keyColumn="id" keyProperty="id"
@@ -29,9 +26,6 @@
             </if>
             <if test="shopId != null">
                 shop_id,
-            </if>
-            <if test="shopName != null">
-                shop_name,
             </if>
             <if test="productId != null">
                 product_id,
@@ -59,9 +53,6 @@
             <if test="shopId != null">
                 #{shopId,jdbcType=VARCHAR},
             </if>
-            <if test="shopName != null">
-                #{shopName,jdbcType=VARCHAR},
-            </if>
             <if test="productId != null">
                 #{productId,jdbcType=VARCHAR},
             </if>
@@ -72,51 +63,17 @@
                 #{priceId,jdbcType=VARCHAR},
             </if>
             <if test="price != null">
-                #{price,jdbcType=DECIMAL},
+                #{price,jdbcType=INTEGER},
             </if>
             <if test="num != null">
                 #{num,jdbcType=INTEGER},
             </if>
             <if test="amount != null">
-                #{amount,jdbcType=DECIMAL},
+                #{amount,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
-
-    <update id="update" parameterType="com.amusing.start.order.entity.pojo.OrderProductInfo">
-        update order_product_info
-        <set>
-            <if test="orderNo != null">
-                order_no = #{orderNo,jdbcType=VARCHAR},
-            </if>
-            <if test="shopId != null">
-                shop_id = #{shopId,jdbcType=VARCHAR},
-            </if>
-            <if test="shopName != null">
-                shop_name = #{shopName,jdbcType=VARCHAR},
-            </if>
-            <if test="productId != null">
-                product_id = #{productId,jdbcType=VARCHAR},
-            </if>
-            <if test="productName != null">
-                product_name = #{productName,jdbcType=VARCHAR},
-            </if>
-            <if test="priceId != null">
-                price_id = #{priceId,jdbcType=VARCHAR},
-            </if>
-            <if test="price != null">
-                price = #{price,jdbcType=DECIMAL},
-            </if>
-            <if test="num != null">
-                num = #{num,jdbcType=INTEGER},
-            </if>
-            <if test="amount != null">
-                amount = #{amount,jdbcType=DECIMAL},
-            </if>
-        </set>
-        where id = #{id,jdbcType=BIGINT}
-    </update>
-
+    
     <select id="getByNo" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

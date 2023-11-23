@@ -2,11 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.amusing.start.user.mapper.AccountInfoMapper">
     <resultMap id="BaseResultMap" type="com.amusing.start.user.entity.pojo.AccountInfo">
-        <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="user_id" jdbcType="VARCHAR" property="userId"/>
-        <result column="main_amount" jdbcType="DECIMAL" property="mainAmount"/>
-        <result column="give_amount" jdbcType="DECIMAL" property="giveAmount"/>
-        <result column="frozen_amount" jdbcType="DECIMAL" property="frozenAmount"/>
+        <result column="main_amount" jdbcType="INTEGER" property="mainAmount"/>
+        <result column="give_amount" jdbcType="INTEGER" property="giveAmount"/>
+        <result column="frozen_amount" jdbcType="INTEGER" property="frozenAmount"/>
         <result column="vip_level" jdbcType="BIT" property="vipLevel"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="create_time" jdbcType="BIGINT" property="createTime"/>
@@ -15,12 +14,10 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        user_id
-        , main_amount, give_amount, frozen_amount, vip_level, create_by, create_time, update_by, update_time
+        user_id, main_amount, give_amount, frozen_amount, vip_level, create_by, create_time, update_by, update_time
     </sql>
 
-    <insert id="insert" keyProperty="id" keyColumn="id" parameterType="com.amusing.start.user.entity.pojo.AccountInfo"
-            useGeneratedKeys="true">
+    <insert id="insert" parameterType="com.amusing.start.user.entity.pojo.AccountInfo">
         insert into account_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null">
@@ -56,13 +53,13 @@
                 #{userId,jdbcType=VARCHAR},
             </if>
             <if test="mainAmount != null">
-                #{mainAmount,jdbcType=DECIMAL},
+                #{mainAmount,jdbcType=INTEGER},
             </if>
             <if test="giveAmount != null">
-                #{giveAmount,jdbcType=DECIMAL},
+                #{giveAmount,jdbcType=INTEGER},
             </if>
             <if test="frozenAmount != null">
-                #{frozenAmount,jdbcType=DECIMAL},
+                #{frozenAmount,jdbcType=INTEGER},
             </if>
             <if test="vipLevel != null">
                 #{vipLevel,jdbcType=BIT},
@@ -86,13 +83,13 @@
         update account_info
         <set>
             <if test="mainAmount != null">
-                main_amount = #{mainAmount,jdbcType=DECIMAL},
+                main_amount = #{mainAmount,jdbcType=INTEGER},
             </if>
             <if test="giveAmount != null">
-                give_amount = #{giveAmount,jdbcType=DECIMAL},
+                give_amount = #{giveAmount,jdbcType=INTEGER},
             </if>
             <if test="frozenAmount != null">
-                frozen_amount = #{frozenAmount,jdbcType=DECIMAL},
+                frozen_amount = #{frozenAmount,jdbcType=INTEGER},
             </if>
             <if test="vipLevel != null">
                 vip_level = #{vipLevel,jdbcType=BIT},
@@ -113,10 +110,16 @@
         where user_id = #{userId,jdbcType=VARCHAR}
     </update>
 
-    <select id="selectById" resultType="com.amusing.start.user.entity.pojo.AccountInfo">
+    <select id="getById" resultType="com.amusing.start.user.entity.pojo.AccountInfo">
         select
         <include refid="Base_Column_List"/>
         from account_info where user_id = #{userId} limit 1
+    </select>
+
+    <select id="getByIdLock" resultType="com.amusing.start.user.entity.pojo.AccountInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from account_info where user_id = #{userId} limit 1 for update
     </select>
 
     <update id="updateMainAccount">

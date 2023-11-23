@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.amusing.start.platform.mapper.AliPayAsyncNotifyInfoMapper">
+    <resultMap id="BaseResultMap" type="com.amusing.start.platform.entity.pojo.AliPayAsyncNotifyInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="notify_id" jdbcType="VARCHAR" property="notifyId"/>
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="trade_no" jdbcType="VARCHAR" property="tradeNo"/>
+        <result column="trade_status" jdbcType="VARCHAR" property="tradeStatus"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="is_del" jdbcType="INTEGER" property="isDel"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="update_time" jdbcType="BIGINT" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, notify_id, order_no, trade_no, trade_status, `status`, is_del, create_time, update_time
+    </sql>
+
+    <insert id="insert" keyColumn="id" keyProperty="id"
+            parameterType="com.amusing.start.platform.entity.pojo.AliPayAsyncNotifyInfo" useGeneratedKeys="true">
+        insert into ali_pay_async_notify_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="notifyId != null">
+                notify_id,
+            </if>
+            <if test="orderNo != null">
+                order_no,
+            </if>
+            <if test="tradeNo != null">
+                trade_no,
+            </if>
+            <if test="tradeStatus != null">
+                trade_status,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="isDel != null">
+                is_del,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="notifyId != null">
+                #{notifyId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderNo != null">
+                #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="tradeNo != null">
+                #{tradeNo,jdbcType=VARCHAR},
+            </if>
+            <if test="tradeStatus != null">
+                #{tradeStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=BIT},
+            </if>
+            <if test="isDel != null">
+                #{isDel,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getByNotifyId" resultMap="BaseResultMap">
+        SELECT *
+        FROM ali_pay_async_notify_info
+        WHERE notify_id = #{notifyId}
+          and is_del = 1
+        limit 1
+    </select>
+
+    <update id="updateById">
+        update ali_pay_async_notify_info
+        set status      = #{status},
+            update_time = now()
+        where id = #{id}
+          and is_del = 1
+        limit 1
+    </update>
+
+</mapper>

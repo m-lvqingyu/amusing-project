@@ -5,14 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * @author 菜单表
- */
+import java.io.Serializable;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MenuInfo {
+public class MenuInfo implements Serializable {
 
     /**
      * 主键
@@ -35,11 +34,6 @@ public class MenuInfo {
     private Integer type;
 
     /**
-     * 组件
-     */
-    private String component;
-
-    /**
      * 路径
      */
     private String path;
@@ -47,18 +41,8 @@ public class MenuInfo {
     /**
      * 优先级
      */
-    private Integer priority;
-
-    /**
-     * 按钮：add-添加,delete-删除,edit-编辑,query-查询
-     */
-    private String icon;
-
-    /**
-     * 描述
-     */
-    private String description;
-
+    private Integer order;
+    
     /**
      * 父级菜单ID
      */

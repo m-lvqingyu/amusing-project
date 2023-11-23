@@ -1,0 +1,10 @@
+[
+    {
+        "resource":"amusing-user-server",
+        "count":2,
+        "grade":1,
+        "limitApp":"default",
+        "strategy":0,
+        "controlBehavior":0
+    }
+]

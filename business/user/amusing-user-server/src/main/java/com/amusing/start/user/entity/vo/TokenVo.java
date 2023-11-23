@@ -1,29 +1,23 @@
 package com.amusing.start.user.entity.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Created by 2022/10/2.
- *
- * @author lvqingyu
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ApiModel(description = "Token信息")
 public class TokenVo {
 
-    /**
-     * token
-     */
+    @ApiModelProperty(value = "token")
     private String token;
 
-    /**
-     * refreshToken
-     */
+    @ApiModelProperty(value = "refreshToken")
     private String refreshToken;
 
 }

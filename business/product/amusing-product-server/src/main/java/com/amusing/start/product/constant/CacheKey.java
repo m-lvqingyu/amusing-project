@@ -1,9 +1,13 @@
 package com.amusing.start.product.constant;
 
 /**
- * Created by lvqingyu on 2022/10/15.
+ * @author Lv.QingYu
+ * @description: 缓存KEY
+ * @since 2022/10/15
  */
 public class CacheKey {
+
+    public static final Long SHOP_CAR_TIME_OUT = 7L;
 
     private static final String SHOP_CAR_PREFIX = "shop_car:";
 

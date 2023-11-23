@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * @author 角色菜单关联表
- */
 @Data
 @Builder
 @AllArgsConstructor

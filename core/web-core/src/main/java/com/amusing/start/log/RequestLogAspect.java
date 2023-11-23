@@ -44,7 +44,7 @@ public class RequestLogAspect {
         String objArgs = JSONUtil.toJsonStr(filterArgs(joinPoint.getArgs()));
         log.info("[amusing-request]-start userId:{}, uri:{}, address:{}, param:{}", userId, uri, address, objArgs);
         Object result = joinPoint.proceed();
-        log.info("[amusing-request]-end userId:{}, result:{}, timeConsuming:{}ms", userId, result, System.currentTimeMillis() - statTime);
+        log.info("[amusing-request]-end userId:{}, result:{}, timeConsuming:{}ms", userId, JSONUtil.toJsonStr(result), System.currentTimeMillis() - statTime);
         return result;
     }
 

@@ -1,24 +1,15 @@
 package com.amusing.start.user.entity.pojo;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
-
-/**
- * Created by 2023/2/9.
- *
- * @author lvqingyu
- */
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class AccountInfo {
-
-    private Long id;
 
     /**
      * 用户唯一ID
@@ -28,17 +19,17 @@ public class AccountInfo {
     /**
      * 主账户金额
      */
-    private BigDecimal mainAmount;
+    private Integer mainAmount;
 
     /**
      * 副账户金额
      */
-    private BigDecimal giveAmount;
+    private Integer giveAmount;
 
     /**
      * 冻结金额
      */
-    private BigDecimal frozenAmount;
+    private Integer frozenAmount;
 
     /**
      * 会员等级

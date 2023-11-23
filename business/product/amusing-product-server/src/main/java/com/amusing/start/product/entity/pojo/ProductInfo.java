@@ -1,17 +1,17 @@
 package com.amusing.start.product.entity.pojo;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
+import lombok.experimental.Accessors;
 
 /**
- * @author 商品信息
+ * @author Lv.QingYu
+ * @description: 商品信息表
+ * @since 2023/9/20
  */
 @Data
-@Builder
+@Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductInfo {
@@ -34,7 +34,7 @@ public class ProductInfo {
     /**
      * 商品数量
      */
-    private BigDecimal stock;
+    private Integer stock;
 
     /**
      * 状态

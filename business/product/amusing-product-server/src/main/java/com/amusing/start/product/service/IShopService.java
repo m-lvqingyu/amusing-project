@@ -1,24 +1,33 @@
 package com.amusing.start.product.service;
 
-import com.amusing.start.exception.CustomException;
-import com.amusing.start.product.entity.dto.ShopCreateDto;
+import com.amusing.start.product.entity.pojo.ShopInfo;
 
 /**
- * @author lv.qingyu
- * @version 1.0
- * @date 2021/12/24
+ * @author Lv.QingYu
+ * @description: 商铺服务Service
+ * @since 2021/12/24
  */
 public interface IShopService {
 
     /**
-     * 新增商铺
-     *
-     * @param executor  执行人
-     * @param createDto 商铺信息
-     * @return
-     * @throws CustomException
+     * @param shopId 商铺ID
+     * @return 商铺信息
+     * @description: 根据商铺ID，获取商铺信息
      */
-    String create(String executor, ShopCreateDto createDto) throws CustomException;
+    ShopInfo getById(String shopId);
 
+    /**
+     * @param name 商铺名称
+     * @return 商铺ID
+     * @description: 根据名称获取商铺ID
+     */
+    String nameExist(String name);
+
+    /**
+     * @param shopInfo 商铺信息
+     * @return 新增条数
+     * @description: 保存商铺信息
+     */
+    Integer insert(ShopInfo shopInfo);
 
 }

@@ -1,10 +1,5 @@
 package com.amusing.start.user.enums;
 
-/**
- * Create By 2021/8/28
- *
- * @author lvqingyu
- */
 public enum YesOrNo {
 
     YES(1, "是"),

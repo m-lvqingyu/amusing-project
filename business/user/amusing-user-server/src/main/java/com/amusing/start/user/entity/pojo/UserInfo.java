@@ -1,28 +1,20 @@
 package com.amusing.start.user.entity.pojo;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-/**
- * @author 用户基础信息
- */
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class UserInfo {
 
     /**
      * 主键
      */
-    private Long id;
-
-    /**
-     * 用户唯一ID
-     */
-    private String uId;
+    private String id;
 
     /**
      * 用户名

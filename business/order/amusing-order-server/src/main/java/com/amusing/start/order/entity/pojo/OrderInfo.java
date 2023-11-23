@@ -1,25 +1,24 @@
 package com.amusing.start.order.entity.pojo;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
 
 /**
- * @author 订单信息
+ * @author Lv.QingYu
+ * @description: 订单表
+ * @since 2021/10/10
  */
 @Data
-@Builder
+@Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderInfo {
+public class OrderInfo implements Serializable {
 
-    /**
-     * 主键ID
-     */
-    private Long id;
+    private static final long serialVersionUID = -2102623645153358463L;
 
     /**
      * 订单编号
@@ -39,22 +38,42 @@ public class OrderInfo {
     /**
      * 订单总金额
      */
-    private BigDecimal totalAmount;
+    private Integer totalAmount;
 
     /**
-     * 运费
+     * 订单实际金额
      */
-    private BigDecimal freightAmount;
+    private Integer realAmount;
+
+    /**
+     * 1:使用优惠券 2:未使用优惠券
+     */
+    private Integer useCoupon;
 
     /**
      * 优惠券减免总金额
      */
-    private BigDecimal couponAmount;
+    private Integer couponAmount;
+
+    /**
+     * 1:参加活动 2:未参加活动
+     */
+    private Integer useActivity;
 
     /**
      * 活动减免总金额
      */
-    private BigDecimal activityAmount;
+    private Integer activityAmount;
+
+    /**
+     * 1:包邮 2:不包邮
+     */
+    private Integer isFreight;
+
+    /**
+     * 运费
+     */
+    private Integer freightAmount;
 
     /**
      * 订单状态
@@ -62,14 +81,29 @@ public class OrderInfo {
     private Integer status;
 
     /**
-     * 是否包邮
-     */
-    private Integer isFreight;
-
-    /**
      * 已评价
      */
     private Integer isEvaluate;
+
+    /**
+     * 支付类型 1:支付宝 2:微信
+     */
+    private Integer payType;
+
+    /**
+     * 支付ID
+     */
+    private Long payId;
+
+    /**
+     * 是否能够退款(1:可退款 2:不可退款)
+     */
+    private Integer canRefund;
+
+    /**
+     * 已退款金额
+     */
+    private Integer refundAmount;
 
     /**
      * 创建人

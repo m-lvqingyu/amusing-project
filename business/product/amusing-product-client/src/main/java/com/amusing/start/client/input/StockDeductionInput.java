@@ -4,16 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
- * @author Administrator
- * @version 1.0
- * @date 2021/12/17 14:22
+ * @author Lv.QingYu
+ * @description: 商品库存扣减请求参数
+ * @since 2021/10/23
  */
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class StockDeductionInput {
 
     /**

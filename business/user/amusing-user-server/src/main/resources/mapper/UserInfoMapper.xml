@@ -2,8 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.amusing.start.user.mapper.UserInfoMapper">
     <resultMap id="BaseResultMap" type="com.amusing.start.user.entity.pojo.UserInfo">
-        <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="u_id" jdbcType="VARCHAR" property="uId"/>
+        <id column="id" jdbcType="VARCHAR" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="secret" jdbcType="VARCHAR" property="secret"/>
@@ -18,46 +17,59 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id
-        , u_id, `name`, `password`, secret, phone, sources, `status`, is_del, create_by, create_time, update_by, update_time
+        id, `name`, `password`, secret, phone, sources, `status`, is_del, create_by, create_time, update_by, update_time
     </sql>
 
-    <select id="selectList" resultType="com.amusing.start.user.entity.vo.user.UserListVo">
-        select id, u_id, `name`, phone, sources, `status` from user_info where 1 = 1
+    <select id="getList" resultMap="BaseResultMap">
+        select id, `name`, phone, sources, `status` from user_info where 1 = 1
         <if test="name != null and name != ''">
             and `name` like concat('%', #{name},'%')
         </if>
-        <if test="phone != null and phone != ''">
-            and phone = #{phone}
+        <if test="userIdList != null and userIdList.size != 0">
+            and id in
+            <foreach collection="userIdList" item="userId" index="index" open="(" separator="," close=")">
+                #{userId}
+            </foreach>
         </if>
         and is_del = 1
     </select>
 
-    <select id="selectByNameOrPhone" resultMap="BaseResultMap">
+    <select id="getByName" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from user_info where 1 = 1
-        <if test="name != null and name != ''">
-            and name = #{name}
-        </if>
-        <if test="phone != null and phone != ''">
-            and phone = #{phone}
-        </if>
+        from user_info where name = #{name}
         and is_del = 1 limit 1
     </select>
 
-    <select id="selectById" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from user_info where u_id = #{userId} and status = 1 and is_del = 1
+    <select id="nameExist" resultType="java.lang.Integer">
+        select count(1)
+        from user_info
+        where name = #{name}
+          and is_del = 1 limit 1
     </select>
 
-    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.amusing.start.user.entity.pojo.UserInfo"
-            useGeneratedKeys="true">
+    <select id="phoneExist" resultType="java.lang.Integer">
+        select count(1)
+        from user_info
+        where phone = #{phone}
+          and is_del = 1 limit 1
+    </select>
+
+    <select id="getById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info where id = #{userId}
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        and is_del = 1
+    </select>
+
+    <insert id="insert" parameterType="com.amusing.start.user.entity.pojo.UserInfo">
         insert into user_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="uId != null">
-                u_id,
+            <if test="id != null">
+                id,
             </if>
             <if test="name != null">
                 `name`,
@@ -94,8 +106,8 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="uId != null">
-                #{uId,jdbcType=VARCHAR},
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
             </if>
             <if test="name != null">
                 #{name,jdbcType=VARCHAR},
@@ -170,7 +182,7 @@
                 update_time = #{updateTime,jdbcType=BIGINT},
             </if>
         </set>
-        where u_id = #{uId,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=VARCHAR}
     </update>
 
 </mapper>

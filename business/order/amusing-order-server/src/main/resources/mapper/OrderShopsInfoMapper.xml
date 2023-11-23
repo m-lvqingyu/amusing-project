@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.amusing.start.order.mapper.OrderShopsInfoMapper">
+    <resultMap id="BaseResultMap" type="com.amusing.start.order.entity.pojo.OrderShopsInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="shops_id" jdbcType="VARCHAR" property="shopsId"/>
+        <result column="shops_name" jdbcType="VARCHAR" property="shopsName"/>
+        <result column="sort" jdbcType="INTEGER" property="sort"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, order_no, shops_id, shops_name, sort
+    </sql>
+
+    <insert id="insert" keyColumn="id" keyProperty="id"
+            parameterType="com.amusing.start.order.entity.pojo.OrderShopsInfo" useGeneratedKeys="true">
+        insert into order_shops_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">
+                order_no,
+            </if>
+            <if test="shopsId != null">
+                shops_id,
+            </if>
+            <if test="shopsName != null">
+                shops_name,
+            </if>
+            <if test="sort != null">
+                sort,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">
+                #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="shopsId != null">
+                #{shopsId,jdbcType=VARCHAR},
+            </if>
+            <if test="shopsName != null">
+                #{shopsName,jdbcType=VARCHAR},
+            </if>
+            <if test="sort != null">
+                #{sort,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getByNo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from order_shops_info
+        where order_no = #{orderNo} order by sort desc
+    </select>
+
+</mapper>

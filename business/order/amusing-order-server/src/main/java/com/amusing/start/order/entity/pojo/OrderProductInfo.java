@@ -1,20 +1,24 @@
 package com.amusing.start.order.entity.pojo;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
-
+import java.io.Serializable;
 /**
- * @author 订单商铺信息
+ * @author Lv.QingYu
+ * @description: 订单商品关联关系表
+ * @since 2021/10/10
  */
 @Data
-@Builder
+@Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderProductInfo {
+public class OrderProductInfo implements Serializable {
+
+    private static final long serialVersionUID = 4016582381548236295L;
+
     /**
      * 主键ID
      */
@@ -29,11 +33,6 @@ public class OrderProductInfo {
      * 商铺ID
      */
     private String shopId;
-
-    /**
-     * 商铺名称
-     */
-    private String shopName;
 
     /**
      * 商品ID
@@ -53,7 +52,7 @@ public class OrderProductInfo {
     /**
      * 单价
      */
-    private BigDecimal price;
+    private Integer price;
 
     /**
      * 商品数量
@@ -63,6 +62,6 @@ public class OrderProductInfo {
     /**
      * 订单金额
      */
-    private BigDecimal amount;
+    private Integer amount;
 
 }

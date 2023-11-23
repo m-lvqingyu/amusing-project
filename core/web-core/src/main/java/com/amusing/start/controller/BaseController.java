@@ -1,5 +1,6 @@
 package com.amusing.start.controller;
 
+import com.amusing.start.code.CommCode;
 import com.amusing.start.code.ErrorCode;
 import com.amusing.start.constant.AuthConstant;
 import com.amusing.start.exception.CustomException;
@@ -26,7 +27,7 @@ public class BaseController {
      * @return 用户唯一ID
      */
     public String getUserId() throws CustomException {
-        return Optional.ofNullable(request).map((i) -> i.getHeader(AuthConstant.USER_UID)).orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
+        return Optional.ofNullable(request).map((i) -> i.getHeader(AuthConstant.USER_UID)).orElseThrow(() -> new CustomException(CommCode.UNAUTHORIZED));
     }
 
     /**

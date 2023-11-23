@@ -20,7 +20,7 @@ public class TokenUtils {
 
     public static final String USER_ID_KEY = "u_id";
 
-    public static final String IS_ADMIN = "admin";
+    public static final String IS_ADMIN = "r_t";
 
     /**
      * 生成Token
@@ -64,7 +64,7 @@ public class TokenUtils {
         return claim.asString();
     }
 
-    public static Integer[] getRoleIds(Map<String, Claim> claimMap) {
+    public static Integer[] getRoleIdList(Map<String, Claim> claimMap) {
         if (CollectionUtil.isEmpty(claimMap)) {
             return null;
         }

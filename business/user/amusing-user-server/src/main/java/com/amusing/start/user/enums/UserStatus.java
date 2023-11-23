@@ -1,10 +1,5 @@
 package com.amusing.start.user.enums;
 
-/**
- * Create By 2021/8/28
- *
- * @author lvqingyu
- */
 public enum UserStatus {
 
     VALID(1, "有效"),

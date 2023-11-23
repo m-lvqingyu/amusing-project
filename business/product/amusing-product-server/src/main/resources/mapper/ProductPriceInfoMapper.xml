@@ -5,7 +5,7 @@
         <result column="price_id" jdbcType="VARCHAR" property="priceId"/>
         <result column="product_id" jdbcType="VARCHAR" property="productId"/>
         <result column="version" jdbcType="INTEGER" property="version"/>
-        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="price" jdbcType="INTEGER" property="price"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="create_time" jdbcType="BIGINT" property="createTime"/>
         <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
@@ -54,7 +54,7 @@
                 #{version,jdbcType=INTEGER},
             </if>
             <if test="price != null">
-                #{price,jdbcType=DECIMAL},
+                #{price,jdbcType=INTEGER},
             </if>
             <if test="createBy != null">
                 #{createBy,jdbcType=VARCHAR},
@@ -81,7 +81,7 @@
                 version = #{version,jdbcType=INTEGER},
             </if>
             <if test="price != null">
-                price = #{price,jdbcType=DECIMAL},
+                price = #{price,jdbcType=INTEGER},
             </if>
             <if test="createBy != null">
                 create_by = #{createBy,jdbcType=VARCHAR},

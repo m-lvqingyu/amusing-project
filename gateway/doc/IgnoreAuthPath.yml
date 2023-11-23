@@ -1,0 +1,6 @@
+ignore:
+ auth:
+  paths:
+   - /user/outward/info/register**
+   - /user/outward/info/login
+   - /user/outward/info/refresh**

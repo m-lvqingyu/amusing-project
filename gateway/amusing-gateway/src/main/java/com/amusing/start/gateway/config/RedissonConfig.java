@@ -14,9 +14,9 @@ import org.springframework.context.annotation.Configuration;
 import java.io.IOException;
 
 /**
- * Created by 2022/10/5.
- *
- * @author lvqingyu
+ * @author Lv.QingYu
+ * @description: redis相关配置
+ * @since 2022/10/05
  */
 @Configuration
 public class RedissonConfig {
@@ -34,10 +34,12 @@ public class RedissonConfig {
         this.nacosConfigManager = nacosConfigManager;
     }
 
+    private static final long TIMEOUT = 3000L;
+
     @Bean
     public RedissonClient redisson() throws NacosException, IOException {
         ConfigService configService = nacosConfigManager.getConfigService();
-        String config = configService.getConfig(dataId, group, 3000);
+        String config = configService.getConfig(dataId, group, TIMEOUT);
         return Redisson.create(Config.fromYAML(config));
     }
 

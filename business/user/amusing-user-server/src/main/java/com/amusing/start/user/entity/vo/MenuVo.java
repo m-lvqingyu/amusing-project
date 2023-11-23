@@ -1,5 +1,7 @@
 package com.amusing.start.user.entity.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,75 +9,38 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-/**
- * Created by 2023/02/24.
- *
- * @author lvqingyu
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ApiModel(description = "菜单信息")
 public class MenuVo {
 
-    /**
-     * 主键
-     */
+    @ApiModelProperty(value = "主键")
     private Integer id;
 
-    /**
-     * 名称
-     */
+    @ApiModelProperty(value = "名称")
     private String name;
 
-    /**
-     * 名称码
-     */
+    @ApiModelProperty(value = "编码")
     private String code;
 
-    /**
-     * 类型：1:菜单 2:按钮
-     */
+    @ApiModelProperty(value = "类型：1:菜单 2:按钮")
     private Integer type;
 
-    /**
-     * 组件
-     */
-    private String component;
-
-    /**
-     * 路径
-     */
+    @ApiModelProperty(value = "路径")
     private String path;
 
-    /**
-     * 优先级
-     */
-    private Integer priority;
+    @ApiModelProperty(value = "优先级")
+    private Integer order;
 
-    /**
-     * 按钮：add-添加,delete-删除,edit-编辑,query-查询
-     */
-    private String icon;
-
-    /**
-     * 描述
-     */
-    private String description;
-
-    /**
-     * 父级ID
-     */
+    @ApiModelProperty(value = "父级ID")
     private Integer parentId;
 
-    /**
-     * 级别
-     */
+    @ApiModelProperty(value = "级别")
     private Integer level;
 
-    /**
-     * 子菜单
-     */
+    @ApiModelProperty(value = "子菜单")
     private List<MenuVo> children;
-    
+
 }

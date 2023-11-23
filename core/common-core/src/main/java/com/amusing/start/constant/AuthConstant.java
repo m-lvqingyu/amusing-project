@@ -1,8 +1,5 @@
 package com.amusing.start.constant;
 
-/**
- * Created by lvqingyu on 2022/10/4.
- */
 public class AuthConstant {
 
     public static final String AUTHORIZATION = "Authorization";
@@ -11,5 +8,5 @@ public class AuthConstant {
 
     public static final String IMEI = "imei";
 
-
+    
 }

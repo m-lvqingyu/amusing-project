@@ -1,74 +1,57 @@
 package com.amusing.start.order.entity.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Create By 2021/10/10
- *
- * @author lvqingyu
+ * @author Lv.QingYu
+ * @description: 订单业务层
+ * @since 2021/10/10
  */
 @Data
-@Builder
+@Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(description = "订单详情")
 public class OrderDetailVo {
 
-    /**
-     * 订单编号
-     */
+    @ApiModelProperty(value = "订单编号")
     private String orderNo;
 
-    /**
-     * 预定人ID
-     */
+    @ApiModelProperty(value = "预定人ID")
     private String reserveId;
 
-    /**
-     * 收件人ID
-     */
+    @ApiModelProperty(value = "收件人ID")
     private String consigneeId;
 
-    /**
-     * 订单总金额
-     */
-    private BigDecimal totalAmount;
+    @ApiModelProperty(value = "订单总金额")
+    private Integer totalAmount;
 
-    /**
-     * 运费
-     */
-    private BigDecimal freightAmount;
+    @ApiModelProperty(value = "运费")
+    private Integer freightAmount;
 
-    /**
-     * 优惠券减免总金额
-     */
-    private BigDecimal couponAmount;
+    @ApiModelProperty(value = "优惠券减免总金额")
+    private Integer couponAmount;
 
-    /**
-     * 活动减免总金额
-     */
-    private BigDecimal activityAmount;
+    @ApiModelProperty(value = "活动减免总金额")
+    private Integer activityAmount;
 
-    /**
-     * 订单状态
-     */
+    @ApiModelProperty(value = "订单状态")
     private Integer status;
 
-    /**
-     * 是否包邮
-     */
+    @ApiModelProperty(value = "是否包邮")
     private Integer isFreight;
 
-    /**
-     * 已评价
-     */
+    @ApiModelProperty(value = "已评价")
     private Integer isEvaluate;
 
-    private List<OrderProductVo> productList;
+    @ApiModelProperty(value = "商品信息")
+    private List<OrderShopsVo> shopsVoList;
 
 }

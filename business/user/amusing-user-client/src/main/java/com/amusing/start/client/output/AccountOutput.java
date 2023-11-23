@@ -1,11 +1,9 @@
 package com.amusing.start.client.output;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
+import lombok.experimental.Accessors;
 
 /**
  * Create By 2021/9/21
@@ -15,7 +13,7 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Accessors(chain = true)
 public class AccountOutput {
 
     private String userId;
@@ -23,17 +21,17 @@ public class AccountOutput {
     /**
      * 主账户金额
      */
-    private BigDecimal mainAmount;
+    private Integer mainAmount;
 
     /**
      * 副账户金额
      */
-    private BigDecimal giveAmount;
+    private Integer giveAmount;
 
     /**
      * 冻结金额
      */
-    private BigDecimal frozenAmount;
+    private Integer frozenAmount;
 
     /**
      * 会员等级

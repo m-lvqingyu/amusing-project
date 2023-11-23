@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * @author 角色表
- */
 @Data
 @Builder
 @AllArgsConstructor

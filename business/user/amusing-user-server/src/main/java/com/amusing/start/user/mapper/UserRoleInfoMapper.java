@@ -5,11 +5,6 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * Created by 2023/2/15.
- *
- * @author lvqingyu
- */
 public interface UserRoleInfoMapper {
 
     List<UserRoleInfo> selectUserRoles(@Param("userId") String userId, @Param("status") Integer status);

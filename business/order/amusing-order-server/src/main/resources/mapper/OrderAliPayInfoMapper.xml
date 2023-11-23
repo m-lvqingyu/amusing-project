@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.amusing.start.order.mapper.OrderAliPayInfoMapper">
+    <resultMap id="BaseResultMap" type="com.amusing.start.order.entity.pojo.OrderAliPayInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="trade_no" jdbcType="VARCHAR" property="tradeNo"/>
+        <result column="buyer_logon_id" jdbcType="VARCHAR" property="buyerLogonId"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="total_amount" jdbcType="INTEGER" property="totalAmount"/>
+        <result column="receipt_amount" jdbcType="INTEGER" property="receiptAmount"/>
+        <result column="buyer_pay_amount" jdbcType="INTEGER" property="buyerPayAmount"/>
+        <result column="point_amount" jdbcType="INTEGER" property="pointAmount"/>
+        <result column="invoice_amount" jdbcType="INTEGER" property="invoiceAmount"/>
+        <result column="merchant_discount_amount" jdbcType="INTEGER" property="merchantDiscountAmount"/>
+        <result column="discount_amount" jdbcType="INTEGER" property="discountAmount"/>
+        <result column="gmt_payment" jdbcType="VARCHAR" property="gmtPayment"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+        <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+        <result column="update_time" jdbcType="BIGINT" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, order_no, trade_no, buyer_logon_id, type, total_amount, receipt_amount, buyer_pay_amount, point_amount,
+        invoice_amount, merchant_discount_amount, discount_amount, gmt_payment, `status`, create_time, update_time
+    </sql>
+
+    <insert id="insert" keyColumn="id" keyProperty="id"
+            parameterType="com.amusing.start.order.entity.pojo.OrderAliPayInfo" useGeneratedKeys="true">
+        insert into order_ali_pay_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">
+                order_no,
+            </if>
+            <if test="tradeNo != null">
+                trade_no,
+            </if>
+            <if test="buyerLogonId != null">
+                buyer_logon_id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="totalAmount != null">
+                total_amount,
+            </if>
+            <if test="receiptAmount != null">
+                receipt_amount,
+            </if>
+            <if test="buyerPayAmount != null">
+                buyer_pay_amount,
+            </if>
+            <if test="pointAmount != null">
+                point_amount,
+            </if>
+            <if test="invoiceAmount != null">
+                invoice_amount,
+            </if>
+            <if test="merchantDiscountAmount != null">
+                merchant_discount_amount,
+            </if>
+            <if test="discountAmount != null">
+                discount_amount,
+            </if>
+            <if test="gmtPayment != null">
+                gmt_payment,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">
+                #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="tradeNo != null">
+                #{tradeNo,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerLogonId != null">
+                #{buyerLogonId,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="totalAmount != null">
+                #{totalAmount,jdbcType=INTEGER},
+            </if>
+            <if test="receiptAmount != null">
+                #{receiptAmount,jdbcType=INTEGER},
+            </if>
+            <if test="buyerPayAmount != null">
+                #{buyerPayAmount,jdbcType=INTEGER},
+            </if>
+            <if test="pointAmount != null">
+                #{pointAmount,jdbcType=INTEGER},
+            </if>
+            <if test="invoiceAmount != null">
+                #{invoiceAmount,jdbcType=INTEGER},
+            </if>
+            <if test="merchantDiscountAmount != null">
+                #{merchantDiscountAmount,jdbcType=INTEGER},
+            </if>
+            <if test="discountAmount != null">
+                #{discountAmount,jdbcType=INTEGER},
+            </if>
+            <if test="gmtPayment != null">
+                #{gmtPayment,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getByTradeNo" resultType="com.amusing.start.order.entity.pojo.OrderAliPayInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from order_ali_pay_info
+        where trade_no = #{tradeNo} limit 1;
+    </select>
+
+    <update id="updateStatus">
+        update order_ali_pay_info
+        set status      = #{status},
+            update_time = now()
+        where trade_no = #{tradeNo}
+        limit 1;
+    </update>
+
+    <update id="getById">
+        select
+        <include refid="Base_Column_List"/>
+        from order_ali_pay_info
+        where id = #{payId} limit 1;
+    </update>
+
+</mapper>

@@ -23,8 +23,8 @@
         <module>core/web-core</module>
         <module>business/product/amusing-product-server</module>
         <module>business/product/amusing-product-client</module>
-        <module>business/search/amusing-search-server</module>
-        <module>business/search/amusing-search-client</module>
+        <module>business/platform/amusing-platform-server</module>
+        <module>business/platform/amusing-platform-client</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -151,21 +151,6 @@
                 <version>${sentinel.nacos.version}</version>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/sharding-jdbc-spring-boot-starter -->
-            <dependency>
-                <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
-                <version>${sharding.version}</version>
-            </dependency>
-
-            <!-- 使用BASE事务时，需要引入此模块 -->
-            <!-- 分片事务 https://github.com/seata/seata-samples/tree/master/springcloud-seata-sharding-jdbc-mybatis-plus-samples -->
-            <dependency>
-                <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>sharding-transaction-base-seata-at</artifactId>
-                <version>${sharding.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
@@ -185,7 +170,6 @@
                 <version>${knife4j-spring-ui.version}</version>
             </dependency>
             <!-- Swagger整合 end -->
-
         </dependencies>
     </dependencyManagement>
 

@@ -6,9 +6,9 @@ import org.springframework.context.annotation.ComponentScan;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 
 /**
- * Create By 2021/9/21
- *
- * @author lvqingyu
+ * @author Lv.QingYu
+ * @description: 用户服务
+ * @since 2021/09/21
  */
 @EnableOpenApi
 @SpringBootApplication
@@ -18,4 +18,6 @@ public class UserApplication {
     public static void main(String[] args) {
         SpringApplication.run(UserApplication.class, args);
     }
+
+
 }

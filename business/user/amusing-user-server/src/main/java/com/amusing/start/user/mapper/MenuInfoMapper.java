@@ -5,11 +5,6 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * Created by 2023/2/15.
- *
- * @author lvqingyu
- */
 public interface MenuInfoMapper {
 
     List<MenuInfo> selectAll();
@@ -20,8 +15,8 @@ public interface MenuInfoMapper {
 
     List<MenuInfo> selectByIds(@Param("ids") List<Integer> ids);
 
-    Integer insert(MenuInfo menuInfo);
+    int insert(MenuInfo menuInfo);
 
-    Integer update(MenuInfo menuInfo);
+    int update(MenuInfo menuInfo);
 
 }

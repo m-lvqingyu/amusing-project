@@ -12,11 +12,21 @@ import lombok.Getter;
 public enum ErrorCode {
 
     SUCCESS(200, "成功"),
-    UNAUTHORIZED(401, "非法访问！"),
+    UNAUTHORIZED(100100, "非法访问！"),
     FAIL(500, "系统异常"),
 
+    // 10000 - 19999 系统错误
     PERMISSION_DENIED(1000, "权限不足"),
     OPERATE_FAIL(1001, "新增或修改操作失败"),
+
+    // 20000 - 29999 订单服务错误码
+    ORDER_CLOSE(20001, "订单已支付成功，无法关闭"),
+    ORDER_STATUS_UPDATE(20002, "订单状态已发生改变"),
+    ORDER_PAY_TIMEOUT(20003, "订单已超时"),
+    ORDER_STATUS_REFUND(20004, "订单状态错误，无法退款"),
+    ORDER_NOT_REFUND(20005, "订单已结束，无法退款"),
+
+    ORDER_USE_REFUND(20006, "订单已全额退款"),
 
 
     USER_NOT_FOUND(2000, "用户信息不存在"),
@@ -25,13 +35,16 @@ public enum ErrorCode {
     NAME_EXISTS(2003, "此用户名太受欢迎,请更换一个"),
     USER_INSERT_ERR(2004, "账户信息新增失败"),
     PHONE_EXISTS(2005, "手机号已注册"),
-    LOGIN_ERR(2006, "用户名或密码错误"),
+    LOGIN_USERNAME_OR_PASS_ERR(2006, "用户名或密码错误"),
     REGISTER_ERR(2007, "用户注册失败，请稍后再试！"),
     IMEI_ERR(2008, "该账户已绑定其他设备。您可在原设备解绑后，继续使用服务"),
     ACCOUNT_FROZEN_ERR(2009, "该账户已被冻结"),
     TOKEN_ERR(2010, "Token已失效，请重新登陆"),
     PAY_ERR(2011, "支付失败"),
     ADMIN_OPERATE_FAIL(2012, "管理员账户不能操作"),
+    PHONE_FORMAT_ERR(2013, "手机号码格式不正确"),
+    NAME_FORMAT_ERR(2014, "用户名格式不正确"),
+
 
     ORDER_SAVE_FAIL(3001, "订单创建失败"),
     ORDER_NOT_FOUND(3002, "订单信息不存在"),

@@ -1,34 +1,31 @@
 package com.amusing.start.user.entity.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
-/**
- * Created by 2022/10/2.
- *
- * @author lvqingyu
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Accessors(chain = true)
+@ApiModel(description = "注册请求参数")
 public class RegisterDto {
 
-    @NotEmpty(message = "用户名不能为空")
+    @ApiModelProperty(value = "用户名")
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9*@_]{4,31}$", message = "用户名格式不正确")
     private String userName;
 
-    @NotEmpty(message = "密码不能为空")
+    @ApiModelProperty(value = "密码")
+    @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9*@_]{5,11}$", message = "密码格式不正确")
     private String password;
 
-    @NotNull(message = "注册来源不能为空")
-    private Integer sources;
-
-    @NotEmpty(message = "手机号码不能为空")
+    @ApiModelProperty(value = "手机号码")
+    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号码格式不正确")
     private String phone;
 
 }

@@ -1,11 +1,11 @@
 package com.amusing.start.client.output;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Create By 2021/10/23
@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  * @author lvqingyu
  */
 @Data
-@Builder
+@Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class ShopCarOutput {
@@ -29,28 +29,46 @@ public class ShopCarOutput {
     private String shopName;
 
     /**
-     * 商品ID
+     * 商铺顺序
      */
-    private String productId;
+    private Integer sort;
 
     /**
-     * 商品名称
+     * 商品信息
      */
-    private String productName;
+    private List<ShopCarProductOutput> productOutputList;
 
-    /**
-     * 价格ID
-     */
-    private String priceId;
+    @Data
+    @Accessors(chain = true)
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ShopCarProductOutput {
 
-    /**
-     * 商品单价
-     */
-    private BigDecimal price;
+        /**
+         * 商品ID
+         */
+        private String productId;
 
-    /**
-     * 商品数量
-     */
-    private Integer stock;
+        /**
+         * 商品名称
+         */
+        private String productName;
+
+        /**
+         * 价格ID
+         */
+        private String priceId;
+
+        /**
+         * 商品单价
+         */
+        private Integer price;
+
+        /**
+         * 商品数量
+         */
+        private Integer stock;
+    }
+
 
 }

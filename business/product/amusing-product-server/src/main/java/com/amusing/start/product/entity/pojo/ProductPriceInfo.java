@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 /**
  * @author 商品价格信息
  */
@@ -34,7 +32,7 @@ public class ProductPriceInfo {
     /**
      * 商品价格
      */
-    private BigDecimal price;
+    private Integer price;
 
     /**
      * 创建人

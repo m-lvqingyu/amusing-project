@@ -16,11 +16,10 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id
-        , `name`, code, description, `status`, is_del, is_admin, create_by, create_time, update_by, update_time
+        id, `name`, code, description, `status`, is_del, is_admin, create_by, create_time, update_by, update_time
     </sql>
 
-    <select id="selectAll">
+    <select id="selectAll" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from role_info where is_del = 1
@@ -175,4 +174,14 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
+
+    <select id="getByIdList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from role_info where id in
+        <foreach collection="idList" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and status = 1 and is_del = 1
+    </select>
 </mapper>

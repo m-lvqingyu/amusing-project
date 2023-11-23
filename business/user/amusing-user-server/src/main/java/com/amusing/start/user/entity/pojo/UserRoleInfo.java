@@ -1,11 +1,14 @@
 package com.amusing.start.user.entity.pojo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- * @author 用户角色关联表
- */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRoleInfo {
 
     /**

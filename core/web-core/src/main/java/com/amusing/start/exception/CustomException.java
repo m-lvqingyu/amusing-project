@@ -1,20 +1,23 @@
 package com.amusing.start.exception;
 
-import com.amusing.start.code.ErrorCode;
+import com.amusing.start.code.BaseCode;
 
 /**
  * Created by lvqingyu on 2022/10/4.
  */
-public class CustomException extends Exception {
+public class CustomException extends RuntimeException {
 
-    private final ErrorCode errorCode;
+    private static final long serialVersionUID = 8748129205334062036L;
 
-    public CustomException(ErrorCode errorCode) {
-        super(errorCode.getMsg());
+    private final BaseCode<?> errorCode;
+
+    public CustomException(BaseCode<?> errorCode) {
+        super(errorCode.getValue());
         this.errorCode = errorCode;
     }
 
-    public ErrorCode getErrorCode() {
+    public BaseCode<?> getErrorCode() {
         return this.errorCode;
     }
+
 }

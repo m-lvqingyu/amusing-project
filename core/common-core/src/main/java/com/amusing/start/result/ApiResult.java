@@ -1,5 +1,7 @@
 package com.amusing.start.result;
 
+import com.amusing.start.code.BaseCode;
+import com.amusing.start.code.CommCode;
 import com.amusing.start.code.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,18 +23,24 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class ApiResult<T> implements Serializable {
 
-    private int code;
+    private static final long serialVersionUID = 6591392059181418224L;
 
-    private String msg;
+    private String code;
+
+    private String message;
 
     private T data;
 
-    public static <T> ApiResult<T> result(ErrorCode errorCode) {
+    public static <T> ApiResult<T> result(BaseCode<?> errorCode) {
         return result(errorCode, null);
     }
 
-    public static <T> ApiResult<T> result(ErrorCode errorCode, T data) {
-        return new ApiResult<T>(errorCode.getCode(), errorCode.getMsg(), data);
+    public static <T> ApiResult<T> result(BaseCode<?> errorCode, T data) {
+        return new ApiResult<T>().setCode(errorCode.getKey()).setMessage(errorCode.getValue()).setData(data);
+    }
+
+    public static <T> ApiResult<T> result(String code, String msg) {
+        return new ApiResult<T>().setCode(code).setMessage(msg);
     }
 
     public static <T> ApiResult<T> ok() {
@@ -40,11 +48,11 @@ public class ApiResult<T> implements Serializable {
     }
 
     public static <T> ApiResult<T> ok(T data) {
-        return result(ErrorCode.SUCCESS, data);
+        return result(CommCode.SUCCESS, data);
     }
 
     public boolean isSuccess() {
-        return this.code == ErrorCode.SUCCESS.getCode();
+        return this.code.equals(CommCode.SUCCESS.getKey());
     }
 
 }

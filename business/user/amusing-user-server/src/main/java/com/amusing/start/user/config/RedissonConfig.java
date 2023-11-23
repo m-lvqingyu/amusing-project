@@ -14,9 +14,9 @@ import org.springframework.context.annotation.Configuration;
 import java.io.IOException;
 
 /**
- * Created by 2022/10/5.
- *
- * @author lvqingyu
+ * @author Lv.QingYu
+ * @description: Redis配置
+ * @since 2022/11/26
  */
 @Configuration
 public class RedissonConfig {

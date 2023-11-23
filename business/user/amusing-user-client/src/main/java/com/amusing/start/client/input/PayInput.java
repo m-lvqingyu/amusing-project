@@ -1,11 +1,9 @@
 package com.amusing.start.client.input;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
+import lombok.experimental.Accessors;
 
 /**
  * Create By 2021/9/21
@@ -13,9 +11,9 @@ import java.math.BigDecimal;
  * @author lvqingyu
  */
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class PayInput {
 
     /**
@@ -26,6 +24,6 @@ public class PayInput {
     /**
      * 结算金额
      */
-    private BigDecimal amount;
+    private Integer amount;
 
 }

@@ -4,40 +4,29 @@ import com.amusing.start.client.input.StockDeductionInput;
 import com.amusing.start.client.output.ShopCarOutput;
 import com.amusing.start.exception.CustomException;
 import com.amusing.start.product.entity.dto.ProductCreateDto;
+import com.amusing.start.product.entity.pojo.ProductInfo;
 
 import java.util.List;
 
 /**
- * Create By 2021/10/23
- *
- * @author lvqingyu
+ * @author Lv.QingYu
+ * @description: 商品服务Service
+ * @since 2023/9/20
  */
 public interface IProductService {
 
     /**
-     * 商品新增
-     *
-     * @param executor  执行者ID
-     * @param createDto 商品信息
-     * @return 商品ID
+     * @param shopId 商铺ID
+     * @param name   商品名称
+     * @return 商品信息
+     * @description: 根据名称获取商品信息
      */
-    String create(String executor, ProductCreateDto createDto) throws CustomException;
+    ProductInfo getByName(String shopId, String name);
 
-    /**
-     * 购物车列表
-     *
-     * @param userId 用户ID
-     * @return 购物车列表
-     */
-    List<ShopCarOutput> shopCar(String userId) throws CustomException;
+    Integer insert(ProductInfo productInfo);
 
-    /**
-     * 扣减库存
-     *
-     * @param inputs 商品信息
-     * @return true: 成功 false: 失败
-     */
-    Boolean deductionStock(List<StockDeductionInput> inputs) throws CustomException;
+    ProductInfo getById(String productId);
 
+    Integer batchDeductionStock(List<StockDeductionInput> inputs);
 
 }
