@@ -5,7 +5,6 @@ import cn.hutool.core.util.IdUtil;
 import com.amusing.start.client.api.UserFeignClient;
 import com.amusing.start.client.request.AccountPayRequest;
 import com.amusing.start.client.request.ConsigneeInfoRequest;
-import com.amusing.start.client.request.StockDeductionRequest;
 import com.amusing.start.client.response.ConsigneeResp;
 import com.amusing.start.code.CommunalCode;
 import com.amusing.start.constant.CommConstant;
@@ -21,6 +20,7 @@ import com.amusing.start.order.pojo.Order;
 import com.amusing.start.order.pojo.OrderProduct;
 import com.amusing.start.order.pojo.OrderShops;
 import com.amusing.start.order.req.ApiCreateOrderReq;
+import com.amusing.start.order.req.StockDeductionReq;
 import com.amusing.start.order.resp.ApiShopCarDetailResp;
 import com.amusing.start.order.service.OrderService;
 import com.amusing.start.order.service.ProductService;
@@ -97,7 +97,7 @@ public class OrderBiz {
             String orderNo = IdUtil.getSnowflake(worker, dataCenter).nextIdStr();
             List<OrderShops> shopsInfoList = new ArrayList<>();
             List<OrderProduct> productInfoList = new ArrayList<>();
-            List<StockDeductionRequest> deductionInputList = new ArrayList<>();
+            List<StockDeductionReq> deductionInputList = new ArrayList<>();
             buildOrderRelational(userId, orderNo, shopsInfoList, productInfoList, deductionInputList);
 
             // 校验订单金额是否超过用户可用余额
@@ -144,12 +144,12 @@ public class OrderBiz {
             lock.unlock();
         }
     }
-    
+
     private void buildOrderRelational(String userId,
                                       String orderNo,
                                       List<OrderShops> shopsInfoList,
                                       List<OrderProduct> productInfoList,
-                                      List<StockDeductionRequest> deductionInputList) {
+                                      List<StockDeductionReq> deductionInputList) {
         // 购物车信息
         List<ApiShopCarDetailResp> shopCarList = shopCarBiz.shopCar(userId);
         if (CollectionUtil.isEmpty(shopCarList)) {
@@ -172,7 +172,7 @@ public class OrderBiz {
                         .setPrice(product.getPrice())
                         .setNum(product.getStock())
                         .setAmount(amount));
-                deductionInputList.add(new StockDeductionRequest()
+                deductionInputList.add(new StockDeductionReq()
                         .setId(product.getProductId())
                         .setNum(product.getStock()));
             });

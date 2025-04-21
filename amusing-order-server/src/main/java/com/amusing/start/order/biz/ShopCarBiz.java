@@ -5,8 +5,8 @@ import com.amusing.start.constant.CommConstant;
 import com.amusing.start.exception.CustomException;
 import com.amusing.start.order.enums.OrderErrorCode;
 import com.amusing.start.order.enums.ProductStatus;
-import com.amusing.start.order.pojo.Product;
 import com.amusing.start.order.pojo.Price;
+import com.amusing.start.order.pojo.Product;
 import com.amusing.start.order.pojo.Shop;
 import com.amusing.start.order.req.ApiShoppingReq;
 import com.amusing.start.order.resp.ApiShopCarDetailResp;
@@ -83,7 +83,7 @@ public class ShopCarBiz {
                         new ApiShopCarDetailResp.ApiProductDetailResp()
                                 .setProductId(productId)
                                 .setProductName(product.getName())
-                                .setPriceId(productPrice.getPriceId())
+                                .setPriceId(productPrice.getId())
                                 .setPrice(productPrice.getPrice())
                                 .setStock(productResponse.getNum()));
             }

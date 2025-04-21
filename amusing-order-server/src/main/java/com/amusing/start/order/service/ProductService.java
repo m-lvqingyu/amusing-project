@@ -1,7 +1,7 @@
 package com.amusing.start.order.service;
 
-import com.amusing.start.client.request.StockDeductionRequest;
 import com.amusing.start.order.pojo.Product;
+import com.amusing.start.order.req.StockDeductionReq;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public interface ProductService {
      *
      * @param requestList 商品数量信息
      */
-    void deductionStock(List<StockDeductionRequest> requestList);
+    void deductionStock(List<StockDeductionReq> requestList);
 
     /**
      * 更具ID获取商品信息

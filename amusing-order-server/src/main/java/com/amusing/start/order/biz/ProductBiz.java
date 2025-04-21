@@ -7,8 +7,8 @@ import com.amusing.start.order.config.props.SnowflakeProps;
 import com.amusing.start.order.enums.OrderErrorCode;
 import com.amusing.start.order.enums.ProductStatus;
 import com.amusing.start.order.enums.YesNo;
-import com.amusing.start.order.pojo.Product;
 import com.amusing.start.order.pojo.Price;
+import com.amusing.start.order.pojo.Product;
 import com.amusing.start.order.req.AdminProductCreateReq;
 import com.amusing.start.order.service.PriceService;
 import com.amusing.start.order.service.ProductService;
@@ -59,7 +59,7 @@ public class ProductBiz {
         // 保存商品价格
         String priceId = IdUtil.createSnowflake(props.getWorker(), props.getCenter()).nextIdStr();
         Price priceInfo = new Price()
-                .setPriceId(priceId)
+                .setId(priceId)
                 .setProductId(productId)
                 .setVersion(CommConstant.ZERO)
                 .setPrice(req.getPrice())

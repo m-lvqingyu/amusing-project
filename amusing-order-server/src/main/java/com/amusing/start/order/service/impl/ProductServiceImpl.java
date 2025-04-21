@@ -1,6 +1,5 @@
 package com.amusing.start.order.service.impl;
 
-import com.amusing.start.client.request.StockDeductionRequest;
 import com.amusing.start.code.CommunalCode;
 import com.amusing.start.exception.CustomException;
 import com.amusing.start.order.enums.OrderErrorCode;
@@ -8,6 +7,7 @@ import com.amusing.start.order.enums.ProductStatus;
 import com.amusing.start.order.enums.YesNo;
 import com.amusing.start.order.mapper.ProductMapper;
 import com.amusing.start.order.pojo.Product;
+import com.amusing.start.order.req.StockDeductionReq;
 import com.amusing.start.order.service.ProductService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -48,8 +48,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deductionStock(List<StockDeductionRequest> requestList) {
-        for (StockDeductionRequest request : requestList) {
+    public void deductionStock(List<StockDeductionReq> requestList) {
+        for (StockDeductionReq request : requestList) {
             Product product = getById(request.getId());
             LambdaUpdateWrapper<Product> wrapper = new LambdaUpdateWrapper<>();
             wrapper.eq(Product::getId, request.getId());
