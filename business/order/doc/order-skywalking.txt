@@ -1,3 +1,0 @@
--javaagent:D:\tools\skywalking\apache-skywalking-apm-bin\agent\skywalking-agent.jar
--Dskywalking.agent.service_name=amusing-order-server
--Dskywalking.collector.backend_service=localhost:11800

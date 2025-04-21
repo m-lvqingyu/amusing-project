@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.amusing.start.oss.config.MinioStorageConfig,\
+  com.amusing.start.oss.config.AliStorageConfig

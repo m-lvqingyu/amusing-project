@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.5.RELEASE</version>
+        <version>2.6.3</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -14,17 +14,17 @@
     <artifactId>amusing-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>core/common-core</module>
-        <module>gateway/amusing-gateway</module>
-        <module>business/order/amusing-order-server</module>
-        <module>business/order/amusing-order-client</module>
-        <module>business/user/amusing-user-server</module>
-        <module>business/user/amusing-user-client</module>
-        <module>core/web-core</module>
-        <module>business/product/amusing-product-server</module>
-        <module>business/product/amusing-product-client</module>
-        <module>business/platform/amusing-platform-server</module>
-        <module>business/platform/amusing-platform-client</module>
+        <module>amusing-gateway</module>
+        <module>amusing-order-server</module>
+        <module>amusing-order-client</module>
+        <module>amusing-user-server</module>
+        <module>amusing-user-client</module>
+        <module>amusing-core</module>
+        <module>plugins/amusing-oss-plugins</module>
+        <module>plugins/amusing-limit-plugins</module>
+        <module>plugins/amusing-log-plugins</module>
+        <module>plugins/amusing-pay-plugins</module>
+        <module>amusing-auth</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -33,29 +33,30 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
-        <spring-cloud-alibaba.version>2.2.6.RELEASE</spring-cloud-alibaba.version>
+        <spring-cloud.version>2021.0.5</spring-cloud.version>
+        <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
         <lombok.version>1.18.12</lombok.version>
         <commons.lang3.version>3.11</commons.lang3.version>
         <commons.collections.version>4.4</commons.collections.version>
         <commons.io.version>2.8.0</commons.io.version>
         <guava.version>29.0-jre</guava.version>
-        <jackson.version>2.11.2</jackson.version>
+        <jackson.version>2.15.0</jackson.version>
         <hutool.version>5.4.2</hutool.version>
         <jwt.version>3.4.0</jwt.version>
         <spring.druid.version>1.2.6</spring.druid.version>
         <mysql.version>8.0.26</mysql.version>
-        <mybatis.version>3.4.3.2</mybatis.version>
+        <mybatis.version>3.5.3.1</mybatis.version>
         <sentinel.nacos.version>1.8.1</sentinel.nacos.version>
-        <sharding.version>4.1.1</sharding.version>
         <redisson.version>3.16.7</redisson.version>
-        <swagger3.version>3.0.0</swagger3.version>
-        <spring.boot.version>2.3.5.RELEASE</spring.boot.version>
-        <knife4j-spring-ui.version>3.0.3</knife4j-spring-ui.version>
+        <knife4j.version>4.0.0</knife4j.version>
+        <springfox.swagger.version>2.10.5</springfox.swagger.version>
+        <seata.spring.version>1.6.1</seata.spring.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Cloud 依赖Start -->
+            <!-- 版本说明 https://github.com/alibaba/spring-cloud-alibaba/wiki/%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -63,8 +64,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
-            <!-- 版本说明 https://github.com/alibaba/spring-cloud-alibaba/wiki/%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E -->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
@@ -72,107 +71,89 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
+            <!-- Spring Cloud 依赖End -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons.lang3.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>${commons.collections.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons.io.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.auth0</groupId>
                 <artifactId>java-jwt</artifactId>
                 <version>${jwt.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.alibaba.csp</groupId>
                 <artifactId>sentinel-datasource-nacos</artifactId>
                 <version>${sentinel.nacos.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>${redisson.version}</version>
             </dependency>
-
-            <!-- Swagger整合 start -->
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-                <version>${swagger3.version}</version>
+                <groupId>io.seata</groupId>
+                <artifactId>seata-spring-boot-starter</artifactId>
+                <version>${seata.spring.version}</version>
             </dependency>
-
             <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-spring-ui</artifactId>
-                <version>${knife4j-spring-ui.version}</version>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>1.7.0</version>
             </dependency>
-            <!-- Swagger整合 end -->
         </dependencies>
     </dependencyManagement>
-
 
     <build>
         <plugins>
